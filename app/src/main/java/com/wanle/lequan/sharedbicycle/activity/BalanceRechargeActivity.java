@@ -60,7 +60,7 @@ import retrofit2.Response;
  */
 public class BalanceRechargeActivity extends AppCompatActivity {
     private static final int SDK_PAY_FLAG = 1;
-    private static final String APP_ID = "wx1902de5450f7a61e";
+    private static final String APP_ID = "wx7e30951a872270b5";
     final IWXAPI msgApi = WXAPIFactory.createWXAPI(this, null);
     @BindView(R.id.edit_amount)
     EditText mEditAmount;

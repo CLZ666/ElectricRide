@@ -14,7 +14,7 @@ import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler{
     private IWXAPI api;
-    private static final String APP_ID = "wx1902de5450f7a61e";
+    private static final String APP_ID = "wx7e30951a872270b5";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
