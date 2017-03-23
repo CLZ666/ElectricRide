@@ -200,7 +200,8 @@
         <activity
             android:name=".wxapi.WXPayEntryActivity"
             android:exported="true"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
         <!--<receiver android:name=".receiver.BlueToothStateReceiver">
             <intent-filter>

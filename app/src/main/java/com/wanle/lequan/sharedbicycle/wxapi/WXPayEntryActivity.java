@@ -1,8 +1,8 @@
 package com.wanle.lequan.sharedbicycle.wxapi;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
@@ -12,7 +12,7 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.wanle.lequan.sharedbicycle.R;
 import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
 
-public class WXPayEntryActivity extends AppCompatActivity implements IWXAPIEventHandler{
+public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler{
     private IWXAPI api;
     private static final String APP_ID = "wx1902de5450f7a61e";
     @Override
@@ -42,7 +42,7 @@ public class WXPayEntryActivity extends AppCompatActivity implements IWXAPIEvent
             ToastUtils.getShortToastByString(this,"支付成功!");
             finish();
         }else if (errCode==-1){
-            ToastUtils.getShortToastByString(this,errStr);
+            ToastUtils.getShortToastByString(this,"支付发生错误");
         }else if (errCode==-2){
             ToastUtils.getShortToastByString(this,"操作已取消!");
         }
