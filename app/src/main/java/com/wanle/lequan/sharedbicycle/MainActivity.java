@@ -1,6 +1,5 @@
 package com.wanle.lequan.sharedbicycle;
 
-
 import android.Manifest;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -385,7 +384,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         aMap.setLocationSource(this);// 设置定位监听
         mUiSettings.setMyLocationButtonEnabled(false);// 设置默认定位按钮是否显示
         aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
-
         MyLocationStyle myLocationStyle = new MyLocationStyle();
             /*myLocationStyle.myLocationIcon(BitmapDescriptorFactory
                     .fromResource(R.drawable.end_point));// 设置小蓝点的图标*/
@@ -395,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         myLocationStyle.radiusFillColor(getResources().getColor(R.color.tougrey1));// 设置圆形的填充颜色
         // myLocationStyle.radiusFillColor(color)//设置圆形的填充颜色
         // myLocationStyle.anchor(int,int)//设置小蓝点的锚点
-
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW);
         aMap.setMyLocationStyle(myLocationStyle);
         aMap.setMyLocationRotateAngle(180);
     }
