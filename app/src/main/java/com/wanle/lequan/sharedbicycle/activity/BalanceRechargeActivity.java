@@ -8,7 +8,9 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -88,7 +90,28 @@ public class BalanceRechargeActivity extends AppCompatActivity {
     RadioGroup mRgbWayPay;
     private RecargeAmountAdapter mAdapter;
     private String mAmount = "";
+    private TextWatcher mTextWatcher=new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String s1 = mEditAmount.getText().toString();
+            if (!TextUtils.isEmpty(s1)){
+                mAdapter.changeTextColor("editNotEmpty");
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            String s1 = mEditAmount.getText().toString();
+            if (!TextUtils.isEmpty(s1)){
+                mAdapter.changeTextColor("editNotEmpty");
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +130,7 @@ public class BalanceRechargeActivity extends AppCompatActivity {
         mRbZfb.setChecked(true);
         EventBus.getDefault().register(this);
         showKeyboard(mEditAmount);
+        mEditAmount.addTextChangedListener(mTextWatcher);
     }
 
     public List<String> getData() {
@@ -140,6 +164,9 @@ public class BalanceRechargeActivity extends AppCompatActivity {
     @Subscribe
     public void onEventMainThread(MyEvent event) {
         mAmount = event.getMsg();
+        if (!mAmount.equals("")){
+            mEditAmount.setText("");
+        }
     }
 
     /**
