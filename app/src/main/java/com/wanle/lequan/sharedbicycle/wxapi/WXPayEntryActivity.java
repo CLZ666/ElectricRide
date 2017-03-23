@@ -37,6 +37,8 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler{
     @Override
     public void onResp(BaseResp baseResp) {
         String errStr = baseResp.errStr;
+        //Log.i("errstr",baseResp.errStr);
+       // Log.i("errstr",baseResp.transaction);
         int errCode = baseResp.errCode;
         if (errCode==0){
             ToastUtils.getShortToastByString(this,"支付成功!");
