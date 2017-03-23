@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name = "color_exam_grey">#282930</drawable>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#282832</color>
+    <color name="colorAccent">#01BBF6</color>
+    <color name="colorPrimaryDarkTrans">#CCf57257</color>
+    <color name="toolbar">#282832</color>
+    <color name="green">#567E29</color>
+    <color name="green2">#399601</color>
+    <color name="green3">#399601</color>
+    <color name="white">#fff</color>
+    <color name="white2">#F8F8F8</color>
+    <color name="touwhite">#5fff</color>
+    <color name="touming">#0fff</color>
+    <color name="black">#000</color>
+    <color name="grey">#282930</color>
+    <color name="tougrey">#66282930</color>
+    <color name="icon_bgd">#282832</color>
+    <color name="transparent">#00000000</color>
+    <color name="red">#01BBF6</color>
+    <color name="my_wallet_bgd">#00C8FB</color>
+    <color name="tougrey1">#26282930</color>
+    <color name="blue_500">#40AFFC</color>
+    <color name="blue">#019DF5</color>
+    <color name="input_bgd">#2D2C2A</color>
+    <color name="translucent_background">#60000000</color>
+</resources>

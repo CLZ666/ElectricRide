@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_recharge_record"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.wanle.lequan.sharedbicycle.activity.TripDetailActivity">
+
+    <include
+
+        layout="@layout/layout_navigation_bar"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.amap.api.maps.MapView
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+        </com.amap.api.maps.MapView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="173dp"
+            android:background="@color/touming">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_user_icon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/ic_launcher"/>
+
+            <TextView
+                android:id="@id/tv_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/iv_user_icon"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:text="18855091326"
+                android:textColor="@color/black"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tv_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/tv_phone"
+                android:layout_marginTop="8dp"
+                android:background="@color/tougrey"
+                />
+
+            <ImageView
+                android:id="@+id/iv_time_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/tv_line"
+                android:layout_marginLeft="70dp"
+                android:layout_marginTop="11dp"
+                android:src="@drawable/travel_detail_alockp_icon"
+                />
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_below="@id/tv_line"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="7dp"
+                android:layout_toRightOf="@id/iv_time_icon"
+                android:gravity="center"
+                android:text="7分钟"
+                android:textColor="@color/black"
+                android:textSize="15sp"/>
+
+            <ImageView
+                android:id="@+id/iv_coin_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/tv_line"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/tv_time"
+                android:src="@drawable/wallet_package"
+                />
+
+            <TextView
+                android:id="@+id/tv_coin"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_below="@id/tv_line"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="7dp"
+                android:layout_toRightOf="@id/iv_coin_icon"
+                android:gravity="center"
+                android:text="2元"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_coin"
+                android:text="骑行花费"
+                android:textSize="12sp"
+                android:layout_alignTop="@+id/tv_tme"/>
+
+            <TextView
+                android:id="@+id/tv_tme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_time"
+                android:layout_below="@id/iv_time_icon"
+                android:layout_marginTop="8dp"
+                android:text="骑行时间"
+                android:textSize="12sp"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_cirlce"
+                android:layout_width="4dp"
+                android:layout_height="4dp"
+                android:layout_alignLeft="@id/iv_time_icon"
+                android:layout_below="@id/tv_tme"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/blue"/>
+
+            <TextView
+                android:id="@+id/tv_s_e"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_tme"
+                android:layout_below="@id/tv_tme"
+                android:layout_marginTop="15dp"
+                android:layout_toRightOf="@id/iv_cirlce"
+                android:text="起止时间"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tv_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_s_e"
+                android:layout_below="@id/iv_cirlce"
+                android:layout_marginTop="12dp"
+                android:text="2017-02-01 11:23"
+                android:textColor="@color/black"
+                android:textSize="11sp"
+                />
+
+            <TextView
+                android:id="@+id/tv_end_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_s_e"
+                android:layout_below="@id/tv_start_time"
+                android:layout_marginTop="8dp"
+                android:text="2017-02-01 11:23"
+                android:textColor="@color/black"
+                android:textSize="11sp"
+                />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_cirlce2"
+                android:layout_width="4dp"
+                android:layout_height="4dp"
+                android:layout_alignLeft="@id/iv_time_icon"
+                android:layout_below="@id/tv_end_time"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="25dp"
+                android:background="@color/blue"/>
+
+            <TextView
+                android:id="@+id/tv_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/tv_s_e"
+                android:layout_below="@id/tv_end_time"
+                android:layout_marginTop="15dp"
+                android:layout_toRightOf="@id/iv_cirlce2"
+                android:text="车辆编号:"
+                android:textSize="12sp"
+                />
+
+            <TextView
+                android:id="@+id/tv_car_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_end_time"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="15dp"
+                android:layout_toRightOf="@id/tv_no"
+                android:text="285875928958986"
+                android:textColor="@color/black"
+                android:textSize="12sp"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/red"
+                android:text="分享给小伙伴"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textColor="@color/white"
+                android:layout_marginBottom="30dp"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+    </FrameLayout>
+
+</LinearLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_identity_verit"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/touwhite"
+    tools:context="com.wanle.lequan.sharedbicycle.activity.IdentityVeritActivity">
+    <include  layout="@layout/layout_navigation_bar"/>
+    <include layout="@layout/layout_borrow_progress"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/name"
+        android:layout_marginLeft="10dp"
+        android:textSize="18sp"
+        android:textColor="@color/black"/>
+    <EditText
+        android:id="@+id/edit_name"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="8dp"
+        android:hint="@string/input_name"
+        android:layout_marginRight="8dp"
+        android:textColorHint="@color/tougrey"
+        android:textCursorDrawable="@null"
+        android:background="@drawable/line_et_identify_bg"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="身份证号"
+        android:layout_marginLeft="10dp"
+        android:textSize="18sp"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/black"/>
+    <EditText
+        android:id="@+id/edit_code"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:hint="@string/input_identity"
+        android:textColorHint="@color/tougrey"
+        android:textCursorDrawable="@null"
+        android:background="@drawable/line_et_identify_bg"
+        />
+    <Button
+        android:id="@+id/btn_confim"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/red"
+        android:text="确认"
+        android:textSize="20sp"
+        android:textColor="@color/white"/>
+</LinearLayout>

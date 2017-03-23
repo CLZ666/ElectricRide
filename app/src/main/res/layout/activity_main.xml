@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/activity_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.wanle.lequan.sharedbicycle.MainActivity"
+    >
+
+    <LinearLayout
+        android:id="@+id/linear_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/toolbar"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_toolbarmore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:src="@drawable/lefttool"
+            />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@color/red"
+            android:textSize="20sp"
+            />
+        <ImageView
+            android:id="@+id/iv_search"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center"
+            android:layout_weight="1"
+            android:src="@drawable/search"
+            />
+    </LinearLayout>
+
+    <com.amap.api.maps.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/linear_bar"
+        >
+    </com.amap.api.maps.MapView>
+    <ImageView
+        android:id="@+id/iv_end_point"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/end_point"
+        android:layout_marginTop="10dp"
+        android:layout_centerInParent="true"
+        />
+    <ImageView
+        android:id="@+id/iv_gps_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="40dp"
+        android:layout_marginLeft="30dp"
+        android:background="@drawable/bgd_circle"
+        android:src="@drawable/gps_start"
+        />
+
+
+    <ImageView
+        android:id="@+id/iv_bike_station"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="40dp"
+        android:layout_marginRight="30dp"
+        android:background="@drawable/bgd_circle"
+        android:src="@drawable/moto"
+        />
+
+
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        app:cardCornerRadius="20dp">
+
+        <Button
+            android:id="@+id/btn_use_car"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/toolbar"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:text="我要用车"
+            android:textColor="@color/white"
+            android:textSize="18sp"/>
+    </android.support.v7.widget.CardView>
+
+    <FrameLayout
+        android:id="@+id/fl_fragment_replace"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linear_bar">
+
+    </FrameLayout>
+
+
+</RelativeLayout>
