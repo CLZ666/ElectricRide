@@ -27,6 +27,8 @@ public class RecargeAmountAdapter extends RecyclerView.Adapter<RecargeAmountAdap
     private Context mContext;
     private List<String> mData;
     private int lastPressIndex = -1;
+    private MyViewHolder mHolder;
+    private int mPosition;
     public RecargeAmountAdapter(Context context) {
         this.mContext = context;
         mData=new ArrayList<>();
@@ -40,6 +42,7 @@ public class RecargeAmountAdapter extends RecyclerView.Adapter<RecargeAmountAdap
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+        mHolder=holder;
         holder.setData(mData.get(position));
     }
 
@@ -66,18 +69,19 @@ public class RecargeAmountAdapter extends RecyclerView.Adapter<RecargeAmountAdap
                 public void onClick(View v) {
                     Log.e("TAG", "OneViewHolder: ");
                     int position = getAdapterPosition();
+                    mPosition=position;
                     if (lastPressIndex == position) {
                         lastPressIndex = -1;
                     } else {
                         lastPressIndex = position;
                     }
-                   notifyDataSetChanged();
+                    notifyDataSetChanged();
                     CharSequence text = tv.getText();
                     EventBus.getDefault().post(new MyEvent(text.toString()));
                 }
             });
         }
-        public void setData(Object data){
+        public  void setData(Object data){
             if (data != null) {
                 String text = (String) data;
                 tv.setText(text);
@@ -93,6 +97,14 @@ public class RecargeAmountAdapter extends RecyclerView.Adapter<RecargeAmountAdap
             }
         }
 
+    }
+
+    public void changeTextColor(String msg) {
+        if (msg.equals("editNotEmpty")){
+            lastPressIndex=-1;
+            mHolder.setData(mData.get(mPosition));
+            notifyDataSetChanged();
+        }
     }
 
 }
