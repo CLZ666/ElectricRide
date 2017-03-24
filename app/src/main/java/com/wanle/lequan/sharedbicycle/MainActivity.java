@@ -82,6 +82,7 @@ import com.wanle.lequan.sharedbicycle.fragment.AddressInfoFragment;
 import com.wanle.lequan.sharedbicycle.fragment.CarStateFragment;
 import com.wanle.lequan.sharedbicycle.overlay.WalkRouteOverlay;
 import com.wanle.lequan.sharedbicycle.receiver.BlueToothStateReceiver;
+import com.wanle.lequan.sharedbicycle.receiver.NetInfoReceiver;
 import com.wanle.lequan.sharedbicycle.utils.GetJsonStringUtil;
 import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
 import com.wanle.lequan.sharedbicycle.utils.NetWorkUtil;
@@ -90,6 +91,7 @@ import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
 import com.wanle.lequan.sharedbicycle.view.ProgersssDialog;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -162,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private BlueToothStateReceiver mBlueToothStateReceiver;
     private CountDownTimer mCdt;
     private CountDownTimer mMCdt;
+    private NetInfoReceiver mNetinfoReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         initView();
         mapPermission();
         monitorBlueTooth();
+        monitiorNetInfo();
         String s = sHA1();
         Log.i("sha1", s);
         setCenter();
@@ -195,6 +199,30 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
+    /**
+     * 监测网络连接状态
+     */
+    private void monitiorNetInfo() {
+            mNetinfoReceiver = new NetInfoReceiver();
+        IntentFilter filter=new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(mNetinfoReceiver,filter);
+    }
+
+    /**
+     * 获得网络信息接受者传来的消息,一旦有网络连接，立即定位到当前位置
+     * @param event
+     */
+    @Subscribe
+    public void onEventMainThread(MyEvent event){
+        String msg = event.getMsg();
+        Log.i("eventmsg",msg);
+        if (msg.equals("网络连接成功")){
+            if (null!=mlocationClient&&null!=mCenterPoint){
+               gps_start(false);
+            }
+        }
+    }
     /**
      * 监测蓝牙打开或者关闭
      */
@@ -291,6 +319,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         mRouteSearch = new RouteSearch(this);
         mRouteSearch.setRouteSearchListener(this);
         mSp_isLogin = getSharedPreferences("isLogin", MODE_PRIVATE);
+        EventBus.getDefault().register(this);
     }
 
     public String sHA1() {
@@ -479,7 +508,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             aMap.setLocationSource(this);// 设置定位监听
             aMap.setMyLocationEnabled(true);
             mlocationClient.startLocation();//启动定位
-
             mProgersssDialog = new ProgersssDialog(this);
             mProgersssDialog.setMsg("正在定位中");
 
@@ -491,6 +519,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             @Override
                             public void run() {
                                     mProgersssDialog.dismiss();
+                                if (null != mCenterPoint) {
+                                    regeocdeQuery();
+                                }
                             }
 
                         }, 800);
@@ -628,6 +659,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
         carStateHandler.removeCallbacks(mRunnable);
         this.unregisterReceiver(mBlueToothStateReceiver);
+        this.unregisterReceiver(mNetinfoReceiver);
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -704,8 +737,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      */
     @Override
     public void activate(OnLocationChangedListener listener) {
-        mListener = listener;
-        initLocation();
+        if (NetWorkUtil.isNetworkAvailable(this)){
+            mListener = listener;
+            initLocation();
+        }
     }
 
     @Override
@@ -892,15 +927,19 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      */
     @Override
     public boolean onMarkerClick(Marker marker) {
-        mOldMarker = marker;
-        routeLine(marker.getPosition());
+        if (NetWorkUtil.isNetworkAvailable(this)){
+            mOldMarker = marker;
+            routeLine(marker.getPosition());
+        }
         return false;
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
-        if (mOldMarker != null) {
-            mOldMarker.hideInfoWindow();
+        if (NetWorkUtil.isNetworkAvailable(this)){
+            if (mOldMarker != null) {
+                mOldMarker.hideInfoWindow();
+            }
         }
     }
 

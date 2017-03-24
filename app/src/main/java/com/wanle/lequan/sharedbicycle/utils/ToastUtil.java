@@ -78,10 +78,11 @@ public class ToastUtil {
             case 1804:
             	//throw new AMapException(AMapException.AMAP_CLIENT_UNKNOWHOST_EXCEPTION);
             case 1806:
-            	ToastUtils.getShortToastByString(context,"网络连接失败,请检查你的网络连接");
+            	ToastUtils.getShortToastByString(context,"网络连接失败，请检查您的网络连接");
+               break;
                 //throw new AMapException(AMapException.AMAP_CLIENT_NETWORK_EXCEPTION);
             case 1900:
-                ToastUtils.getShortToastByString(context,"");
+                //ToastUtils.getShortToastByString(context,"");
             	//throw new AMapException(AMapException.AMAP_CLIENT_UNKNOWN_ERROR);
             case 1901:
             	throw new AMapException(AMapException.AMAP_CLIENT_INVALID_PARAMETER);

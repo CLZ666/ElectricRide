@@ -123,10 +123,10 @@ public class NetWorkUtil {
                     // 当前所连接的网络可用
                     return true;
                 }else{
-                    ToastUtils.getShortToastByString(context,"网络连接失败，请检查你的网络连接");
+                    ToastUtils.getShortToastByString(context,"网络连接失败，请检查您的网络连接");
                 }
             }else{
-                ToastUtils.getShortToastByString(context,"网络连接失败，请检查你的网络连接");
+                ToastUtils.getShortToastByString(context,"网络连接失败，请检查您的网络连接");
             }
         }
         return false;
