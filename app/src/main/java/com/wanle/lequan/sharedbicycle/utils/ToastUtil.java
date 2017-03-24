@@ -76,18 +76,20 @@ public class ToastUtil {
             case 1803:
             	throw new AMapException(AMapException.AMAP_CLIENT_URL_EXCEPTION);
             case 1804:
-            	throw new AMapException(AMapException.AMAP_CLIENT_UNKNOWHOST_EXCEPTION);
+            	//throw new AMapException(AMapException.AMAP_CLIENT_UNKNOWHOST_EXCEPTION);
             case 1806:
-            	throw new AMapException(AMapException.AMAP_CLIENT_NETWORK_EXCEPTION);
+            	ToastUtils.getShortToastByString(context,"网络连接失败,请检查你的网络连接");
+                //throw new AMapException(AMapException.AMAP_CLIENT_NETWORK_EXCEPTION);
             case 1900:
-            	throw new AMapException(AMapException.AMAP_CLIENT_UNKNOWN_ERROR);
+                ToastUtils.getShortToastByString(context,"");
+            	//throw new AMapException(AMapException.AMAP_CLIENT_UNKNOWN_ERROR);
             case 1901:
             	throw new AMapException(AMapException.AMAP_CLIENT_INVALID_PARAMETER);
             case 1902:
             	throw new AMapException(AMapException.AMAP_CLIENT_IO_EXCEPTION);
             case 1903:
             	throw new AMapException(AMapException.AMAP_CLIENT_NULLPOINT_EXCEPTION);
-              //云图和附近错误码  
+              //云图和附近错误码
             case 2000:
                 throw new AMapException(AMapException.AMAP_SERVICE_TABLEID_NOT_EXIST);
             case 2001:

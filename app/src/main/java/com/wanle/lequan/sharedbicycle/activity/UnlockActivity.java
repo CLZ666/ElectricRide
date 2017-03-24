@@ -103,7 +103,6 @@ public class UnlockActivity extends AppCompatActivity {
                 }
             });
             mPbProgressbar.setProgress(progress);
-
         }
     }
 
@@ -158,9 +157,9 @@ public class UnlockActivity extends AppCompatActivity {
                                 }
                             };
                             cdt.start();
-                        } else {
+                        } /*else {
                             ToastUtil.show(UnlockActivity.this, responseMsg);
-                        }
+                        }*/
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

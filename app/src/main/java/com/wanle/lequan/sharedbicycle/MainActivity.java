@@ -160,6 +160,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private InfoWinAdapter mInfoWinAdapter;
     private Marker mOldMarker;
     private BlueToothStateReceiver mBlueToothStateReceiver;
+    private CountDownTimer mCdt;
+    private CountDownTimer mMCdt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,16 +171,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (NetWorkUtil.isNetworkAvailable(this)) ;
         initMap(savedInstanceState);
         initView();
-        initLocation();
         mapPermission();
         monitorBlueTooth();
         String s = sHA1();
         Log.i("sha1", s);
         setCenter();
         gps_start(true);
-        CountDownTimer cdt = new CountDownTimer(100, 100) {
+        mMCdt = new CountDownTimer(100, 100) {
             @Override
             public void onTick(long millisUntilFinished) {
+
 
             }
 
@@ -187,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 carStateHandler.post(mRunnable);
             }
         };
-        cdt.start();
+        mMCdt.start();
         if (mCenterPoint != null) {
             regeocdeQuery();
         }
@@ -241,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         } else {
                             carStateHandler.removeCallbacks(mRunnable);
                             setAdressInfoFragment();
+                            mBtnUseCar.setText("我要用车");
                         }
                     }
                 } catch (IOException e) {
@@ -360,10 +363,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             //设置为高精度定位模式
             mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
             //设置定位时间间隔
-            mLocationOption.setInterval(2000);
+            mLocationOption.setInterval(30000);
             // mLocationOption.setInterval(-1);
             //设置是否只定位一次,默认为false
-            mLocationOption.setOnceLocation(true);
+           // mLocationOption.setOnceLocation(true);
             //设置定位参数
             mlocationClient.setLocationOption(mLocationOption);
             // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
@@ -440,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 break;
             case R.id.btn_use_car:
                 if (mBtnUseCar.getText().equals("我要用车")) {
-                    QRCodePermission();
+                    userCar();
                 } else if (mBtnUseCar.getText().equals("我要还车")) {
                     if (NetWorkUtil.isNetworkAvailable(this)) {
                         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_return_car, null);
@@ -540,7 +543,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             return;
         }
         if (isLogin1 && isDeposit && isIdentify) {
-            startActivity(new Intent(this, SweepLockActivity.class));
+            QRCodePermission();
         }
     }
 
@@ -629,9 +632,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     protected void onResume() {
+        NetWorkUtil.isNetworkAvailable(this);
         super.onResume();
         mMap.onResume();
         monitorBlueTooth();
+       // mMCdt.start();
     }
 
     @Override
@@ -663,6 +668,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 if (point != null) {
                     LatLng latlng = new LatLng(point.getLatitude(), point.getLongitude());
                     aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
+                    if (mCenterPoint!=null){
+                        regeocdeQuery();
+                    }
                 }
                 break;
         }
@@ -1076,6 +1084,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void mapPermission() {
         String[] mapPerms = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE};
         if (EasyPermissions.hasPermissions(this.getApplicationContext(), mapPerms)) {
+            initLocation();
         } else {
             EasyPermissions.requestPermissions(this, "请求定位权限!", MY_PERMISSIONS_REQUEST_MAP, mapPerms);
         }
@@ -1085,7 +1094,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void QRCodePermission() {
         String[] params = {Manifest.permission.CAMERA};
         if (EasyPermissions.hasPermissions(this.getApplicationContext(), params)) {
-            userCar();
+            startActivity(new Intent(this, SweepLockActivity.class));
         } else {
             EasyPermissions.requestPermissions(this, "请求打开照相机权限!", MY_PERMISSIONS_REQUEST_QR_CODE, params);
         }
