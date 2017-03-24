@@ -2,30 +2,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/red"
               android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="确认站点信息"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="18sp"
-        android:gravity="center"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="我是站点，我是站点"
-        android:textColor="@color/white"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:id="@+id/textView2"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_gravity="center">
+        <TextView
+            android:id="@+id/tv_address"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            android:singleLine="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="10dp"
+            android:text="ha "
+            android:gravity="center"/>
+        <ImageView
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:src="@drawable/end_point"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@id/tv_address"/>
+    </RelativeLayout>
 
     <ImageView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/howjie"
         android:layout_marginTop="15dp"
+        android:layout_gravity="center"
         android:scaleType="fitXY"
         android:id="@+id/imageView"/>
 
@@ -35,8 +50,9 @@
         android:layout_height="30dp"
         android:text="确认"
         android:textSize="15sp"
-        android:textColor="@color/red"
-        android:background="@color/white"
+        android:textColor="@color/white"
+        android:background="@color/red"
         android:layout_marginTop="30dp"
+
         android:gravity="center"/>
 </LinearLayout>

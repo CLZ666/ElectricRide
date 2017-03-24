@@ -165,6 +165,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private CountDownTimer mCdt;
     private CountDownTimer mMCdt;
     private NetInfoReceiver mNetinfoReceiver;
+    private String mStreet;
+    private String mStreet1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -467,8 +469,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         mIsStation = false;
                     }
                 }
-
-
                 break;
             case R.id.btn_use_car:
                 if (mBtnUseCar.getText().equals("我要用车")) {
@@ -479,6 +479,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         final AlertDialog dialog = new AlertDialog.Builder(this).create();
                         dialog.setView(dialogView);
                         TextView tv_confim = (TextView) dialogView.findViewById(R.id.tv_confim);
+                        TextView tv_address= (TextView) dialogView.findViewById(R.id.tv_address);
+                        tv_address.setText(mStreet1);
                         tv_confim.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -739,7 +741,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void activate(OnLocationChangedListener listener) {
         if (NetWorkUtil.isNetworkAvailable(this)){
             mListener = listener;
-            initLocation();
+            mapPermission();
         }
     }
 
@@ -980,15 +982,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 String province = regeocodeAddress.getProvince();
                 String city = regeocodeAddress.getCity();
                 String district = regeocodeAddress.getDistrict();
-                String street = regeocodeAddress.getStreetNumber().getStreet() + "街";
-                Log.i("street", street);
+                mStreet = regeocodeAddress.getStreetNumber().getStreet() + "街";
+                Log.i("street", mStreet);
                 double latitude = mAmapocation.getLatitude();
                 double longitude = mAmapocation.getLongitude();
                 LatLng start = new LatLng(latitude, longitude);
                 int distance = testDistance(start, mCenterPoint);
                 int time = distance / 100;
                 Log.i("car_amount", mCar_amount + "");
-                AddressInfo info = new AddressInfo(subString(regeocodeAddress.getFormatAddress(), province, city, district, street), mCar_amount + "", distance + "", time + "");
+                mStreet1 = subString(regeocodeAddress.getFormatAddress(), province, city, district, mStreet);
+                AddressInfo info = new AddressInfo(mStreet1, mCar_amount + "", distance + "", time + "");
                 Log.i("address", regeocodeAddress.getFormatAddress());
                 EventBus.getDefault().post(new MyEvent(info));
             } else {
