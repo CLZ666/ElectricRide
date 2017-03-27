@@ -14,7 +14,7 @@ import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler{
     private IWXAPI api;
-    private static final String APP_ID = "wx7e30951a872270b5";
+    private static final String APP_ID = "wx1902de5450f7a61e";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +45,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler{
             finish();
         }else if (errCode==-1){
             ToastUtils.getShortToastByString(this,"支付发生错误");
+            finish();
         }else if (errCode==-2){
             ToastUtils.getShortToastByString(this,"操作已取消!");
         }

@@ -205,39 +205,41 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      * 监测网络连接状态
      */
     private void monitiorNetInfo() {
-            mNetinfoReceiver = new NetInfoReceiver();
-        IntentFilter filter=new IntentFilter();
+        mNetinfoReceiver = new NetInfoReceiver();
+        IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        registerReceiver(mNetinfoReceiver,filter);
+        registerReceiver(mNetinfoReceiver, filter);
     }
 
     /**
      * 获得网络信息接受者传来的消息,一旦有网络连接，立即定位到当前位置
+     *
      * @param event
      */
     @Subscribe
-    public void onEventMainThread(MyEvent event){
+    public void onEventMainThread(MyEvent event) {
         String msg = event.getMsg();
-        Log.i("eventmsg",msg);
-        if (msg.equals("网络连接成功")){
-            if (null!=mlocationClient&&null!=mCenterPoint){
-               gps_start(false);
+        Log.i("eventmsg", msg);
+        if (msg.equals("网络连接成功")) {
+            if (null != mlocationClient && null != mCenterPoint) {
+                gps_start(false);
             }
         }
     }
+
     /**
      * 监测蓝牙打开或者关闭
      */
     private void monitorBlueTooth() {
         mBlueToothStateReceiver = new BlueToothStateReceiver(this);
-        BluetoothAdapter bluetoothAdapter=BluetoothAdapter.getDefaultAdapter();
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         boolean isOpen = bluetoothAdapter.isEnabled();
-        if (!isOpen){
+        if (!isOpen) {
             startActivity(new Intent(this, BlueToothActivity.class));
         }
         IntentFilter filter1;
         filter1 = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(mBlueToothStateReceiver,filter1);
+        registerReceiver(mBlueToothStateReceiver, filter1);
         /*this.registerReceiver(mBlueToothStateReceiver,filter2);
         this.registerReceiver(mBlueToothStateReceiver,filter3);
         this.registerReceiver(mBlueToothStateReceiver,filter4);
@@ -397,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             mLocationOption.setInterval(30000);
             // mLocationOption.setInterval(-1);
             //设置是否只定位一次,默认为false
-           // mLocationOption.setOnceLocation(true);
+            // mLocationOption.setOnceLocation(true);
             //设置定位参数
             mlocationClient.setLocationOption(mLocationOption);
             // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
@@ -479,7 +481,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         final AlertDialog dialog = new AlertDialog.Builder(this).create();
                         dialog.setView(dialogView);
                         TextView tv_confim = (TextView) dialogView.findViewById(R.id.tv_confim);
-                        TextView tv_address= (TextView) dialogView.findViewById(R.id.tv_address);
+                        TextView tv_address = (TextView) dialogView.findViewById(R.id.tv_address);
                         tv_address.setText(mStreet1);
                         tv_confim.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -520,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                    mProgersssDialog.dismiss();
+                                mProgersssDialog.dismiss();
                                 if (null != mCenterPoint) {
                                     regeocdeQuery();
                                 }
@@ -671,7 +673,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onResume();
         mMap.onResume();
         monitorBlueTooth();
-       // mMCdt.start();
+        // mMCdt.start();
     }
 
     @Override
@@ -703,7 +705,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 if (point != null) {
                     LatLng latlng = new LatLng(point.getLatitude(), point.getLongitude());
                     aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
-                    if (mCenterPoint!=null){
+                    if (mCenterPoint != null) {
                         regeocdeQuery();
                     }
                 }
@@ -739,7 +741,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      */
     @Override
     public void activate(OnLocationChangedListener listener) {
-        if (NetWorkUtil.isNetworkAvailable(this)){
+        if (NetWorkUtil.isNetworkAvailable(this)) {
             mListener = listener;
             mapPermission();
         }
@@ -929,7 +931,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      */
     @Override
     public boolean onMarkerClick(Marker marker) {
-        if (NetWorkUtil.isNetworkAvailable(this)){
+        if (NetWorkUtil.isNetworkAvailable(this)) {
             mOldMarker = marker;
             routeLine(marker.getPosition());
         }
@@ -938,7 +940,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onMapClick(LatLng latLng) {
-        if (NetWorkUtil.isNetworkAvailable(this)){
+        if (NetWorkUtil.isNetworkAvailable(this)) {
             if (mOldMarker != null) {
                 mOldMarker.hideInfoWindow();
             }
@@ -1118,7 +1120,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        // super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 

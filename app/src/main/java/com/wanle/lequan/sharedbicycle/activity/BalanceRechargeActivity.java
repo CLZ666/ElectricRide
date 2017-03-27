@@ -60,7 +60,7 @@ import retrofit2.Response;
  */
 public class BalanceRechargeActivity extends AppCompatActivity {
     private static final int SDK_PAY_FLAG = 1;
-    private static final String APP_ID = "wx7e30951a872270b5";
+    private static final String APP_ID = "wx1902de5450f7a61e";
     final IWXAPI msgApi = WXAPIFactory.createWXAPI(this, null);
     @BindView(R.id.edit_amount)
     EditText mEditAmount;
@@ -225,7 +225,7 @@ public class BalanceRechargeActivity extends AppCompatActivity {
                     WxOrderInfoBean wxOrderInfoBean = null;
                     try {
                         String jsonString = respons.body().string();
-                        Log.i("wxpay", jsonString);
+                    //    Log.i("wxpay", jsonString);
                         wxOrderInfoBean = gson.fromJson(jsonString, WxOrderInfoBean.class);
                         WxOrderInfoBean.ResponseObjBean.PrepayDataBean prepayData = wxOrderInfoBean.getResponseObj().getPrepayData();
                         wxPay(prepayData);
@@ -266,11 +266,11 @@ public class BalanceRechargeActivity extends AppCompatActivity {
         String appid = prepayData.getAppid();
         msgApi.registerApp(appid);*/
         PayReq request = new PayReq();
-        Log.i("deposit", prepayData.toString());
+       // Log.i("deposit", prepayData.toString());
         request.appId = APP_ID + "";
         request.partnerId = prepayData.getPartnerid();
         request.prepayId = prepayData.getPrepayid();
-        request.packageValue = prepayData.getPackageX();
+        request.packageValue = "Sign=WXPay";
         request.nonceStr = prepayData.getNoncestr();
         request.timeStamp = prepayData.getTimestamp();
         request.sign = prepayData.getSign();
