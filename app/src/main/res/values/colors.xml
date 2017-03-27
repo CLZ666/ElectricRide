@@ -25,4 +25,5 @@
     <color name="blue">#019DF5</color>
     <color name="input_bgd">#2D2C2A</color>
     <color name="translucent_background">#60000000</color>
+    <color name="color999999">#999999</color>
 </resources>

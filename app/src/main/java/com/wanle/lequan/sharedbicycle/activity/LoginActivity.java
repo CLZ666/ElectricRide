@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -59,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         mEditPhone.addTextChangedListener(textWatcher);
         mSp_userinfo = getSharedPreferences("userinfo", MODE_PRIVATE);
         mEdit_userinfo = mSp_userinfo.edit();
+        mEditIdentify.setOnKeyListener(onKey);
     }
 
 
@@ -69,13 +71,13 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.btn_get_code:
-                if (NetWorkUtil.isNetworkAvailable(this)){
+                if (NetWorkUtil.isNetworkAvailable(this)) {
                     getCode();
                 }
                 break;
             case R.id.btn_login:
-                if (NetWorkUtil.isNetworkAvailable(this)){
-                   login();
+                if (NetWorkUtil.isNetworkAvailable(this)) {
+                    login();
                 }
                 //  startActivity(new Intent(this,IdentityVeritActivity.class));
                 break;
@@ -150,7 +152,7 @@ public class LoginActivity extends AppCompatActivity {
                 String userName = userInfoBean.getResponseObj().getUserName();
                 mEdit_userinfo.putString("userName", userName).commit();
                 int balance1 = userInfoBean.getResponseObj().getBalance();
-                double balance=balance1*1.0/100;
+                double balance = balance1 * 1.0 / 100;
                 mEdit_userinfo.putString("balance", balance + "");
                 String phone = userInfoBean.getResponseObj().getPhone();
                 mEdit_userinfo.putString("phone", phone).commit();
@@ -261,5 +263,27 @@ public class LoginActivity extends AppCompatActivity {
                 mBtnGetCode.setTextColor(getResources().getColor(R.color.white));
             }
         }
+    };
+    View.OnKeyListener onKey = new View.OnKeyListener() {
+
+        @Override
+
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+// TODO Auto-generated method stub
+
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                if (NetWorkUtil.isNetworkAvailable(LoginActivity.this)) {
+                    login();
+                }
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
     };
 }

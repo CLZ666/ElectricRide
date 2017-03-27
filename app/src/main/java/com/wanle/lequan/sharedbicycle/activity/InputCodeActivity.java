@@ -8,13 +8,10 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -27,6 +24,7 @@ import com.wanle.lequan.sharedbicycle.utils.GetJsonStringUtil;
 import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
 import com.wanle.lequan.sharedbicycle.utils.NetWorkUtil;
 import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
+import com.wanle.lequan.sharedbicycle.view.PayNumberEditText;
 import com.wanle.lequan.sharedbicycle.view.ProgersssDialog;
 
 import java.io.IOException;
@@ -51,7 +49,7 @@ public class InputCodeActivity extends AppCompatActivity {
 
     @BindView(R.id.tv_title)
     TextView mTvTitle;
-    @BindView(R.id.edit_1)
+    /*@BindView(R.id.edit_1)
     EditText mEdit1;
     @BindView(R.id.edit_2)
     EditText mEdit2;
@@ -68,17 +66,50 @@ public class InputCodeActivity extends AppCompatActivity {
     @BindView(R.id.edit_8)
     EditText mEdit8;
     @BindView(R.id.edit_9)
-    EditText mEdit9;
+    EditText mEdit9;*/
+    @BindView(R.id.ppe_num)
+    PayNumberEditText mPpeNum;
     private Camera m_camera;
     private boolean isOpen = false;
     private ArrayList<EditText> edits = new ArrayList<>();
     private AlertDialog mDialog;
-    private TextWatcher mTextWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
+    /* private TextWatcher mTextWatcher = new TextWatcher() {
+         @Override
+         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+             if (s.toString().length() == 1) {
+                 if (mEdit1.isFocused()) {
+                     mEdit2.requestFocus();
+                     mEdit1.clearFocus();
+                 } else if (mEdit2.isFocused()) {
+                     mEdit2.clearFocus();
+                     mEdit3.requestFocus();
+                 } else if (mEdit3.isFocused()) {
+                     mEdit3.clearFocus();
+                     mEdit4.requestFocus();
+                 } else if (mEdit4.isFocused()) {
+                     mEdit4.clearFocus();
+                     mEdit5.requestFocus();
+                 } else if (mEdit5.isFocused()) {
+                     mEdit5.clearFocus();
+                     mEdit6.requestFocus();
+                 } else if (mEdit6.isFocused()) {
+                     mEdit6.clearFocus();
+                     mEdit7.requestFocus();
+                 } else if (mEdit7.isFocused()) {
+                     mEdit7.clearFocus();
+                     mEdit8.requestFocus();
+                 } else if (mEdit8.isFocused()) {
+                     mEdit8.clearFocus();
+                     mEdit9.requestFocus();
+                 } else if (mEdit9.isFocused()) {
+                    *//* for (int i=0;i<edits.size();i++){
+                        edits.get(i).setFocusable(true);
+                        edits.get(i).setEnabled(true);
+                    }*//*
+                }
+            }
+        }*/
+/*
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
 
@@ -88,8 +119,8 @@ public class InputCodeActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {
             if (s.toString().length() == 1) {
                 if (mEdit1.isFocused()) {
-                    mEdit1.clearFocus();
                     mEdit2.requestFocus();
+                    mEdit1.clearFocus();
                 } else if (mEdit2.isFocused()) {
                     mEdit2.clearFocus();
                     mEdit3.requestFocus();
@@ -112,14 +143,18 @@ public class InputCodeActivity extends AppCompatActivity {
                     mEdit8.clearFocus();
                     mEdit9.requestFocus();
                 } else if (mEdit9.isFocused()) {
-                    mEdit9.clearFocus();
+                    for (int i = 0; i < edits.size(); i++) {
+                        edits.get(i).setFocusable(true);
+                        edits.get(i).setEnabled(true);
+                    }
                 }
             }
         }
-    };
+    };*/
     private SharedPreferences mSpUserInfo;
     private ProgersssDialog mProgersssDialog;
     private CountDownTimer mCdt;
+    private EditText mEditNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,23 +168,12 @@ public class InputCodeActivity extends AppCompatActivity {
         mTvTitle.setText("输入编码");
         mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         mSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
-        mEdit1.setFocusable(true);
-        mEdit1.setFocusableInTouchMode(true);
-        mEdit1.requestFocus();
-        edits.add(mEdit1);
-        edits.add(mEdit2);
-        edits.add(mEdit3);
-        edits.add(mEdit4);
-        edits.add(mEdit5);
-        edits.add(mEdit6);
-        edits.add(mEdit7);
-        edits.add(mEdit8);
-        edits.add(mEdit9);
-        for (int i = 0; i < edits.size(); i++) {
-            edits.get(i).setInputType(EditorInfo.TYPE_CLASS_PHONE);
-            edits.get(i).addTextChangedListener(mTextWatcher);
+        mPpeNum.initStyle(R.drawable.edit_num_bg, 9, 0.33f, R.color.color999999, R.color.black, 20);
+        mPpeNum.setShowPwd(false);
+        mEditNum = mPpeNum.getEditText();
+        if (null != mEditNum) {
+            showKeyboard(mEditNum);
         }
-        showKeyboard(mEdit1);
     }
 
     @OnClick({R.id.iv_back, R.id.iv_erweima, R.id.iv_open_light, R.id.tv_erweima, R.id.v_open_light, R.id.btn_confim})
@@ -261,20 +285,8 @@ public class InputCodeActivity extends AppCompatActivity {
     }
 
     private void unLockCar() {
-        String no1 = mEdit1.getText().toString().trim();
-        String no2 = mEdit2.getText().toString().trim();
-        String no3 = mEdit3.getText().toString().trim();
-        String no4 = mEdit4.getText().toString().trim();
-        String no5 = mEdit5.getText().toString().trim();
-        String no6 = mEdit6.getText().toString().trim();
-        String no7 = mEdit7.getText().toString().trim();
-        String no8 = mEdit8.getText().toString().trim();
-        String no9 = mEdit9.getText().toString().trim();
-        if (TextUtils.isEmpty(no1) || TextUtils.isEmpty(no2) ||
-                TextUtils.isEmpty(no3) || TextUtils.isEmpty(no4) ||
-                TextUtils.isEmpty(no5) || TextUtils.isEmpty(no6) ||
-                TextUtils.isEmpty(no7) || TextUtils.isEmpty(no8) ||
-                TextUtils.isEmpty(no9)) {
+        String numText = mPpeNum.getPwdText();
+        if (TextUtils.isEmpty(numText) || numText.length() < 9) {
             ToastUtils.getShortToastByString(this, "请确认输入的编号是否正确!");
         } else {
             mProgersssDialog = new ProgersssDialog(InputCodeActivity.this);
@@ -312,7 +324,7 @@ public class InputCodeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mCdt!=null){
+        if (mCdt != null) {
             mCdt.cancel();
         }
     }
@@ -330,4 +342,5 @@ public class InputCodeActivity extends AppCompatActivity {
                        },
                 200);
     }
+
 }
