@@ -171,7 +171,7 @@ public class TripDetailActivity extends AppCompatActivity {
      */
     private void routeLine(TripDetailBean tripDetailBean) {
         List<TripDetailBean.ResponseObjBean.ItineraryRecordBean> itineraryRecord = tripDetailBean.getResponseObj().getItineraryRecord();
-        if (null!=itineraryRecord) {
+        if (null != itineraryRecord) {
             TripDetailBean.ResponseObjBean.ItineraryRecordBean startPoint = tripDetailBean.getResponseObj().getItineraryRecord().get(0);
             TripDetailBean.ResponseObjBean.ItineraryRecordBean endPoint = tripDetailBean.getResponseObj().getItineraryRecord().get(1);
             LatLng startLng = new LatLng(Double.parseDouble(startPoint.getLatitude()), Double.parseDouble(startPoint.getLongitude()));

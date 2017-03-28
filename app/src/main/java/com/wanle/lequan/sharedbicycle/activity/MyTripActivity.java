@@ -17,6 +17,7 @@ import com.wanle.lequan.sharedbicycle.constant.ApiService;
 import com.wanle.lequan.sharedbicycle.utils.GetJsonStringUtil;
 import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
 import com.wanle.lequan.sharedbicycle.utils.NetWorkUtil;
+import com.wanle.lequan.sharedbicycle.utils.ToastUtil;
 import com.wanle.lequan.sharedbicycle.view.EmptyRecyclerView;
 import com.wanle.lequan.sharedbicycle.view.RecycleViewDivider;
 
@@ -97,9 +98,11 @@ public class MyTripActivity extends AppCompatActivity {
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         TripListBean tripListBean = gson.fromJson(jsonString, TripListBean.class);
-                        if (tripListBean != null) {
+                        if (tripListBean != null&&tripListBean.getResponseCode().equals("1")) {
                             Log.i("trip",tripListBean.getResponseObj().size()+"");
                             mMAdapter.setData(tripListBean.getResponseObj(),isRefresh);
+                        }else {
+                            ToastUtil.show(MyTripActivity.this,tripListBean.getResponseMsg());
                         }
                     }
                 } catch (IOException e) {

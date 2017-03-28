@@ -277,18 +277,20 @@ public class SettingActivity extends AppCompatActivity implements EasyPermission
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     Gson gson = new Gson();
                     try {
-                        VerificationCode uploadBean = gson.fromJson(response.body().string(), VerificationCode.class);
-                        if (uploadBean != null) {
-                            String responseCode = uploadBean.getResponseCode();
-                            if (responseCode.equals("1")) {
-                                ToastUtils.getShortToastByString(SettingActivity.this, "头像上传成功!");
-                            } else {
-                                ToastUtils.getShortToastByString(SettingActivity.this, " 头像上传失败");
+                        String jsonString = response.body().string();
+                        if (null!=jsonString){
+                            VerificationCode uploadBean = gson.fromJson(jsonString, VerificationCode.class);
+                            if (uploadBean != null) {
+                                String responseCode = uploadBean.getResponseCode();
+                                if (responseCode.equals("1")) {
+                                    ToastUtils.getShortToastByString(SettingActivity.this, "头像上传成功!");
+                                } else {
+                                    ToastUtils.getShortToastByString(SettingActivity.this, " 头像上传失败");
+                                }
                             }
                         }
                     } catch (IOException e) {
-
-
+                        e.printStackTrace();
                     }
                 }
 

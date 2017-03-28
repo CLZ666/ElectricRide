@@ -89,7 +89,6 @@ public class UnlockActivity extends AppCompatActivity {
                 }
             }
         };
-
         mCdt.start();
     }
 
@@ -136,7 +135,6 @@ public class UnlockActivity extends AppCompatActivity {
                     if (null != jsonString) {
                         Log.i("unlock", jsonString);
                         JSONObject jsonObject = new JSONObject(jsonString);
-                        String responseMsg = jsonObject.getString("responseMsg");
                         mResponseCode = jsonObject.getString("responseCode");
                         if (mResponseCode.equals("1")) {
                             mCdt.cancel();

@@ -46,6 +46,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -90,7 +92,7 @@ public class BalanceRechargeActivity extends AppCompatActivity {
     RadioGroup mRgbWayPay;
     private RecargeAmountAdapter mAdapter;
     private String mAmount = "";
-    private TextWatcher mTextWatcher=new TextWatcher() {
+    private TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -99,7 +101,7 @@ public class BalanceRechargeActivity extends AppCompatActivity {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             String s1 = mEditAmount.getText().toString();
-            if (!TextUtils.isEmpty(s1)){
+            if (!TextUtils.isEmpty(s1)) {
                 mAdapter.changeTextColor("editNotEmpty");
             }
         }
@@ -107,7 +109,7 @@ public class BalanceRechargeActivity extends AppCompatActivity {
         @Override
         public void afterTextChanged(Editable s) {
             String s1 = mEditAmount.getText().toString();
-            if (!TextUtils.isEmpty(s1)){
+            if (!TextUtils.isEmpty(s1)) {
                 mAdapter.changeTextColor("editNotEmpty");
             }
         }
@@ -118,6 +120,10 @@ public class BalanceRechargeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_balance_recharge);
         ButterKnife.bind(this);
+        init();
+    }
+
+    private void init() {
         msgApi.registerApp(APP_ID);
         mSp_UserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
         mTvTitle.setText("余额充值");
@@ -164,7 +170,7 @@ public class BalanceRechargeActivity extends AppCompatActivity {
     @Subscribe
     public void onEventMainThread(MyEvent event) {
         mAmount = event.getMsg();
-        if (!mAmount.equals("")){
+        if (!mAmount.equals("")) {
             mEditAmount.setText("");
         }
     }
@@ -219,30 +225,33 @@ public class BalanceRechargeActivity extends AppCompatActivity {
         GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> respons) {
-                Gson gson = new Gson();
-                Log.i("deposit", type + "");
-                if (type == 1) {
-                    WxOrderInfoBean wxOrderInfoBean = null;
-                    try {
-                        String jsonString = respons.body().string();
-                    //    Log.i("wxpay", jsonString);
-                        wxOrderInfoBean = gson.fromJson(jsonString, WxOrderInfoBean.class);
-                        WxOrderInfoBean.ResponseObjBean.PrepayDataBean prepayData = wxOrderInfoBean.getResponseObj().getPrepayData();
-                        wxPay(prepayData);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                try {
+                    Gson gson = new Gson();
+                    String jsonString = respons.body().string();
+                    if (jsonString != null) {
+                        if (type == 1) {
+                            WxOrderInfoBean wxOrderInfoBean = null;
+                            wxOrderInfoBean = gson.fromJson(jsonString, WxOrderInfoBean.class);
+                            if (null != wxOrderInfoBean) {
+                                WxOrderInfoBean.ResponseObjBean.PrepayDataBean prepayData = wxOrderInfoBean.getResponseObj().getPrepayData();
+                                if (null != prepayData) {
+                                    wxPay(prepayData);
+                                }
+                            }
+                        } else {
+                            ZfbOrderInfoBean zfbOrderInfoBean = null;
+
+                            zfbOrderInfoBean = gson.fromJson(jsonString, ZfbOrderInfoBean.class);
+                            if (null != zfbOrderInfoBean) {
+                                zfbPay(zfbOrderInfoBean.getResponseObj().getOrderSign());
+                            }
+                        }
                     }
-                } else {
-                    ZfbOrderInfoBean zfbOrderInfoBean = null;
-                    try {
-                        zfbOrderInfoBean = gson.fromJson(respons.body().string(), ZfbOrderInfoBean.class);
-                        zfbPay(zfbOrderInfoBean.getResponseObj().getOrderSign());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    //  Log.i("deposit", type + "");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
-
             }
 
             @Override
@@ -252,11 +261,6 @@ public class BalanceRechargeActivity extends AppCompatActivity {
         });
     }
 
-    protected void showKeyboard(final EditText editText) {
-        InputMethodManager inputManager =
-                (InputMethodManager) editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputManager.showSoftInput(editText, 0);
-    }
 
     /**
      * 微信支付
@@ -266,7 +270,7 @@ public class BalanceRechargeActivity extends AppCompatActivity {
         String appid = prepayData.getAppid();
         msgApi.registerApp(appid);*/
         PayReq request = new PayReq();
-       // Log.i("deposit", prepayData.toString());
+        // Log.i("deposit", prepayData.toString());
         request.appId = APP_ID + "";
         request.partnerId = prepayData.getPartnerid();
         request.prepayId = prepayData.getPrepayid();
@@ -304,6 +308,20 @@ public class BalanceRechargeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+    }
+
+    protected void showKeyboard(final EditText editText) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+                           public void run() {
+                               InputMethodManager inputManager =
+                                       (InputMethodManager) editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                               inputManager.showSoftInput(editText, 0);
+                           }
+
+                       },
+                200);
     }
 
 }

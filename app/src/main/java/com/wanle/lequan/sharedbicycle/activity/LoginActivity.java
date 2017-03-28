@@ -23,6 +23,7 @@ import com.wanle.lequan.sharedbicycle.utils.CountDownTimerUtils;
 import com.wanle.lequan.sharedbicycle.utils.GetUserInfo;
 import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
 import com.wanle.lequan.sharedbicycle.utils.NetWorkUtil;
+import com.wanle.lequan.sharedbicycle.utils.ToastUtil;
 import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
 import com.wanle.lequan.sharedbicycle.view.ProgersssDialog;
 
@@ -112,10 +113,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onNext(loginBean loginBean) {
-
-                    String responseCode = loginBean.getResponseCode();
                     Log.i("888", loginBean.toString());
                     if (loginBean != null) {
+                        String responseCode = loginBean.getResponseCode();
                         if (responseCode.equals("1")) {
                             mProgersssDialog = new ProgersssDialog(LoginActivity.this);
                             mProgersssDialog.setMsg("正在登录中");
@@ -123,6 +123,8 @@ public class LoginActivity extends AppCompatActivity {
                             mEdit_userinfo.commit();
                             getSharedPreferences("isLogin", MODE_PRIVATE).edit().putBoolean("isLogin", true).commit();
                             getUserInfo();
+                        }else{
+                            ToastUtil.show(LoginActivity.this,loginBean.getResponseMsg());
                         }
                     }
                 }
@@ -147,34 +149,36 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onNext(UserInfoBean userInfoBean) {
-                String headImg = userInfoBean.getResponseObj().getHeadImg();
-                mEdit_userinfo.putString("headimg", headImg).commit();
-                String userName = userInfoBean.getResponseObj().getUserName();
-                mEdit_userinfo.putString("userName", userName).commit();
-                int balance1 = userInfoBean.getResponseObj().getBalance();
-                double balance = balance1 * 1.0 / 100;
-                mEdit_userinfo.putString("balance", balance + "");
-                String phone = userInfoBean.getResponseObj().getPhone();
-                mEdit_userinfo.putString("phone", phone).commit();
-                int payDeposit = userInfoBean.getResponseObj().getPayDeposit();
-                int isVerified = userInfoBean.getResponseObj().getIsVerified();
-                if (isVerified == 1 && payDeposit > 0) {
-                    mProgersssDialog.dismiss();
-                    mEdit_userinfo.putBoolean("isBorrow", true);
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                } else {
-                    mProgersssDialog.dismiss();
-                    startActivity(new Intent(LoginActivity.this, DepositActivity.class));
-                }
+                if (null!=userInfoBean&&userInfoBean.getResponseCode().equals("1")){
+                    String headImg = userInfoBean.getResponseObj().getHeadImg();
+                    mEdit_userinfo.putString("headimg", headImg).commit();
+                    String userName = userInfoBean.getResponseObj().getUserName();
+                    mEdit_userinfo.putString("userName", userName).commit();
+                    int balance1 = userInfoBean.getResponseObj().getBalance();
+                    double balance = balance1 * 1.0 / 100;
+                    mEdit_userinfo.putString("balance", balance + "");
+                    String phone = userInfoBean.getResponseObj().getPhone();
+                    mEdit_userinfo.putString("phone", phone).commit();
+                    int payDeposit = userInfoBean.getResponseObj().getPayDeposit();
+                    int isVerified = userInfoBean.getResponseObj().getIsVerified();
+                    if (isVerified == 1 && payDeposit > 0) {
+                        mProgersssDialog.dismiss();
+                        mEdit_userinfo.putBoolean("isBorrow", true);
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    } else {
+                        mProgersssDialog.dismiss();
+                        startActivity(new Intent(LoginActivity.this, DepositActivity.class));
+                    }
 
-                if (payDeposit > 0) {
-                    mEdit_userinfo.putBoolean(getResources().getString(R.string.is_deposit), true).commit();
+                    if (payDeposit > 0) {
+                        mEdit_userinfo.putBoolean(getResources().getString(R.string.is_deposit), true).commit();
+                    }
+                    if (isVerified == 1) {
+                        mEdit_userinfo.putBoolean(getResources().getString(R.string.is_identity), true).commit();
+                    }
+                    Log.i("888", userInfoBean.toString());
+                    finish();
                 }
-                if (isVerified == 1) {
-                    mEdit_userinfo.putBoolean(getResources().getString(R.string.is_identity), true).commit();
-                }
-                Log.i("888", userInfoBean.toString());
-                finish();
             }
         });
     }
@@ -215,7 +219,7 @@ public class LoginActivity extends AppCompatActivity {
                                     mCountDownUtils.start();
                                     mBtnGetCode.setTextColor(getResources().getColor(R.color.colorAccent));
                                 } else {
-                                    ToastUtils.getShortToastByString(LoginActivity.this, "获取验证码失败");
+                                    ToastUtils.getShortToastByString(LoginActivity.this, verificationCode.getResponseMsg());
                                 }
                             }
 

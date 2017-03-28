@@ -69,9 +69,11 @@ public class MyAccountActivity extends AppCompatActivity {
 
             @Override
             public void onNext(UserInfoBean userInfoBean) {
-                int balance = userInfoBean.getResponseObj().getBalance();
-                double mbalance = balance * 1.0 / 100;
-                mTvFareBalance.setText(mbalance + "");
+                if (null!=userInfoBean&&userInfoBean.getResponseCode().equals("1")){
+                    int balance = userInfoBean.getResponseObj().getBalance();
+                    double mbalance = balance * 1.0 / 100;
+                    mTvFareBalance.setText(mbalance + "");
+                }
             }
         });
     }

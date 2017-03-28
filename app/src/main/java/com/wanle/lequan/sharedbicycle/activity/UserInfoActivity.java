@@ -46,7 +46,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import rx.Observable;
 import rx.Subscriber;
 
-public class UserInfoActivity extends AppCompatActivity implements UMShareListener{
+public class UserInfoActivity extends AppCompatActivity implements UMShareListener {
 
 
     @BindView(R.id.tv_phone_verification)
@@ -162,7 +162,7 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
             @Override
             public void onNext(UserInfoBean userInfoBean) {
                 Log.i("888", userInfoBean.toString());
-                if (userInfoBean != null) {
+                if (userInfoBean != null && userInfoBean.getResponseCode().equals("1")) {
                     String headImg = userInfoBean.getResponseObj().getHeadImg();
                     mSpUserInfo.edit().putString("headimg", headImg).commit();
                     Glide.with(UserInfoActivity.this).load(headImg).into(mUserIcon);
@@ -308,7 +308,7 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
             return;
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-       // EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+        // EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -318,7 +318,7 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
         if (requestCode == 10) {
             if (!Settings.canDrawOverlays(this)) {
                 // SYSTEM_ALERT_WINDOW permission not granted...
-                Toast.makeText(this,"not granted",Toast.LENGTH_SHORT);
+                Toast.makeText(this, "not granted", Toast.LENGTH_SHORT);
             }
         }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);

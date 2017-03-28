@@ -49,108 +49,12 @@ public class InputCodeActivity extends AppCompatActivity {
 
     @BindView(R.id.tv_title)
     TextView mTvTitle;
-    /*@BindView(R.id.edit_1)
-    EditText mEdit1;
-    @BindView(R.id.edit_2)
-    EditText mEdit2;
-    @BindView(R.id.edit_3)
-    EditText mEdit3;
-    @BindView(R.id.edit_4)
-    EditText mEdit4;
-    @BindView(R.id.edit_5)
-    EditText mEdit5;
-    @BindView(R.id.edit_6)
-    EditText mEdit6;
-    @BindView(R.id.edit_7)
-    EditText mEdit7;
-    @BindView(R.id.edit_8)
-    EditText mEdit8;
-    @BindView(R.id.edit_9)
-    EditText mEdit9;*/
     @BindView(R.id.ppe_num)
     PayNumberEditText mPpeNum;
     private Camera m_camera;
     private boolean isOpen = false;
     private ArrayList<EditText> edits = new ArrayList<>();
     private AlertDialog mDialog;
-    /* private TextWatcher mTextWatcher = new TextWatcher() {
-         @Override
-         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-             if (s.toString().length() == 1) {
-                 if (mEdit1.isFocused()) {
-                     mEdit2.requestFocus();
-                     mEdit1.clearFocus();
-                 } else if (mEdit2.isFocused()) {
-                     mEdit2.clearFocus();
-                     mEdit3.requestFocus();
-                 } else if (mEdit3.isFocused()) {
-                     mEdit3.clearFocus();
-                     mEdit4.requestFocus();
-                 } else if (mEdit4.isFocused()) {
-                     mEdit4.clearFocus();
-                     mEdit5.requestFocus();
-                 } else if (mEdit5.isFocused()) {
-                     mEdit5.clearFocus();
-                     mEdit6.requestFocus();
-                 } else if (mEdit6.isFocused()) {
-                     mEdit6.clearFocus();
-                     mEdit7.requestFocus();
-                 } else if (mEdit7.isFocused()) {
-                     mEdit7.clearFocus();
-                     mEdit8.requestFocus();
-                 } else if (mEdit8.isFocused()) {
-                     mEdit8.clearFocus();
-                     mEdit9.requestFocus();
-                 } else if (mEdit9.isFocused()) {
-                    *//* for (int i=0;i<edits.size();i++){
-                        edits.get(i).setFocusable(true);
-                        edits.get(i).setEnabled(true);
-                    }*//*
-                }
-            }
-        }*/
-/*
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            if (s.toString().length() == 1) {
-                if (mEdit1.isFocused()) {
-                    mEdit2.requestFocus();
-                    mEdit1.clearFocus();
-                } else if (mEdit2.isFocused()) {
-                    mEdit2.clearFocus();
-                    mEdit3.requestFocus();
-                } else if (mEdit3.isFocused()) {
-                    mEdit3.clearFocus();
-                    mEdit4.requestFocus();
-                } else if (mEdit4.isFocused()) {
-                    mEdit4.clearFocus();
-                    mEdit5.requestFocus();
-                } else if (mEdit5.isFocused()) {
-                    mEdit5.clearFocus();
-                    mEdit6.requestFocus();
-                } else if (mEdit6.isFocused()) {
-                    mEdit6.clearFocus();
-                    mEdit7.requestFocus();
-                } else if (mEdit7.isFocused()) {
-                    mEdit7.clearFocus();
-                    mEdit8.requestFocus();
-                } else if (mEdit8.isFocused()) {
-                    mEdit8.clearFocus();
-                    mEdit9.requestFocus();
-                } else if (mEdit9.isFocused()) {
-                    for (int i = 0; i < edits.size(); i++) {
-                        edits.get(i).setFocusable(true);
-                        edits.get(i).setEnabled(true);
-                    }
-                }
-            }
-        }
-    };*/
     private SharedPreferences mSpUserInfo;
     private ProgersssDialog mProgersssDialog;
     private CountDownTimer mCdt;
@@ -239,7 +143,7 @@ public class InputCodeActivity extends AppCompatActivity {
     }
 
     public void checkCarState() {
-        String userId = getSharedPreferences("userinfo", MODE_PRIVATE).getString("userId", "");
+        String userId = mSpUserInfo.getString("userId", "");
         String carNo = "24929615696887809";
         Map<String, String> map = new HashMap<>();
         map.put("userId", userId);
@@ -253,23 +157,25 @@ public class InputCodeActivity extends AppCompatActivity {
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                        if (messageBean.getResponseCode().equals("1")) {
-                            mCdt = new CountDownTimer(1000, 1000) {
-                                @Override
-                                public void onTick(long millisUntilFinished) {
+                        if (null != messageBean) {
+                            if (messageBean.getResponseCode().equals("1")) {
+                                mCdt = new CountDownTimer(1000, 1000) {
+                                    @Override
+                                    public void onTick(long millisUntilFinished) {
 
-                                }
+                                    }
 
-                                @Override
-                                public void onFinish() {
-                                    mProgersssDialog.dismiss();
-                                    mDialog.show();
-                                }
-                            };
-                            mCdt.start();
-                        } else {
-                            mProgersssDialog.dismiss();
-                            ToastUtils.getShortToastByString(InputCodeActivity.this, messageBean.getResponseMsg());
+                                    @Override
+                                    public void onFinish() {
+                                        mProgersssDialog.dismiss();
+                                        mDialog.show();
+                                    }
+                                };
+                                mCdt.start();
+                            } else {
+                                mProgersssDialog.dismiss();
+                                ToastUtils.getShortToastByString(InputCodeActivity.this, messageBean.getResponseMsg());
+                            }
                         }
                     }
                 } catch (IOException e) {

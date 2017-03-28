@@ -131,30 +131,32 @@ public class CarStateFragment extends Fragment {
                 try {
                     String jsonString = response.body().string();
                     Log.i("templock", jsonString);
-
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                        String responseCode = messageBean.getResponseCode();
-                        if (responseCode.equals("1")) {
-                            mCdt = new CountDownTimer(1000, 1000) {
-                                @Override
-                                public void onTick(long millisUntilFinished) {
-                                }
+                        if (messageBean != null) {
+                            String responseCode = messageBean.getResponseCode();
+                            if (responseCode.equals("1")) {
+                                mCdt = new CountDownTimer(1000, 1000) {
+                                    @Override
+                                    public void onTick(long millisUntilFinished) {
+                                    }
 
-                                @Override
-                                public void onFinish() {
-                                    dialog.dismiss();
-                                    mUseStatus = 1;
-                                    mTvIsLock.setText("继续使用");
-                                    mTvCarStatus.setText("车辆锁定中");
-                                }
-                            };
-                            mCdt.start();
-                        } else {
-                            ToastUtils.getShortToastByString(getActivity(), "临时锁车失败");
-                            dialog.dismiss();
+                                    @Override
+                                    public void onFinish() {
+                                        dialog.dismiss();
+                                        mUseStatus = 1;
+                                        mTvIsLock.setText("继续使用");
+                                        mTvCarStatus.setText("车辆锁定中");
+                                    }
+                                };
+                                mCdt.start();
+                            } else {
+                                ToastUtils.getShortToastByString(getActivity(), "临时锁车失败");
+                                dialog.dismiss();
+                            }
                         }
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -221,8 +223,9 @@ public class CarStateFragment extends Fragment {
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
+
                         String responseCode = messageBean.getResponseCode();
-                        if (responseCode.equals("1")) {
+                        if (null!=messageBean&&responseCode.equals("1")) {
                             mCdt = new CountDownTimer(1000, 1000) {
                                 @Override
                                 public void onTick(long millisUntilFinished) {
@@ -258,7 +261,7 @@ public class CarStateFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mCdt!=null){
+        if (mCdt != null) {
             mCdt.cancel();
         }
     }

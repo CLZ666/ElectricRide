@@ -55,38 +55,40 @@ public class FeedBackActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.btn_submit:
-                if (NetWorkUtil.isNetworkAvailable(this)){
+                if (NetWorkUtil.isNetworkAvailable(this)) {
                     feedBack();
                 }
                 break;
         }
     }
+
     /**
      * 访问网络，提交意见
      */
-    public void feedBack(){
+    public void feedBack() {
         String userId = mSp_userinfo.getString("userId", "");
         String advice = mEditAdvice.getText().toString().trim();
-        if (advice.equals("")){
-            ToastUtils.getShortToastByString(this,"意见内容不能为空!");
+        if (advice.equals("")) {
+            ToastUtils.getShortToastByString(this, "意见内容不能为空!");
             return;
         }
-        Map<String,String> map=new HashMap<>();
-        map.put("userId",userId);
-        map.put("feedBack",advice);
+        Map<String, String> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("feedBack", advice);
         Call<ResponseBody> call = HttpUtil.getService(ApiService.class).feedBack(map);
         GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Gson gson=new Gson();
+                Gson gson = new Gson();
                 try {
-                    FeedBackBean feedBackBean = gson.fromJson(response.body().string(), FeedBackBean.class);
-                    if (feedBackBean.getResponseCode().equals("1")){
-                        ToastUtils.getShortToastByString(FeedBackActivity.this,"提交成功");
-                        startActivity(new Intent(FeedBackActivity.this,SettingActivity.class));
+                    String jsonString = response.body().string();
+                    FeedBackBean feedBackBean = gson.fromJson(jsonString, FeedBackBean.class);
+                    if (null != feedBackBean && feedBackBean.getResponseCode().equals("1")) {
+                        ToastUtils.getShortToastByString(FeedBackActivity.this, "提交成功");
+                        startActivity(new Intent(FeedBackActivity.this, SettingActivity.class));
                         FeedBackActivity.this.finish();
-                    }else{
-                        ToastUtils.getShortToastByString(FeedBackActivity.this,"提交失败");
+                    } else {
+                        ToastUtils.getShortToastByString(FeedBackActivity.this, "提交失败");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

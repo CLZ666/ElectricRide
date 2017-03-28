@@ -240,11 +240,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         IntentFilter filter1;
         filter1 = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(mBlueToothStateReceiver, filter1);
-        /*this.registerReceiver(mBlueToothStateReceiver,filter2);
-        this.registerReceiver(mBlueToothStateReceiver,filter3);
-        this.registerReceiver(mBlueToothStateReceiver,filter4);
-        this.registerReceiver(mBlueToothStateReceiver,filter5);
-        this.registerReceiver(mBlueToothStateReceiver,filter6);*/
     }
 
     /**
@@ -263,19 +258,21 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     if (null != jsonString) {
                         gson = new Gson();
                         MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                        if (messageBean.getResponseCode().equals("1")) {
-                            setCarStutsFragment();
-                            mBtnUseCar.setText("我要还车");
-                            gson = new Gson();
-                            final CarStateBean carStateBean = gson.fromJson(jsonString, CarStateBean.class);
-                            Log.i("carStateBean", carStateBean.toString());
-                            if (null != carStateBean) {
-                                sendCarValue(carStateBean);
+                        if (null != messageBean) {
+                            if (messageBean.getResponseCode().equals("1")) {
+                                setCarStutsFragment();
+                                mBtnUseCar.setText("我要还车");
+                                gson = new Gson();
+                                final CarStateBean carStateBean = gson.fromJson(jsonString, CarStateBean.class);
+                                Log.i("carStateBean", carStateBean.toString());
+                                if (null != carStateBean) {
+                                    sendCarValue(carStateBean);
+                                }
+                            } else {
+                                carStateHandler.removeCallbacks(mRunnable);
+                                setAdressInfoFragment();
+                                mBtnUseCar.setText("我要用车");
                             }
-                        } else {
-                            carStateHandler.removeCallbacks(mRunnable);
-                            setAdressInfoFragment();
-                            mBtnUseCar.setText("我要用车");
                         }
                     }
                 } catch (IOException e) {
@@ -444,7 +441,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 } else {
                     startActivity(new Intent(this, IsLoginActivity.class));
                 }
-                // startActivity(new Intent(this, LoginActivity.class));
                 break;
             case R.id.iv_search:
                 startActivityForResult(new Intent(this, SearchActivity.class), REQUEST_CODE);
@@ -594,7 +590,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                        if (messageBean.getResponseCode().equals("1")) {
+                        if (null != messageBean && messageBean.getResponseCode().equals("1")) {
                             mProgersssDialog.dismiss();
                             startActivity(new Intent(MainActivity.this, EndRideActivity.class));
                             mBtnUseCar.setText("我要用车");
@@ -803,15 +799,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         if (stringJson != null) {
                             Gson gson = new Gson();
                             NearByCarBean nearByCarBean = gson.fromJson(stringJson, NearByCarBean.class);
-                            if (nearByCarBean.getResponseCode().equals("1")) {
+                            if (null != nearByCarBean && nearByCarBean.getResponseCode().equals("1")) {
                                 Log.i("nearby", nearByCarBean.toString());
                                 List<NearByCarBean.ResponseObjBean> nearbyCars = nearByCarBean.getResponseObj();
                                 mCar_amount = nearbyCars.size();
                                 Log.i("car_amount", mCar_amount + "");
-                                if (!mIsStation) {
-                                    addBikeMark(nearbyCars);
-                                } else {
-                                    addStationMark(nearbyCars);
+                                if (null != nearbyCars) {
+                                    if (!mIsStation) {
+                                        addBikeMark(nearbyCars);
+                                    } else {
+                                        addStationMark(nearbyCars);
+                                    }
                                 }
                             } else {
                                 ToastUtil.show(MainActivity.this, nearByCarBean.getResponseMsg());
@@ -884,10 +882,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
-
         LatLng target = cameraPosition.target;
         mCenterMarker.setPosition(target);
-
     }
 
     /**

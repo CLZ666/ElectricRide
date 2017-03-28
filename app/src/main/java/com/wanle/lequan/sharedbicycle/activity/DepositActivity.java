@@ -44,30 +44,32 @@ import retrofit2.Response;
  * 押金充值页面
  */
 public class DepositActivity extends AppCompatActivity {
-    private static final int SDK_PAY_FLAG =1 ;
+    private static final int SDK_PAY_FLAG = 1;
     private SharedPreferences mSp_borrow;
     private SharedPreferences.Editor mEdit_borrow;
     private static final String APP_ID = "wx1902de5450f7a61e";
-    final IWXAPI msgApi = WXAPIFactory.createWXAPI(this,APP_ID, false);
+    final IWXAPI msgApi = WXAPIFactory.createWXAPI(this, APP_ID, false);
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             PayResult result = new PayResult((Map<String, String>) msg.obj);
             String memo = result.getMemo();
-            Log.i("deposit",memo);
-            if (memo.equals("操作已经取消。")){
-                ToastUtils.getShortToastByString(DepositActivity.this,"操作已经取消");
-            }else if (memo.equals("")){
-                ToastUtils.getShortToastByString(DepositActivity.this,"支付成功");
-                mEdit_borrow.putBoolean(getResources().getString(R.string.is_deposit),true).commit();
+            Log.i("deposit", memo);
+            if (memo.equals("操作已经取消。")) {
+                ToastUtils.getShortToastByString(DepositActivity.this, "操作已经取消");
+            } else if (memo.equals("")) {
+                ToastUtils.getShortToastByString(DepositActivity.this, "支付成功");
+                mEdit_borrow.putBoolean(getResources().getString(R.string.is_deposit), true).commit();
                 boolean isIdentify = mSp_borrow.getBoolean(getResources().getString(R.string.is_identity), false);
-                if (!isIdentify){
-                    startActivity(new Intent(DepositActivity.this,IdentityVeritActivity.class));
-                }else{
-                    startActivity(new Intent(DepositActivity.this,MainActivity.class));
+                if (!isIdentify) {
+                    startActivity(new Intent(DepositActivity.this, IdentityVeritActivity.class));
+                } else {
+                    startActivity(new Intent(DepositActivity.this, MainActivity.class));
                 }
                 DepositActivity.this.finish();
             }
-        };
+        }
+
+        ;
     };
     @BindView(R.id.tv_title)
     TextView mTvTitle;
@@ -88,8 +90,8 @@ public class DepositActivity extends AppCompatActivity {
         mTvTitle.setText("押金充值");
         mLineDepositrecharge.setBackgroundColor(getResources().getColor(R.color.red));
         mRbZfb.setChecked(true);
-        mSp_borrow=getSharedPreferences("userinfo", MODE_PRIVATE);
-        mEdit_borrow=mSp_borrow.edit();
+        mSp_borrow = getSharedPreferences("userinfo", MODE_PRIVATE);
+        mEdit_borrow = mSp_borrow.edit();
     }
 
     @OnClick({R.id.rb_zfb, R.id.rb_wx, R.id.btn_confim, R.id.iv_back})
@@ -100,9 +102,9 @@ public class DepositActivity extends AppCompatActivity {
                 break;
             case R.id.btn_confim:
                 int id = mRgbWayPay.getCheckedRadioButtonId();
-                if (id==R.id.rb_zfb){
+                if (id == R.id.rb_zfb) {
                     recharge(id);
-                }else if (id==R.id.rb_wx){
+                } else if (id == R.id.rb_wx) {
                     recharge(id);
                 }
                 break;
@@ -112,8 +114,8 @@ public class DepositActivity extends AppCompatActivity {
     /**
      * 押金充值
      */
-    public void recharge(int id){
-        switch (id){
+    public void recharge(int id) {
+        switch (id) {
             case R.id.rb_zfb:
                 getPayData(2);
                 break;
@@ -126,46 +128,45 @@ public class DepositActivity extends AppCompatActivity {
 
     /**
      * 访问网络，获得支付接口返回的数据
-     *
      */
-    public void getPayData(final int type){
-        Map<String,String> map=new HashMap<>();
+    public void getPayData(final int type) {
+        Map<String, String> map = new HashMap<>();
         String userId = mSp_borrow.getString("userId", "");
-        map.put("userId",userId);
-        map.put("rechargeMoney","1");
-        map.put("rechargeType",type+"");
-        map.put("type","2");
-        Log.i("deposit",map.get("rechargeMoney"));
+        map.put("userId", userId);
+        map.put("rechargeMoney", "1");
+        map.put("rechargeType", type + "");
+        map.put("type", "2");
+        Log.i("deposit", map.get("rechargeMoney"));
         Call<ResponseBody> call = HttpUtil.getService(ApiService.class).recharge(map);
         GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> respons) {
-               Gson gson=new Gson();
-                Log.i("deposit",type+"");
-                if (type==1){
-                    WxOrderInfoBean wxOrderInfoBean =null;
-                    try {
-
-                        String jsonString = respons.body().string();
-
-                        wxOrderInfoBean = gson.fromJson(jsonString, WxOrderInfoBean.class);
-                        WxOrderInfoBean.ResponseObjBean.PrepayDataBean prepayData = wxOrderInfoBean.getResponseObj().getPrepayData();
-                        wxPay(prepayData);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                Gson gson = new Gson();
+                String jsonString = null;
+                try {
+                    jsonString = respons.body().string();
+                    if (null != jsonString) {
+                        if (type == 1) {
+                            WxOrderInfoBean wxOrderInfoBean = null;
+                            wxOrderInfoBean = gson.fromJson(jsonString, WxOrderInfoBean.class);
+                            if (null != wxOrderInfoBean) {
+                                WxOrderInfoBean.ResponseObjBean.PrepayDataBean prepayData = wxOrderInfoBean.getResponseObj().getPrepayData();
+                                if (null != prepayData) {
+                                    wxPay(prepayData);
+                                }
+                            }
+                        } else {
+                            ZfbOrderInfoBean zfbOrderInfoBean = null;
+                            zfbOrderInfoBean = gson.fromJson(jsonString, ZfbOrderInfoBean.class);
+                            if (null != zfbOrderInfoBean) {
+                                zfbPay(zfbOrderInfoBean.getResponseObj().getOrderSign());
+                            }
+                        }
                     }
-                }else{
-                    ZfbOrderInfoBean zfbOrderInfoBean = null;
-                    try {
-                        zfbOrderInfoBean = gson.fromJson(respons.body().string(), ZfbOrderInfoBean.class);
-                        zfbPay(zfbOrderInfoBean.getResponseObj().getOrderSign());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
-
-
+                Log.i("deposit", type + "");
             }
 
             @Override
@@ -174,28 +175,30 @@ public class DepositActivity extends AppCompatActivity {
             }
         });
     }
+
     /**
      * 微信支付
      */
-    public void wxPay(WxOrderInfoBean.ResponseObjBean.PrepayDataBean prepayData){
+    public void wxPay(WxOrderInfoBean.ResponseObjBean.PrepayDataBean prepayData) {
        /* Log.i("deposit",prepayData.toString());
         String appid = prepayData.getAppid();
         msgApi.registerApp(appid);*/
         PayReq request = new PayReq();
-        Log.i("deposit",prepayData.toString());
+        Log.i("deposit", prepayData.toString());
         request.appId = prepayData.getAppid();
         request.partnerId = prepayData.getPartnerid();
-        request.prepayId= prepayData.getPrepayid();
+        request.prepayId = prepayData.getPrepayid();
         request.packageValue = prepayData.getPackageX();
-        request.nonceStr= prepayData.getNoncestr();
-        request.timeStamp= prepayData.getTimestamp();
-        request.sign= prepayData.getSign();
+        request.nonceStr = prepayData.getNoncestr();
+        request.timeStamp = prepayData.getTimestamp();
+        request.sign = prepayData.getSign();
         msgApi.sendReq(request);
     }
+
     /**
      * 支付宝支付
      */
-    public void zfbPay(String orderinfo){
+    public void zfbPay(String orderinfo) {
         final String info = orderinfo;   // 订单信息
 
         Runnable payRunnable = new Runnable() {
