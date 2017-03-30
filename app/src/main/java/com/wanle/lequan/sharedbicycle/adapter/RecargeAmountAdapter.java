@@ -52,7 +52,7 @@ public class RecargeAmountAdapter extends RecyclerView.Adapter<RecargeAmountAdap
     }
 
     public void setData(List<String> data) {
-        Log.i("recharge",data.toString());
+       // Log.i("recharge",data.toString());
         if (data!=null){
             mData.addAll(data);
             notifyDataSetChanged();

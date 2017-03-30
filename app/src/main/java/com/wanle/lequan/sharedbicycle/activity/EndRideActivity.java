@@ -49,6 +49,8 @@ public class EndRideActivity extends AppCompatActivity {
             case R.id.tv_trip_detail:
                 startActivity(new Intent(this,TripDetailActivity.class).putExtra("itineraryId","bc80e9fcf7e411e6b1218e34576bcc2e"));
                 break;
+            default:
+                break;
         }
     }
 

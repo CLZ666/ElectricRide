@@ -113,8 +113,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onNext(loginBean loginBean) {
-                    Log.i("888", loginBean.toString());
                     if (loginBean != null) {
+                        Log.i("888", loginBean.toString());
                         String responseCode = loginBean.getResponseCode();
                         if (responseCode.equals("1")) {
                             mProgersssDialog = new ProgersssDialog(LoginActivity.this);

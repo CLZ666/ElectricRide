@@ -16,7 +16,7 @@ import com.wanle.lequan.sharedbicycle.utils.AppManage;
  */
 
 public class BlueToothStateReceiver extends BroadcastReceiver {
-    private String btMessage="";
+
     private Context mContext;
     public BlueToothStateReceiver(Context context){
         this.mContext=context;

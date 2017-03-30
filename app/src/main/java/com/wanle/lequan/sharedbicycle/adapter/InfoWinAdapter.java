@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amap.api.maps.AMap;
-import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.wanle.lequan.sharedbicycle.R;
 
@@ -19,7 +18,7 @@ import com.wanle.lequan.sharedbicycle.R;
 
 public class InfoWinAdapter implements AMap.InfoWindowAdapter, View.OnClickListener {
 
-    private LatLng mPosition;
+    //private LatLng mPosition;
     private Context mContext;
     private View mView;
     private ImageView mIv_station;
@@ -43,7 +42,7 @@ public class InfoWinAdapter implements AMap.InfoWindowAdapter, View.OnClickListe
     }
 
     private void initData(Marker marker) {
-        mPosition = marker.getPosition();
+        //mPosition = marker.getPosition();
     }
 
     @Override

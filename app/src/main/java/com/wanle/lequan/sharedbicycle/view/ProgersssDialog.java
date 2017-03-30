@@ -19,11 +19,11 @@ public class ProgersssDialog extends Dialog {
 
 
     TextView mIdTvLoadingmsg;
-    private Context context;
+
 
     public ProgersssDialog(Context context) {
         super(context, R.style.progress_dialog);
-        this.context = context;
+
         //加载布局文件
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.progress_dialog, null);

@@ -19,11 +19,18 @@ import com.umeng.message.PushAgent;*/
  */
 
 public class MyApp extends Application {
+    //private RefWatcher mRefWatcher;
     /* PlatformConfig.setQQZone("100424468", "c7394704798a158208a74ab60104f0ba");
      PlatformConfig.setSinaWeibo("3921700954", "04b48b094faeb16683c32669824ebdad", "http://sns.whalecloud.com");*/
+   /* public static RefWatcher getRefWatcher(Context context) {
+        MyApp application = (MyApp) context
+                .getApplicationContext();
+        return application.mRefWatcher;
+    }*/
     @Override
     public void onCreate() {
         super.onCreate();
+        /*mRefWatcher= LeakCanary.install(this);*/
         Config.DEBUG = true;
         UMShareAPI.get(this);
         PushAgent mPushAgent = PushAgent.getInstance(this);

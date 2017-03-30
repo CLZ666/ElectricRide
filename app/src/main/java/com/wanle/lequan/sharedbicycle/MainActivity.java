@@ -129,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public AMapLocationClient mlocationClient = null;
     AMapLocationClientOption mLocationOption;
     private LatLng mLocalLatlng;
-    private Marker mCenterMarker;
     AMapLocation mAmapocation;
     GeocodeSearch mGeocodeSearch;
     private LatLng mCenterPoint;
@@ -173,7 +172,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        if (NetWorkUtil.isNetworkAvailable(this)) ;
+        NetWorkUtil.isNetworkAvailable(this);
+        //monitiorMemoryLeak();
         initMap(savedInstanceState);
         initView();
         mapPermission();
@@ -201,6 +201,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
+   /* *//**
+     * 监测内存泄漏
+     *//*
+   private void monitiorMemoryLeak() {
+        RefWatcher refWatcher =  MyApp.getRefWatcher(this);
+        refWatcher.watch(this);
+    }*/
+
     /**
      * 监测网络连接状态
      */
@@ -219,8 +227,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Subscribe
     public void onEventMainThread(MyEvent event) {
         String msg = event.getMsg();
-       // Log.i("eventmsg", msg);
-        if (null!=msg){
+        // Log.i("eventmsg", msg);
+        if (null != msg) {
             if (msg.equals("网络连接成功")) {
                 if (null != mlocationClient && null != mCenterPoint) {
                     gps_start(false);
@@ -266,8 +274,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 mBtnUseCar.setText("我要还车");
                                 gson = new Gson();
                                 final CarStateBean carStateBean = gson.fromJson(jsonString, CarStateBean.class);
-                                Log.i("carStateBean", carStateBean.toString());
                                 if (null != carStateBean) {
+                                    Log.i("carStateBean", carStateBean.toString());
                                     sendCarValue(carStateBean);
                                 }
                             } else {
@@ -496,6 +504,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             case R.id.iv_end_point:
                 routeLine(mCenterPoint);
                 break;
+            default:
+                break;
         }
     }
 
@@ -592,15 +602,18 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                        if (null != messageBean && messageBean.getResponseCode().equals("1")) {
-                            mProgersssDialog.dismiss();
-                            startActivity(new Intent(MainActivity.this, EndRideActivity.class));
-                            mBtnUseCar.setText("我要用车");
-                            mlocationClient.startLocation();//启动定位
-                            MainActivity.this.setAdressInfoFragment();
-                        } else {
-                            ToastUtil.show(MainActivity.this, messageBean.getResponseMsg());
+                        if (null!=messageBean){
+                            if (messageBean.getResponseCode().equals("1")) {
+                                mProgersssDialog.dismiss();
+                                startActivity(new Intent(MainActivity.this, EndRideActivity.class));
+                                mBtnUseCar.setText("我要用车");
+                                mlocationClient.startLocation();//启动定位
+                                MainActivity.this.setAdressInfoFragment();
+                            } else {
+                                ToastUtil.show(MainActivity.this, messageBean.getResponseMsg());
+                            }
                         }
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -708,6 +721,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     }
                 }
                 break;
+            default:
+                break;
         }
     }
 
@@ -780,55 +795,61 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      * 查找附近车的方法
      */
     public void queryCar(LatLng latlng) {
-        Log.i("latlng1", latlng.toString());
-        Point point = new Point(0, 0);
-        LatLng start = aMap.getProjection().fromScreenLocation(point);
-        int distance = testDistance(start, mCenterPoint);
-        Log.i("distance", distance + "");
-        Map<String, String> map = new HashMap<>();
-        if (latlng != null) {
-            map.put("radius", 1000 + "");
-            map.put("longitude", latlng.longitude + "");
-            map.put("latitude", latlng.latitude + "");
-        }
-        Call<ResponseBody> call = HttpUtil.getService(ApiService.class).queryCar(map);
-        GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code() == 200) {
-                    try {
-                        String stringJson = response.body().string();
-                        if (stringJson != null) {
-                            Gson gson = new Gson();
-                            NearByCarBean nearByCarBean = gson.fromJson(stringJson, NearByCarBean.class);
-                            if (null != nearByCarBean && nearByCarBean.getResponseCode().equals("1")) {
-                                Log.i("nearby", nearByCarBean.toString());
-                                List<NearByCarBean.ResponseObjBean> nearbyCars = nearByCarBean.getResponseObj();
-                                mCar_amount = nearbyCars.size();
-                                Log.i("car_amount", mCar_amount + "");
-                                if (null != nearbyCars) {
-                                    if (!mIsStation) {
-                                        addBikeMark(nearbyCars);
+        if (null!=latlng){
+            Log.i("latlng1", latlng.toString());
+            Point point = new Point(0, 0);
+            LatLng start = aMap.getProjection().fromScreenLocation(point);
+            int distance = testDistance(start, mCenterPoint);
+            Log.i("distance", distance + "");
+            Map<String, String> map = new HashMap<>();
+            if (latlng != null) {
+                map.put("radius", 1000 + "");
+                map.put("longitude", latlng.longitude + "");
+                map.put("latitude", latlng.latitude + "");
+            }
+            Call<ResponseBody> call = HttpUtil.getService(ApiService.class).queryCar(map);
+            GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        try {
+                            String stringJson = response.body().string();
+                            if (stringJson != null) {
+                                Gson gson = new Gson();
+                                NearByCarBean nearByCarBean = gson.fromJson(stringJson, NearByCarBean.class);
+                                if (null != nearByCarBean) {
+                                    if (nearByCarBean.getResponseCode().equals("1")) {
+                                        Log.i("nearby", nearByCarBean.toString());
+                                        List<NearByCarBean.ResponseObjBean> nearbyCars = nearByCarBean.getResponseObj();
+                                        if (null != nearbyCars) {
+                                            mCar_amount = nearbyCars.size();
+                                            Log.i("car_amount", mCar_amount + "");
+                                            if (!mIsStation) {
+                                                addBikeMark(nearbyCars);
+                                            } else {
+                                                addStationMark(nearbyCars);
+                                            }
+                                        }
                                     } else {
-                                        addStationMark(nearbyCars);
+                                        ToastUtil.show(MainActivity.this, nearByCarBean.getResponseMsg());
                                     }
                                 }
-                            } else {
-                                ToastUtil.show(MainActivity.this, nearByCarBean.getResponseMsg());
-                            }
 
+
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-            }
-        });
+                }
+            });
+        }
+
     }
 
     /**
@@ -884,8 +905,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
-        LatLng target = cameraPosition.target;
-        mCenterMarker.setPosition(target);
     }
 
     /**
@@ -946,25 +965,26 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void routeLine(LatLng endPoint) {
-        double latitude = mAmapocation.getLatitude();
-        double longitude = mAmapocation.getLongitude();
-        final LatLonPoint startPoint = new LatLonPoint(latitude, longitude);
-        if (mWalkRouteOverlay != null) {
-            mWalkRouteOverlay.removeFromMap();
+        if (null!=endPoint){
+            double latitude = mAmapocation.getLatitude();
+            double longitude = mAmapocation.getLongitude();
+            final LatLonPoint startPoint = new LatLonPoint(latitude, longitude);
+            if (mWalkRouteOverlay != null) {
+                mWalkRouteOverlay.removeFromMap();
+            }
+            LatLng position = endPoint;
+            LatLonPoint endpoint = new LatLonPoint(position.latitude, position.longitude);
+            if (startPoint == null) {
+                ToastUtils.getShortToastByString(MainActivity.this, "定位中,请稍后重试");
+            }  else {
+                RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(startPoint, endpoint);
+                //初始化query对象，fromAndTo是包含起终点信息，walkMode是步行路径规划的模式
+                mQueryWalk = new RouteSearch.WalkRouteQuery(fromAndTo, RouteSearch.WALK_DEFAULT);
+                mRouteSearch.calculateWalkRouteAsyn(mQueryWalk);//开始算路
+                showProgressDialog();
+            }
         }
-        LatLng position = endPoint;
-        LatLonPoint endpoint = new LatLonPoint(position.latitude, position.longitude);
-        if (startPoint == null) {
-            ToastUtils.getShortToastByString(MainActivity.this, "定位中,请稍后重试");
-        } else if (endPoint == null) {
-            ToastUtils.getShortToastByString(MainActivity.this, "终点未设置");
-        } else {
-            RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(startPoint, endpoint);
-            //初始化query对象，fromAndTo是包含起终点信息，walkMode是步行路径规划的模式
-            mQueryWalk = new RouteSearch.WalkRouteQuery(fromAndTo, RouteSearch.WALK_DEFAULT);
-            mRouteSearch.calculateWalkRouteAsyn(mQueryWalk);//开始算路
-            showProgressDialog();
-        }
+
     }
 
     /**
@@ -1092,14 +1112,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_MAP:
-                break;
-            case MY_PERMISSIONS_REQUEST_QR_CODE:
-                break;
-            default:
-                break;
-        }
+
     }
 
     @Override

@@ -135,6 +135,8 @@ public class IdentityVeritActivity extends AppCompatActivity {
                IdentityVerify();
                 //getJsonString();
                 break;
+            default:
+                break;
         }
     }
 

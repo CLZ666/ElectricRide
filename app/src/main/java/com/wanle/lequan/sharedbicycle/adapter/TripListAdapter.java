@@ -55,8 +55,8 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final TripListBean.ResponseObjBean dataBean = mDatas.get(position);
-        double CycleCharge = dataBean.getCycleCharge() * 1.0 / 100;
         if (dataBean != null) {
+            double CycleCharge = dataBean.getCycleCharge() * 1.0 / 100;
             holder.mTvDate.setText(stampToDate(dataBean.getStartTime() + ""));
             holder.mTvCarNo.setText(dataBean.getCarNo());
             holder.mTvTripTime.setText(dataBean.getCycleTime() + " "+"分钟");
@@ -103,7 +103,7 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.MyView
     public static String stampToDate(String s) {
         String res;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        long lt = new Long(s);
+        long lt = Long.valueOf(s);
         Date date = new Date(lt);
         res = simpleDateFormat.format(date);
         return res;

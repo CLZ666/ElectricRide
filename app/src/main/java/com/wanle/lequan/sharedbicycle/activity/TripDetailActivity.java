@@ -113,18 +113,17 @@ public class TripDetailActivity extends AppCompatActivity {
                     if (jsonString != null) {
                         Gson gson = new Gson();
                         TripDetailBean tripDetailBean = gson.fromJson(jsonString, TripDetailBean.class);
-                        if (tripDetailBean.getResponseCode().equals("1")) {
-
-                            if (tripDetailBean != null) {
+                        if (null != tripDetailBean) {
+                            if (tripDetailBean.getResponseCode().equals("1")) {
                                 if (null != tripDetailBean.getResponseObj().getItinerary()) {
                                     routeLine(tripDetailBean);
                                     setDeatail(tripDetailBean);
                                 }
+
+                            } else {
+                                ToastUtil.show(TripDetailActivity.this, tripDetailBean.getResponseMsg());
                             }
-                        } else {
-                            ToastUtil.show(TripDetailActivity.this, tripDetailBean.getResponseMsg());
                         }
-                        Log.i("trip_detail", jsonString);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -158,7 +157,7 @@ public class TripDetailActivity extends AppCompatActivity {
     public static String stampToDate(String s) {
         String res;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        long lt = new Long(s);
+        long lt = Long.valueOf(s);
         Date date = new Date(lt);
         res = simpleDateFormat.format(date);
         return res;

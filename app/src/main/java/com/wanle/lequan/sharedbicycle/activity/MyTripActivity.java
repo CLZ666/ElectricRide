@@ -70,11 +70,11 @@ public class MyTripActivity extends AppCompatActivity {
         if (NetWorkUtil.isNetworkAvailable(this)) {
 
         }
-        emptyView=findViewById(R.id.empty_view);
+        emptyView = findViewById(R.id.empty_view);
         mMAdapter = new TripListAdapter(this);
         mRecListTrip.setAdapter(mMAdapter);
         mRecListTrip.setEmptyView(emptyView);
-        mRecListTrip.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        mRecListTrip.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         getTripList(false);
         mRecListTrip.addItemDecoration(new RecycleViewDivider(this, LinearLayoutManager.HORIZONTAL, 3, getResources().getColor(R.color.red)));
     }
@@ -98,11 +98,13 @@ public class MyTripActivity extends AppCompatActivity {
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         TripListBean tripListBean = gson.fromJson(jsonString, TripListBean.class);
-                        if (tripListBean != null&&tripListBean.getResponseCode().equals("1")) {
-                            Log.i("trip",tripListBean.getResponseObj().size()+"");
-                            mMAdapter.setData(tripListBean.getResponseObj(),isRefresh);
-                        }else {
-                            ToastUtil.show(MyTripActivity.this,tripListBean.getResponseMsg());
+                        if (tripListBean != null) {
+                            if (tripListBean.getResponseCode().equals("1")) {
+                                Log.i("trip", tripListBean.getResponseObj().size() + "");
+                                mMAdapter.setData(tripListBean.getResponseObj(), isRefresh);
+                            } else {
+                                ToastUtil.show(MyTripActivity.this, tripListBean.getResponseMsg());
+                            }
                         }
                     }
                 } catch (IOException e) {

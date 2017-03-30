@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.net.Uri;
 
 import java.io.File;
@@ -118,7 +117,7 @@ public class UpLoadUtils {
                 (int) bottom);
         final Rect dst = new Rect((int) dst_left, (int) dst_top,
                 (int) dst_right, (int) dst_bottom);
-        final RectF rectF = new RectF(dst);
+
 
         paint.setAntiAlias(true);// 设置画笔无锯齿
 

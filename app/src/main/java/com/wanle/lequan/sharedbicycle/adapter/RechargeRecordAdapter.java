@@ -91,6 +91,8 @@ public class RechargeRecordAdapter extends BaseAdapter {
             case 7 :
                 holder.mTvType.setText("活动奖励");
                 break;
+            default:
+                break;
             }
         return convertView;
     }
@@ -110,7 +112,7 @@ public class RechargeRecordAdapter extends BaseAdapter {
     public static String stampToDate(String s) {
         String res;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        long lt = new Long(s);
+        long lt = Long.valueOf(s);
         Date date = new Date(lt);
         res = simpleDateFormat.format(date);
         return res;

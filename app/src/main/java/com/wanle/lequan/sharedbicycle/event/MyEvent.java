@@ -1,7 +1,6 @@
 package com.wanle.lequan.sharedbicycle.event;
 
 import com.wanle.lequan.sharedbicycle.bean.AddressInfo;
-import com.wanle.lequan.sharedbicycle.bean.CarState;
 
 /**
  * autor:Jerry
@@ -12,7 +11,7 @@ import com.wanle.lequan.sharedbicycle.bean.CarState;
 public class MyEvent {
     private String msg;
     private AddressInfo mInfo;
-    private CarState mCarState;
+
 
     public MyEvent(String msg) {
         this.msg = msg;

@@ -129,8 +129,8 @@ public class InputCodeActivity extends AppCompatActivity {
                 break;
             case R.id.btn_confim:
                 if (NetWorkUtil.isNetworkAvailable(this)) {
-                    // unLockCar();
-                    connectBle();
+                     unLockCar();
+                   // connectBle();
                 }
                 break;
         }
@@ -209,8 +209,15 @@ public class InputCodeActivity extends AppCompatActivity {
     }
 
     private void unLockCar() {
+        String numText = mPpeNum.getPwdText();
+        if (TextUtils.isEmpty(numText) || numText.length() < 9) {
+            ToastUtils.getShortToastByString(this, "请确认输入的编号是否正确!");
+        }else {
+            mProgersssDialog = new ProgersssDialog(InputCodeActivity.this);
+            mProgersssDialog.setMsg("正在获取车辆信息");
             showCarState();
             checkCarState();
+        }
     }
 
 

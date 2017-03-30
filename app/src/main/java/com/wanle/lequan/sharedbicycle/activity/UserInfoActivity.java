@@ -161,7 +161,7 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
 
             @Override
             public void onNext(UserInfoBean userInfoBean) {
-                Log.i("888", userInfoBean.toString());
+                //Log.i("888", userInfoBean.toString());
                 if (userInfoBean != null && userInfoBean.getResponseCode().equals("1")) {
                     String headImg = userInfoBean.getResponseObj().getHeadImg();
                     mSpUserInfo.edit().putString("headimg", headImg).commit();

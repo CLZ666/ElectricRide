@@ -223,28 +223,30 @@ public class CarStateFragment extends Fragment {
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
+                        if (null != messageBean) {
+                            String responseCode = messageBean.getResponseCode();
+                            if (responseCode.equals("1")) {
+                                mCdt = new CountDownTimer(1000, 1000) {
+                                    @Override
+                                    public void onTick(long millisUntilFinished) {
+                                    }
 
-                        String responseCode = messageBean.getResponseCode();
-                        if (null!=messageBean&&responseCode.equals("1")) {
-                            mCdt = new CountDownTimer(1000, 1000) {
-                                @Override
-                                public void onTick(long millisUntilFinished) {
-                                }
-
-                                @Override
-                                public void onFinish() {
-                                    mProgersssDialog.dismiss();
-                                    mUseStatus = 2;
-                                    mTvIsLock.setText("临时锁车");
-                                    mTvCarStatus.setText("车辆骑行中");
-                                    mProgersssDialog.dismiss();
-                                }
-                            };
-                            mCdt.start();
-                        } else {
-                            ToastUtils.getShortToastByString(getActivity(), "开锁失败");
-                            mProgersssDialog.dismiss();
+                                    @Override
+                                    public void onFinish() {
+                                        mProgersssDialog.dismiss();
+                                        mUseStatus = 2;
+                                        mTvIsLock.setText("临时锁车");
+                                        mTvCarStatus.setText("车辆骑行中");
+                                        mProgersssDialog.dismiss();
+                                    }
+                                };
+                                mCdt.start();
+                            } else {
+                                ToastUtils.getShortToastByString(getActivity(), "开锁失败");
+                                mProgersssDialog.dismiss();
+                            }
                         }
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

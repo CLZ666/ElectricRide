@@ -1,6 +1,5 @@
 package com.wanle.lequan.sharedbicycle.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +17,8 @@ public class LoadingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading);
         ButterKnife.bind(this);
-        Intent intent = getIntent();
-        String msg = intent.getStringExtra("msg");
+
+
         //这里Handler的postDelayed方法，等待10000毫秒在执行run方法。
         //在Activity中我们经常需要使用Handler方法更新UI或者执行一些耗时事件，
         //并且Handler中post方法既可以执行耗时事件也可以做一些UI更新的事情，比较好用，推荐使用
