@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -46,6 +47,7 @@ public class FeedBackActivity extends AppCompatActivity {
         mSp_userinfo = getSharedPreferences("userinfo", MODE_PRIVATE);
         mTvTitle.setText("意见反馈");
         mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        mEditAdvice.setOnKeyListener(onKey);
     }
 
     @OnClick({R.id.iv_back, R.id.btn_submit})
@@ -101,4 +103,26 @@ public class FeedBackActivity extends AppCompatActivity {
             }
         });
     }
+    View.OnKeyListener onKey = new View.OnKeyListener() {
+
+        @Override
+
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+
+
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                if (NetWorkUtil.isNetworkAvailable(FeedBackActivity.this)) {
+                   feedBack();
+                }
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+    };
 }

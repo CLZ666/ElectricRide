@@ -454,6 +454,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 break;
             case R.id.iv_search:
                 startActivityForResult(new Intent(this, SearchActivity.class), REQUEST_CODE);
+                //startActivityForResult(new Intent(this, DepositActivity.class), REQUEST_CODE);
                 break;
             case R.id.iv_gps_start:
                 mapPermission();

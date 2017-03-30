@@ -74,21 +74,23 @@
             android:id="@+id/rgb_way_pay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true">
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp">
             <RadioButton
                 android:id="@+id/rb_zfb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_marginRight="8dp"
+                android:button="@null"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/rb_pay_select"/>
             <RadioButton
                 android:id="@+id/rb_wx"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="16dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="25dp"
                 android:layout_marginRight="8dp"
+                android:button="@null"
                 android:background="@drawable/rb_pay_select"
                 />
         </RadioGroup>

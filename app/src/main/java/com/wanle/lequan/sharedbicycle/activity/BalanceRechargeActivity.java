@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -137,6 +138,7 @@ public class BalanceRechargeActivity extends AppCompatActivity {
         EventBus.getDefault().register(this);
         showKeyboard(mEditAmount);
         mEditAmount.addTextChangedListener(mTextWatcher);
+        mEditAmount.setOnKeyListener(onKey);
     }
 
     public List<String> getData() {
@@ -163,6 +165,8 @@ public class BalanceRechargeActivity extends AppCompatActivity {
                         recharge(id);
                     }
                 }
+                break;
+            default:
                 break;
         }
     }
@@ -323,5 +327,31 @@ public class BalanceRechargeActivity extends AppCompatActivity {
                        },
                 200);
     }
+    View.OnKeyListener onKey = new View.OnKeyListener() {
+
+        @Override
+
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                if (NetWorkUtil.isNetworkAvailable(BalanceRechargeActivity.this)) {
+                    int id = mRgbWayPay.getCheckedRadioButtonId();
+                    if (id == R.id.rb_zfb) {
+                        recharge(id);
+                    } else if (id == R.id.rb_wx) {
+                        recharge(id);
+                    }
+                }
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+    };
 
 }

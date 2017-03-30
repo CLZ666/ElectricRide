@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -94,6 +95,7 @@ public class InputCodeActivity extends AppCompatActivity {
         mEditNum = mPpeNum.getEditText();
         if (null != mEditNum) {
             showKeyboard(mEditNum);
+            mEditNum.setOnKeyListener(onKey);
         }
     }
 
@@ -384,4 +386,27 @@ public class InputCodeActivity extends AppCompatActivity {
             }
         });
     }
+    View.OnKeyListener onKey = new View.OnKeyListener() {
+
+        @Override
+
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+
+
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                if (NetWorkUtil.isNetworkAvailable(InputCodeActivity.this)) {
+                        unLockCar();
+                        // connectBle();
+                }
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+    };
 }
