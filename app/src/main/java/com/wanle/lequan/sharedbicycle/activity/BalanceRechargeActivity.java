@@ -343,9 +343,7 @@ public class BalanceRechargeActivity extends AppCompatActivity {
                         recharge(id);
                     }
                 }
-
                 return true;
-
             }
 
             return false;
