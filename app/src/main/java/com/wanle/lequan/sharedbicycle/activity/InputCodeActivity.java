@@ -1,5 +1,10 @@
 package com.wanle.lequan.sharedbicycle.activity;
 
+import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +14,7 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,13 +22,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.clj.fastble.BleManager;
+import com.clj.fastble.conn.BleGattCallback;
+import com.clj.fastble.exception.BleException;
+import com.clj.fastble.scan.ListScanCallback;
+import com.clj.fastble.utils.HexUtil;
 import com.google.gson.Gson;
 import com.wanle.lequan.sharedbicycle.R;
 import com.wanle.lequan.sharedbicycle.bean.MessageBean;
 import com.wanle.lequan.sharedbicycle.constant.ApiService;
+import com.wanle.lequan.sharedbicycle.utils.BlueToothControl;
 import com.wanle.lequan.sharedbicycle.utils.GetJsonStringUtil;
 import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
 import com.wanle.lequan.sharedbicycle.utils.NetWorkUtil;
+import com.wanle.lequan.sharedbicycle.utils.ToastUtil;
 import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
 import com.wanle.lequan.sharedbicycle.view.PayNumberEditText;
 import com.wanle.lequan.sharedbicycle.view.ProgersssDialog;
@@ -59,6 +72,10 @@ public class InputCodeActivity extends AppCompatActivity {
     private ProgersssDialog mProgersssDialog;
     private CountDownTimer mCdt;
     private EditText mEditNum;
+    private BlueToothControl mBlueToothControl;
+    private static final String TAG = "device1";
+    private boolean isFind;
+    private BleManager mBleManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,15 +129,16 @@ public class InputCodeActivity extends AppCompatActivity {
                 break;
             case R.id.btn_confim:
                 if (NetWorkUtil.isNetworkAvailable(this)) {
-                    unLockCar();
+                    // unLockCar();
+                    connectBle();
                 }
                 break;
         }
     }
 
     public void showCarState() {
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_car_stuts, null);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = LayoutInflater.from(InputCodeActivity.this).inflate(R.layout.dialog_car_stuts, null);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(InputCodeActivity.this);
         mDialog = builder.create();
         mDialog.setCanceledOnTouchOutside(true);
         mDialog.setView(view);
@@ -191,15 +209,8 @@ public class InputCodeActivity extends AppCompatActivity {
     }
 
     private void unLockCar() {
-        String numText = mPpeNum.getPwdText();
-        if (TextUtils.isEmpty(numText) || numText.length() < 9) {
-            ToastUtils.getShortToastByString(this, "请确认输入的编号是否正确!");
-        } else {
-            mProgersssDialog = new ProgersssDialog(InputCodeActivity.this);
-            mProgersssDialog.setMsg("正在获取车辆信息");
             showCarState();
             checkCarState();
-        }
     }
 
 
@@ -249,4 +260,121 @@ public class InputCodeActivity extends AppCompatActivity {
                 200);
     }
 
+    /**
+     * 和车的蓝牙锁连接
+     */
+    public void connectBle() {
+        String numText = mPpeNum.getPwdText();
+        if (TextUtils.isEmpty(numText) || numText.length() < 9) {
+            ToastUtils.getShortToastByString(this, "请确认输入的编号是否正确!");
+        } else {
+            mBlueToothControl = new BlueToothControl(this);
+            mBleManager = mBlueToothControl.getBleManager();
+            if (mBlueToothControl.isSupportBle()) {
+                scanDevice();
+            } else {
+                ToastUtil.show(this, "您当前设备不支持蓝牙,无法用车");
+            }
+        }
+    }
+
+    /**
+     * 扫描附近设备
+     */
+    private void scanDevice() {
+        mProgersssDialog = new ProgersssDialog(InputCodeActivity.this);
+        mProgersssDialog.setMsg("正在获取车辆信息");
+        mBlueToothControl.scanDevice(new ListScanCallback(5000) {
+            @Override
+            public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+                super.onLeScan(device, rssi, scanRecord);
+               /* Log.i(TAG,device.getAddress());
+                final String mac = device.getAddress();
+                if (null != mac && "F0:C7:7F:F9:C9:C4".equals(mac)) {
+                    Log.i(TAG,device.getAddress());
+                    // connectByName(name);
+                    connectByMac(mac);
+                    isFind = true;
+                }*/
+            }
+
+            @Override
+            public void onDeviceFound(BluetoothDevice[] devices) {
+                Log.i(TAG, "共发现" + devices.length + "台设备");
+                for (int i = 0; i < devices.length; i++) {
+                    // final String name = devices[i].getName();
+                    final String mac = devices[i].getAddress();
+                    if (null != mac && "F0:C7:7F:F9:C9:C4".equals(mac)) {
+                         Log.i(TAG,devices[i].getAddress());
+                        // connectByName(name);
+                        connectByMac(mac);
+                        isFind = true;
+                    }
+                }
+                if (!isFind) {
+                    scanDevice();
+                }
+            }
+        });
+    }
+
+    /**
+     * 根据蓝牙设备的mac地址连接
+     *
+     * @param mac
+     */
+    private void connectByMac(String mac) {
+        mBlueToothControl.connectByMac(mac, (long) 2000, new BleGattCallback() {
+            @Override
+            public void onNotFoundDevice() {
+                Log.i(TAG, "未发现设备！");
+                scanDevice();
+            }
+
+            @Override
+            public void onFoundDevice(BluetoothDevice device) {
+                Log.i(TAG, "发现设备: " + device.getAddress());
+            }
+
+            @SuppressLint("NewApi")
+            @Override
+            public void onConnectSuccess(BluetoothGatt gatt, int status) {
+
+                Log.i(TAG, "连接成功！");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        unLockCar();
+                    }
+                });
+                gatt.discoverServices();
+            }
+
+            @SuppressLint("NewApi")
+            @Override
+            public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+                Log.i(TAG, "服务被发现！");
+                mBleManager.getBluetoothState();
+
+                for (final BluetoothGattService service : gatt.getServices()) {
+                    Log.i("TAG1", service.getUuid().toString());
+                    for (final BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
+                        Log.i(TAG, characteristic.getUuid().toString());
+                        if (null != characteristic.getValue()) {
+                            Log.i(TAG, String.valueOf(HexUtil.encodeHex(characteristic.getValue())));
+                        }
+                        final int properties = characteristic.getProperties();
+                        Log.i(TAG, properties + "");
+                    }
+                }
+            }
+
+
+            @Override
+            public void onConnectFailure(BleException exception) {
+                Log.i(TAG, "连接失败或连接中断：" + exception.toString());
+                mBleManager.handleException(exception);
+            }
+        });
+    }
 }

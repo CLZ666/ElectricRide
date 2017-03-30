@@ -219,10 +219,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Subscribe
     public void onEventMainThread(MyEvent event) {
         String msg = event.getMsg();
-        Log.i("eventmsg", msg);
-        if (msg.equals("网络连接成功")) {
-            if (null != mlocationClient && null != mCenterPoint) {
-                gps_start(false);
+       // Log.i("eventmsg", msg);
+        if (null!=msg){
+            if (msg.equals("网络连接成功")) {
+                if (null != mlocationClient && null != mCenterPoint) {
+                    gps_start(false);
+                }
             }
         }
     }

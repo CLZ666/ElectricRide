@@ -62,7 +62,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
-        android:background="@color/white"
         >
         <ImageView
             android:id="@+id/iv_zhifubao"
@@ -74,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/zhifubao_pay"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="13dp"
             android:layout_marginLeft="5dp"
             android:textSize="18sp"
             android:layout_toRightOf="@id/iv_zhifubao"
@@ -91,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/wx_pay"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
             android:layout_marginLeft="5dp"
             android:textSize="18sp"
             android:layout_marginBottom="8dp"
@@ -103,21 +102,25 @@
             android:id="@+id/rgb_way_pay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
             android:layout_alignParentRight="true">
+
             <RadioButton
                 android:id="@+id/rb_zfb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="13dp"
                 android:layout_marginRight="8dp"
+                android:button="@null"
                 android:background="@drawable/rb_pay_select"/>
+
             <RadioButton
                 android:id="@+id/rb_wx"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="16dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginRight="8dp"
+                android:button="@null"
                 android:background="@drawable/rb_pay_select"
                 />
         </RadioGroup>

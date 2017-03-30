@@ -59,4 +59,5 @@ dependencies {
     compile 'cn.bingoogolapple:bga-zbar:1.1.7@aar'
     compile 'pub.devrel:easypermissions:0.1.9'
     compile project(':PushSDK')
+    compile 'com.clj.fastble:FastBleLib:1.0.6'
 }
