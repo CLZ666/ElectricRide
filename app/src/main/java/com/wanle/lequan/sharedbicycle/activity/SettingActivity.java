@@ -324,10 +324,6 @@ public class SettingActivity extends AppCompatActivity implements EasyPermission
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {

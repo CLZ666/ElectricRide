@@ -1,5 +1,6 @@
 package com.wanle.lequan.sharedbicycle.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -19,6 +21,8 @@ import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,6 +64,7 @@ public class IdentityVeritActivity extends AppCompatActivity {
         mSp_identity = getSharedPreferences("userinfo", MODE_PRIVATE);
         mEdit_identity = mSp_identity.edit();
         mEditCode.setOnKeyListener(onKey);
+
         //getJsonString();
     }
 
@@ -162,4 +167,18 @@ public class IdentityVeritActivity extends AppCompatActivity {
         }
 
     };
+
+    protected void showKeyboard(final EditText editText) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+                           public void run() {
+                               InputMethodManager inputManager =
+                                       (InputMethodManager) editText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                               inputManager.showSoftInput(editText, 0);
+                           }
+
+                       },
+                200);
+    }
 }
