@@ -17,11 +17,10 @@
         <com.wanle.lequan.sharedbicycle.view.EmptyRecyclerView
             android:id="@+id/rec_list_trip"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></com.wanle.lequan.sharedbicycle.view.EmptyRecyclerView>
+            android:layout_height="wrap_content"></com.wanle.lequan.sharedbicycle.view.EmptyRecyclerView>
 
     </android.support.v4.widget.SwipeRefreshLayout>>
 <include
     android:id="@+id/empty_view"
-
     layout="@layout/layout_empty_view"/>
 </LinearLayout>

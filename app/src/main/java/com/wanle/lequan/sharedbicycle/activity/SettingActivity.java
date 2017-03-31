@@ -102,7 +102,9 @@ public class SettingActivity extends AppCompatActivity implements EasyPermission
         }
         mTvPhone.setText(mPhone);
         mHeadimg = mMSp_userinfo.getString("headimg", "");
-        Glide.with(this).load(mHeadimg).asBitmap().into(mIvUserIcon);
+        if (!mHeadimg.equals("")) {
+            Glide.with(this).load(mHeadimg).asBitmap().into(mIvUserIcon);
+        }
     }
 
     @OnClick({R.id.iv_back, R.id.rel_user_icon, R.id.rel_advice, R.id.rel_about_us, R.id.btn_exit_login})
@@ -144,6 +146,8 @@ public class SettingActivity extends AppCompatActivity implements EasyPermission
                 });
                 dialog.show();
                 break;
+            default:
+                break;
         }
     }
 
@@ -153,9 +157,6 @@ public class SettingActivity extends AppCompatActivity implements EasyPermission
     private void showChoosePicDialog() {
         mView = LayoutInflater.from(this).inflate(R.layout.dialog_upload, null);
         mDialog = new AlertDialog.Builder(this).create();
-       /* dialog.setTitle("设置头像");
-        String[] items = {"选择本地照片", "拍照"};
-        dialog.setNegativeButton("取消", null);*/
         mDialog.setView(mView);
         mDialog.setCanceledOnTouchOutside(true);
         TextView tv_choose = (TextView) mView.findViewById(R.id.tv_choose_picture);
@@ -203,6 +204,8 @@ public class SettingActivity extends AppCompatActivity implements EasyPermission
                         setImageToView(data); // 让刚才选择裁剪得到的图片显示在界面上
                     }
                     break;
+                default:
+                    break;
             }
         }
     }
@@ -245,7 +248,7 @@ public class SettingActivity extends AppCompatActivity implements EasyPermission
             mIvUserIcon.setImageBitmap(photo);
             byte[] data1 = bitmap2Bytes(photo);
 
-           // Log.i("upload", new String(data1));
+            // Log.i("upload", new String(data1));
             ToastUtil.show(this, "头像上传中");
             uploadPic(photo);
         }
@@ -278,7 +281,7 @@ public class SettingActivity extends AppCompatActivity implements EasyPermission
                     Gson gson = new Gson();
                     try {
                         String jsonString = response.body().string();
-                        if (null!=jsonString){
+                        if (null != jsonString) {
                             VerificationCode uploadBean = gson.fromJson(jsonString, VerificationCode.class);
                             if (uploadBean != null) {
                                 String responseCode = uploadBean.getResponseCode();
@@ -333,7 +336,7 @@ public class SettingActivity extends AppCompatActivity implements EasyPermission
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
-            EasyPermissions.checkDeniedPermissionsNeverAskAgain(SettingActivity.this, "为了您能使用拍照上传功能,请打开照相机权限", R.string.confim, R.string.cancel, perms);
+        EasyPermissions.checkDeniedPermissionsNeverAskAgain(SettingActivity.this, "为了您能使用拍照上传功能,请打开照相机权限", R.string.confim, R.string.cancel, perms);
     }
 
     @AfterPermissionGranted(MY_PERMISSIONS_REQUEST_QR_CODE)

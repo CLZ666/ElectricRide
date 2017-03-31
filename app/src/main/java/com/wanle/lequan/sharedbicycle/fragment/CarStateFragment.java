@@ -118,6 +118,8 @@ public class CarStateFragment extends Fragment {
                     }
                 }
                 break;
+            default:
+                break;
         }
     }
 
@@ -173,6 +175,7 @@ public class CarStateFragment extends Fragment {
     @Subscribe
     public void onEventMainThread(CarStateEvent event) {
         CarState carState = event.getCarState();
+        Log.i("carstate",carState.toString());
         mCarNo = carState.getCarNo();
         mCarPower = carState.getCarPower();
         mCycleTime = carState.getCycleTime();
@@ -187,7 +190,7 @@ public class CarStateFragment extends Fragment {
     private void updateUi() {
         mTvCarNo.setText("车辆编号: " + mCarNo);
         mTvDumpEnergy.setText(mCarPower + "%");
-        mTvRidingTime.setText(getStandardTime((long) mCycleTime));
+        mTvRidingTime.setText(getStandardTime((long) (mCycleTime*60)));
         mTvRideCost.setText("￥ " + (mCycleCharge / 100));
         if (mUseStatus == 1) {
             mTvIsLock.setText("临时锁车");

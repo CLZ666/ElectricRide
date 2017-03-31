@@ -98,6 +98,8 @@ public class MyAccountActivity extends AppCompatActivity {
             case R.id.btn_recharge:
                 startActivity(new Intent(this, BalanceRechargeActivity.class));
                 break;
+            default:
+                break;
         }
     }
 }

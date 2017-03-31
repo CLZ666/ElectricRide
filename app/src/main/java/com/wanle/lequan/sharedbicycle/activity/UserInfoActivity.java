@@ -93,6 +93,7 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
     }
 
     private void getUserInfoString() {
+
         String userId = getSharedPreferences("userinfo", MODE_PRIVATE).getString("userId", "");
         // String userId = "9DBD039C7DCE2DA86889143946687EF6BD790241761D8CD8147EA299742DBCD6B2DC180FD294EC25F7DEBEB1F2B0DA7";
         Log.i("userInfo", userId);
@@ -103,7 +104,9 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
 
     private void UpdateUi() {
         String headimg = mSpUserInfo.getString("headimg", "");
-        Glide.with(UserInfoActivity.this).load(headimg).placeholder(getResources().getDrawable(R.drawable.userhead)).into(mUserIcon);
+        if (!headimg.equals("")){
+           Glide.with(UserInfoActivity.this).load(headimg).into(mUserIcon);
+        }
         String balance = mSpUserInfo.getString("balance", "");
         mTvBalance.setText("￥" + balance);
         mIvBack.setOnClickListener(new View.OnClickListener() {
@@ -164,8 +167,10 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
                 //Log.i("888", userInfoBean.toString());
                 if (userInfoBean != null && userInfoBean.getResponseCode().equals("1")) {
                     String headImg = userInfoBean.getResponseObj().getHeadImg();
-                    mSpUserInfo.edit().putString("headimg", headImg).commit();
-                    Glide.with(UserInfoActivity.this).load(headImg).into(mUserIcon);
+                    if (!headImg.equals("")){
+                        mSpUserInfo.edit().putString("headimg", headImg).commit();
+                        Glide.with(UserInfoActivity.this).load(headImg).into(mUserIcon);
+                    }
                     String userName = userInfoBean.getResponseObj().getUserName();
                     mSpUserInfo.edit().putString("userName", userName).commit();
                     int balance1 = userInfoBean.getResponseObj().getBalance();
@@ -232,22 +237,24 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
             case R.id.tv_setting:
                 startActivity(new Intent(this, SettingActivity.class));
                 break;
+            default:
+                break;
         }
     }
 
     private void shareOption() {
         UMImage image = new UMImage(this, "http://img.lequangroup.cn/Categroy/48f493ad138d400b91b17c0a1f941060_750x300.png");
-        UMImage thumb = new UMImage(this, R.mipmap.ic_launcher);
+        UMImage thumb = new UMImage(this, R.drawable.logo);
         image.setThumb(thumb);
         image.compressStyle = UMImage.CompressStyle.SCALE;
-        UMWeb web = new UMWeb("http://www.ifeng.com/");
-        web.setTitle("This is music title");//标题
+        UMWeb web = new UMWeb("http://h5.lequangroup.cn/");
+        web.setTitle("乐圈国际馆");//标题
         web.setThumb(thumb);  //缩略图
-        web.setDescription("my description");//描述
+        web.setDescription("精选全球好货");//描述
         new ShareAction(this).withText("hello")
                 .withMedia(image)
                 .withMedia(web)
-                .setDisplayList(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE)
+                .setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.QZONE,SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE)
                 .setCallback(this).open();
     }
 
@@ -331,7 +338,6 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
     @Override
     public void onResult(SHARE_MEDIA share_media) {
         ToastUtil.show(UserInfoActivity.this, "分享成功");
-
     }
 
     @Override

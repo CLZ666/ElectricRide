@@ -190,6 +190,8 @@ public class BalanceRechargeActivity extends AppCompatActivity {
             case R.id.rb_wx:
                 getPayData(1);
                 break;
+            default:
+                break;
         }
 
     }

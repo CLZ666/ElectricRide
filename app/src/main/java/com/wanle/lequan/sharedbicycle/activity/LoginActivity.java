@@ -82,6 +82,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 //  startActivity(new Intent(this,IdentityVeritActivity.class));
                 break;
+            default:
+                break;
         }
     }
 
@@ -151,7 +153,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onNext(UserInfoBean userInfoBean) {
                 if (null!=userInfoBean&&userInfoBean.getResponseCode().equals("1")){
                     String headImg = userInfoBean.getResponseObj().getHeadImg();
-                    mEdit_userinfo.putString("headimg", headImg).commit();
+                    if (!headImg.equals("")){
+                        mEdit_userinfo.putString("headimg", headImg).commit();
+                    }
                     String userName = userInfoBean.getResponseObj().getUserName();
                     mEdit_userinfo.putString("userName", userName).commit();
                     int balance1 = userInfoBean.getResponseObj().getBalance();

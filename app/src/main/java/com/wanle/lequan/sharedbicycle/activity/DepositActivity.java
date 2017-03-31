@@ -108,6 +108,8 @@ public class DepositActivity extends AppCompatActivity {
                     recharge(id);
                 }
                 break;
+            default:
+                break;
         }
     }
 
@@ -121,6 +123,8 @@ public class DepositActivity extends AppCompatActivity {
                 break;
             case R.id.rb_wx:
                 getPayData(1);
+                break;
+            default:
                 break;
         }
 

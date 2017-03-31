@@ -135,6 +135,8 @@ public class InputCodeActivity extends AppCompatActivity {
                    // connectBle();
                 }
                 break;
+            default:
+                break;
         }
     }
 
@@ -155,6 +157,7 @@ public class InputCodeActivity extends AppCompatActivity {
         tv_unlock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mDialog.dismiss();
                 Intent intent = new Intent(InputCodeActivity.this, UnlockActivity.class);
                 startActivity(intent);
                 finish();

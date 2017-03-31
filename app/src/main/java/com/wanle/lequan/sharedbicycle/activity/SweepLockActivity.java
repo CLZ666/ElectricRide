@@ -213,6 +213,8 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
                     isOpen = false;
                 }
                 break;
+            default:
+                break;
         }
     }
 

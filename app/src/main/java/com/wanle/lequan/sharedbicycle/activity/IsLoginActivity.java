@@ -82,6 +82,8 @@ public class IsLoginActivity extends AppCompatActivity {
                 mLinear.setBackground(mDrawable);
                 finish();
                 break;
+            default:
+                break;
         }
     }
 

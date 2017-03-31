@@ -51,6 +51,7 @@ public class MyApp extends Application {
     }
     {
         PlatformConfig.setWeixin("wxaee1318bd6e9e063","e4ea090a7fbe3b5d0edb6fa20873a44f");
+        PlatformConfig.setQQZone("1105999429","YJbpD5g0Yc88inbp");
     }
 
 }

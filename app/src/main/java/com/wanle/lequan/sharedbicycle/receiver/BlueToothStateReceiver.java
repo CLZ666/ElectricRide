@@ -38,6 +38,8 @@ public class BlueToothStateReceiver extends BroadcastReceiver {
             case BluetoothAdapter.STATE_OFF:
                 mContext.startActivity(new Intent(mContext, BlueToothActivity.class));
                 break;
+            default:
+                break;
         }
 
         Log.i("TAG---BlueTooth","接收到蓝牙状态改变广播！！");

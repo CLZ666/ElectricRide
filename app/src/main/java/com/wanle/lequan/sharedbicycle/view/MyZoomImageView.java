@@ -143,7 +143,7 @@ public class MyZoomImageView extends ImageView {
                 // 手指离开屏幕
                 case MotionEvent.ACTION_UP:
                     setDoubleTouchEvent(event);
-
+                    break;
                 case MotionEvent.ACTION_POINTER_UP:
                     // System.out.println("ACTION_POINTER_UP");
                     mode = 0;
@@ -164,6 +164,8 @@ public class MyZoomImageView extends ImageView {
                         // 记录当前ImageView的缩放倍数
                         currentMatrix.set(getImageMatrix());
                     }
+                    break;
+                default:
                     break;
             }
             setImageMatrix(matrix);

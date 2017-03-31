@@ -161,11 +161,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private InfoWinAdapter mInfoWinAdapter;
     private Marker mOldMarker;
     private BlueToothStateReceiver mBlueToothStateReceiver;
-    private CountDownTimer mCdt;
     private CountDownTimer mMCdt;
     private NetInfoReceiver mNetinfoReceiver;
     private String mStreet;
     private String mStreet1;
+    private String mResponseCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Log.i("sha1", s);
         setCenter();
         gps_start(true);
-        mMCdt = new CountDownTimer(100, 100) {
+        mMCdt = new CountDownTimer(10, 10) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -269,7 +269,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         gson = new Gson();
                         MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
                         if (null != messageBean) {
+                            mResponseCode = messageBean.getResponseCode();
                             if (messageBean.getResponseCode().equals("1")) {
+                                showBikeStation();
                                 setCarStutsFragment();
                                 mBtnUseCar.setText("我要还车");
                                 gson = new Gson();
@@ -280,7 +282,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                 }
                             } else {
                                 carStateHandler.removeCallbacks(mRunnable);
+                                if (null != mlocationClient) {
+                                    mlocationClient.startLocation();
+                                }
+                                regeocdeQuery();
                                 setAdressInfoFragment();
+                                showBike();
                                 mBtnUseCar.setText("我要用车");
                             }
                         }
@@ -484,6 +491,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     userCar();
                 } else if (mBtnUseCar.getText().equals("我要还车")) {
                     if (NetWorkUtil.isNetworkAvailable(this)) {
+                        showBikeStation();
                         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_return_car, null);
                         final AlertDialog dialog = new AlertDialog.Builder(this).create();
                         dialog.setView(dialogView);
@@ -520,7 +528,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
             aMap.setLocationSource(this);// 设置定位监听
             aMap.setMyLocationEnabled(true);
-            mlocationClient.startLocation();//启动定位
+            if (null != mlocationClient) {
+                mlocationClient.startLocation();//启动定位
+            }
             mProgersssDialog = new ProgersssDialog(this);
             mProgersssDialog.setMsg("正在定位中");
 
@@ -570,6 +580,27 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
+    /**
+     * 显示附近还车站点
+     */
+    public void showBikeStation() {
+        mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.station_icon));
+        if (null!=mAmapocation){
+            queryCar(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
+        }
+        mIsStation = true;
+    }
+
+    /**
+     * 显示附近单车
+     */
+    public void showBike(){
+        mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.moto));
+        if (null!=mAmapocation){
+            queryCar(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
+        }
+        mIsStation = false;
+    }
     private void userCar() {
         boolean isLogin1 = mSp_isLogin.getBoolean("isLogin", false);
         boolean isDeposit = mSpUserinfo.getBoolean(getResources().getString(R.string.is_deposit), false);
@@ -603,7 +634,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                        if (null!=messageBean){
+                        if (null != messageBean) {
                             if (messageBean.getResponseCode().equals("1")) {
                                 mProgersssDialog.dismiss();
                                 startActivity(new Intent(MainActivity.this, EndRideActivity.class));
@@ -688,10 +719,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         // mMCdt.start();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -701,11 +728,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (unlock) {
             carStateHandler.post(mRunnable);
             setCarStutsFragment();
-            mBtnUseCar.setText("我要还车");
+            showBikeStation();
         } else {
-            mlocationClient.startLocation();
-            setAdressInfoFragment();
-            mBtnUseCar.setText("我要用车");
+            mMCdt = new CountDownTimer(100, 100) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    carStateHandler.post(mRunnable);
+                }
+
+                @Override
+                public void onFinish() {
+                    carStateHandler.post(mRunnable);
+                }
+            };
+            mMCdt.start();
         }
     }
 
@@ -773,10 +809,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onLocationChanged(AMapLocation amapLocation) {
-        mAmapocation = amapLocation;
         if (mListener != null && amapLocation != null) {
-            if (amapLocation != null
-                    && amapLocation.getErrorCode() == 0) {
+            if (amapLocation.getErrorCode() == 0) {
+                mAmapocation = amapLocation;
                 mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
                 double longitude = amapLocation.getLongitude();
                 double latitude = amapLocation.getLatitude();
@@ -796,18 +831,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      * 查找附近车的方法
      */
     public void queryCar(LatLng latlng) {
-        if (null!=latlng){
+        if (null != latlng) {
             Log.i("latlng1", latlng.toString());
             Point point = new Point(0, 0);
             LatLng start = aMap.getProjection().fromScreenLocation(point);
             int distance = testDistance(start, mCenterPoint);
             Log.i("distance", distance + "");
             Map<String, String> map = new HashMap<>();
-            if (latlng != null) {
-                map.put("radius", 1000 + "");
-                map.put("longitude", latlng.longitude + "");
-                map.put("latitude", latlng.latitude + "");
-            }
+            map.put("radius", 1000 + "");
+            map.put("longitude", latlng.longitude + "");
+            map.put("latitude", latlng.latitude + "");
             Call<ResponseBody> call = HttpUtil.getService(ApiService.class).queryCar(map);
             GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
                 @Override
@@ -922,12 +955,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void regeocdeQuery() {
-        LatLonPoint point = new LatLonPoint(mCenterPoint.latitude, mCenterPoint.longitude);
-        Log.i("main1", mCenterPoint.toString());
-        //ToastUtils.getShortToastByString(this,s);
-        // 第一个参数表示一个Latlng，第二参数表示范围多少米，第三个参数表示是火系坐标系还是GPS原生坐标系
-        RegeocodeQuery query = new RegeocodeQuery(point, 200, GeocodeSearch.AMAP);
-        mGeocodeSearch.getFromLocationAsyn(query);
+        if (null != mCenterPoint) {
+            LatLonPoint point = new LatLonPoint(mCenterPoint.latitude, mCenterPoint.longitude);
+            Log.i("main1", mCenterPoint.toString());
+            //ToastUtils.getShortToastByString(this,s);
+            // 第一个参数表示一个Latlng，第二参数表示范围多少米，第三个参数表示是火系坐标系还是GPS原生坐标系
+            RegeocodeQuery query = new RegeocodeQuery(point, 200, GeocodeSearch.AMAP);
+            mGeocodeSearch.getFromLocationAsyn(query);
+        }
     }
 
     //根据经纬度获取地理位置描述数据(逆地理编码结果回调）
@@ -966,7 +1001,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void routeLine(LatLng endPoint) {
-        if (null!=endPoint){
+        if (null != endPoint && null != mAmapocation) {
             double latitude = mAmapocation.getLatitude();
             double longitude = mAmapocation.getLongitude();
             final LatLonPoint startPoint = new LatLonPoint(latitude, longitude);
@@ -975,15 +1010,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
             LatLng position = endPoint;
             LatLonPoint endpoint = new LatLonPoint(position.latitude, position.longitude);
-            if (startPoint == null) {
-                ToastUtils.getShortToastByString(MainActivity.this, "定位中,请稍后重试");
-            }  else {
-                RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(startPoint, endpoint);
-                //初始化query对象，fromAndTo是包含起终点信息，walkMode是步行路径规划的模式
-                mQueryWalk = new RouteSearch.WalkRouteQuery(fromAndTo, RouteSearch.WALK_DEFAULT);
-                mRouteSearch.calculateWalkRouteAsyn(mQueryWalk);//开始算路
-                showProgressDialog();
-            }
+            RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(startPoint, endpoint);
+            //初始化query对象，fromAndTo是包含起终点信息，walkMode是步行路径规划的模式
+            mQueryWalk = new RouteSearch.WalkRouteQuery(fromAndTo, RouteSearch.WALK_DEFAULT);
+            mRouteSearch.calculateWalkRouteAsyn(mQueryWalk);//开始算路
+            showProgressDialog();
+
         }
 
     }
@@ -1059,7 +1091,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     mWalkRouteOverlay.removeFromMap();
                     mWalkRouteOverlay.addToMap();
                     mWalkRouteOverlay.zoomToSpan();
-                } else if (result != null && result.getPaths() == null) {
+                } else if (result.getPaths() == null) {
                     ToastUtil.show(this, R.string.no_result);
                 }
             } else {

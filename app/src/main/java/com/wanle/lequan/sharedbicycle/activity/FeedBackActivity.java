@@ -61,6 +61,8 @@ public class FeedBackActivity extends AppCompatActivity {
                     feedBack();
                 }
                 break;
+            default:
+                break;
         }
     }
 

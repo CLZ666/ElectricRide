@@ -43,6 +43,7 @@ public class MyTripActivity extends AppCompatActivity {
     SwipeRefreshLayout mSwipRefresh;
     private TripListAdapter mMAdapter;
     private View emptyView;
+    private TextView mTv_empty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,9 @@ public class MyTripActivity extends AppCompatActivity {
         mSwipRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getTripList(true);
+                if (NetWorkUtil.isNetworkAvailable(MyTripActivity.this)){
+                    getTripList(true);
+                }
                 mSwipRefresh.setRefreshing(false);
             }
         });
@@ -71,11 +74,22 @@ public class MyTripActivity extends AppCompatActivity {
 
         }
         emptyView = findViewById(R.id.empty_view);
+        mTv_empty = (TextView) emptyView.findViewById(R.id.tv_empty);
+        mTv_empty.setText("暂时没有行程记录哦");
+        emptyView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getTripList(true);
+            }
+        });
         mMAdapter = new TripListAdapter(this);
         mRecListTrip.setAdapter(mMAdapter);
         mRecListTrip.setEmptyView(emptyView);
+        netBug();
         mRecListTrip.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        getTripList(false);
+        if (NetWorkUtil.isNetworkAvailable(this)){
+            getTripList(false);
+        }
         mRecListTrip.addItemDecoration(new RecycleViewDivider(this, LinearLayoutManager.HORIZONTAL, 3, getResources().getColor(R.color.red)));
     }
 
@@ -102,6 +116,7 @@ public class MyTripActivity extends AppCompatActivity {
                             if (tripListBean.getResponseCode().equals("1")) {
                                 Log.i("trip", tripListBean.getResponseObj().size() + "");
                                 mMAdapter.setData(tripListBean.getResponseObj(), isRefresh);
+                                abnormalView();
                             } else {
                                 ToastUtil.show(MyTripActivity.this, tripListBean.getResponseMsg());
                             }
@@ -123,5 +138,23 @@ public class MyTripActivity extends AppCompatActivity {
     @OnClick(R.id.iv_back)
     public void onClick() {
         finish();
+   }
+    public void abnormalView(){
+        if (NetWorkUtil.isNetworkAvailable(MyTripActivity.this)){
+            if (mMAdapter.getItemCount()==0){
+                emptyView.setVisibility(View.VISIBLE);
+                mSwipRefresh.setVisibility(View.GONE);
+            }else{
+                emptyView.setVisibility(View.GONE);
+                mSwipRefresh.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+    public void netBug(){
+        if (!NetWorkUtil.isNetworkAvailable(MyTripActivity.this)) {
+            mTv_empty.setText("网络连接失败，连接后点击刷新");
+            emptyView.setVisibility(View.VISIBLE);
+            mSwipRefresh.setVisibility(View.GONE);
+        }
     }
 }

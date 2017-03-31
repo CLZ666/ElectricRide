@@ -43,6 +43,7 @@ public class InfoWinAdapter implements AMap.InfoWindowAdapter, View.OnClickListe
 
     private void initData(Marker marker) {
         //mPosition = marker.getPosition();
+
     }
 
     @Override
