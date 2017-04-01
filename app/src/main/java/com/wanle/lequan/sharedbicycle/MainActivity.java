@@ -176,7 +176,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         //monitiorMemoryLeak();
         initMap(savedInstanceState);
         initView();
-        mapPermission();
+        if (NetWorkUtil.isNetworkAvalible(this)) {
+            mapPermission();
+        }
         monitorBlueTooth();
         monitiorNetInfo();
         String s = sHA1();
@@ -228,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void onEventMainThread(MyEvent event) {
         String msg = event.getMsg();
         // Log.i("eventmsg", msg);
-        if (null != msg) {
+        if (msg != null) {
             if (msg.equals("网络连接成功")) {
                 if (null != mlocationClient && null != mCenterPoint) {
                     gps_start(false);
@@ -585,7 +587,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      */
     public void showBikeStation() {
         mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.station_icon));
-        if (null!=mAmapocation){
+        if (null != mAmapocation) {
             queryCar(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
         }
         mIsStation = true;
@@ -594,13 +596,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     /**
      * 显示附近单车
      */
-    public void showBike(){
+    public void showBike() {
         mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.moto));
-        if (null!=mAmapocation){
+        if (null != mAmapocation) {
             queryCar(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
         }
         mIsStation = false;
     }
+
     private void userCar() {
         boolean isLogin1 = mSp_isLogin.getBoolean("isLogin", false);
         boolean isDeposit = mSpUserinfo.getBoolean(getResources().getString(R.string.is_deposit), false);
@@ -809,9 +812,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onLocationChanged(AMapLocation amapLocation) {
+        mAmapocation = amapLocation;
         if (mListener != null && amapLocation != null) {
             if (amapLocation.getErrorCode() == 0) {
-                mAmapocation = amapLocation;
                 mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
                 double longitude = amapLocation.getLongitude();
                 double latitude = amapLocation.getLatitude();

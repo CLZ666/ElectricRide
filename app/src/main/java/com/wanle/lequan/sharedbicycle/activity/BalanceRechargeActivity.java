@@ -335,7 +335,6 @@ public class BalanceRechargeActivity extends AppCompatActivity {
 
         public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (NetWorkUtil.isNetworkAvailable(BalanceRechargeActivity.this)) {
                     int id = mRgbWayPay.getCheckedRadioButtonId();
@@ -347,7 +346,6 @@ public class BalanceRechargeActivity extends AppCompatActivity {
                 }
                 return true;
             }
-
             return false;
 
         }

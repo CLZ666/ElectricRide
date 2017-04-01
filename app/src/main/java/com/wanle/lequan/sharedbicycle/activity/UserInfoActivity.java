@@ -198,9 +198,12 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
         });
     }
 
-    @OnClick({R.id.linear_borrow, R.id.rel_my_account, R.id.rel_my_trip, R.id.rel_my_news, R.id.rel_my_invite, R.id.rel_user_guide, R.id.rel_my_contact_us, R.id.iv_back, R.id.tv_setting})
+    @OnClick({R.id.user_icon,R.id.linear_borrow, R.id.rel_my_account, R.id.rel_my_trip, R.id.rel_my_news, R.id.rel_my_invite, R.id.rel_user_guide, R.id.rel_my_contact_us, R.id.iv_back, R.id.tv_setting})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.user_icon:
+                startActivity(new Intent(this, SettingActivity.class));
+                break;
             case R.id.linear_borrow:
                 if (!mIsDeposit) {
                     startActivity(new Intent(this, DepositActivity.class));
