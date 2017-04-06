@@ -28,7 +28,7 @@ public class ProgersssDialog extends Dialog {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.progress_dialog, null);
         mIdTvLoadingmsg= (TextView) view.findViewById(R.id.id_tv_loadingmsg);
-      //  setCancelable(true);
+        setCancelable(true);
         setCanceledOnTouchOutside(false);
         //给图片添加动态效果
         //Animation anim = AnimationUtils.loadAnimation(context, R.anim.loading_dialog_progressbar);

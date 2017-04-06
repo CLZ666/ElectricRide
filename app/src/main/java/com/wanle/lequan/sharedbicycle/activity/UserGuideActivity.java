@@ -2,6 +2,7 @@ package com.wanle.lequan.sharedbicycle.activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
@@ -47,6 +48,21 @@ public class UserGuideActivity extends AppCompatActivity {
         emptyView = findViewById(R.id.empty_view);
         mTv_empty = (TextView) emptyView.findViewById(R.id.tv_empty);
         netBug();
+        emptyView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (NetWorkUtil.isNetworkAvailable(UserGuideActivity.this)){
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mWebView.setVisibility(View.VISIBLE);
+                            emptyView.setVisibility(View.GONE);
+                        }
+                    },1000);
+
+                }
+            }
+        });
     }
 
     public void netBug() {

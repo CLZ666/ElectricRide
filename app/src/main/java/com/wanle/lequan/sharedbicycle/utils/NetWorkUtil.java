@@ -106,7 +106,7 @@ public class NetWorkUtil {
         }
     }
     /**
-     * 检测当的网络（WLAN、3G/2G）状态
+     * 检测当前的网络（WLAN、3G/2G）状态
      * @param context Context
      * @return true 表示网络可用
      */
