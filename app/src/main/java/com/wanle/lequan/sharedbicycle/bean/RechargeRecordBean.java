@@ -10,10 +10,11 @@ import java.util.List;
 
 public class RechargeRecordBean {
 
+
     /**
      * responseCode : 1
      * responseMsg :
-     * responseObj : {"resultCode":1,"list":[{"income":1,"pay":0,"ctime":1488719491000,"type":1},{"income":1,"pay":0,"ctime":1488719231000,"type":1},{"income":1,"pay":0,"ctime":1488719110000,"type":1},{"income":1,"pay":0,"ctime":1488707554000,"type":2},{"income":1000,"pay":0,"ctime":1488707554000,"type":1},{"income":1,"pay":0,"ctime":1488637394000,"type":2},{"income":1000,"pay":0,"ctime":1488637394000,"type":1},{"income":1,"pay":0,"ctime":1488636714000,"type":2},{"income":1000,"pay":0,"ctime":1488636714000,"type":1},{"income":1,"pay":0,"ctime":1488633396000,"type":2},{"income":1000,"pay":0,"ctime":1488633396000,"type":1},{"income":1,"pay":0,"ctime":1488632839000,"type":2},{"income":1000,"pay":0,"ctime":1488632839000,"type":1},{"income":1,"pay":0,"ctime":1488632569000,"type":2},{"income":1000,"pay":0,"ctime":1488632569000,"type":1},{"income":10,"pay":0,"ctime":1488632228000,"type":2},{"income":1000,"pay":0,"ctime":1488632228000,"type":1}]}
+     * responseObj : {"resultCode":1,"list":[{"income":1000,"pay":0,"ctime":"2017-04-06 14:42:56","type":"7"},{"income":1,"pay":0,"ctime":"2017-04-06 14:42:56","type":"2"},{"income":1000,"pay":0,"ctime":"2017-03-16 12:33:56","type":"7"},{"income":1,"pay":0,"ctime":"2017-03-16 12:33:56","type":"2"}]}
      */
 
     private String responseCode;
@@ -47,7 +48,7 @@ public class RechargeRecordBean {
     public static class ResponseObjBean {
         /**
          * resultCode : 1
-         * list : [{"income":1,"pay":0,"ctime":1488719491000,"type":1},{"income":1,"pay":0,"ctime":1488719231000,"type":1},{"income":1,"pay":0,"ctime":1488719110000,"type":1},{"income":1,"pay":0,"ctime":1488707554000,"type":2},{"income":1000,"pay":0,"ctime":1488707554000,"type":1},{"income":1,"pay":0,"ctime":1488637394000,"type":2},{"income":1000,"pay":0,"ctime":1488637394000,"type":1},{"income":1,"pay":0,"ctime":1488636714000,"type":2},{"income":1000,"pay":0,"ctime":1488636714000,"type":1},{"income":1,"pay":0,"ctime":1488633396000,"type":2},{"income":1000,"pay":0,"ctime":1488633396000,"type":1},{"income":1,"pay":0,"ctime":1488632839000,"type":2},{"income":1000,"pay":0,"ctime":1488632839000,"type":1},{"income":1,"pay":0,"ctime":1488632569000,"type":2},{"income":1000,"pay":0,"ctime":1488632569000,"type":1},{"income":10,"pay":0,"ctime":1488632228000,"type":2},{"income":1000,"pay":0,"ctime":1488632228000,"type":1}]
+         * list : [{"income":1000,"pay":0,"ctime":"2017-04-06 14:42:56","type":"7"},{"income":1,"pay":0,"ctime":"2017-04-06 14:42:56","type":"2"},{"income":1000,"pay":0,"ctime":"2017-03-16 12:33:56","type":"7"},{"income":1,"pay":0,"ctime":"2017-03-16 12:33:56","type":"2"}]
          */
 
         private int resultCode;
@@ -71,16 +72,16 @@ public class RechargeRecordBean {
 
         public static class ListBean {
             /**
-             * income : 1
+             * income : 1000
              * pay : 0
-             * ctime : 1488719491000
-             * type : 1
+             * ctime : 2017-04-06 14:42:56
+             * type : 7
              */
 
             private int income;
             private int pay;
-            private long ctime;
-            private int type;
+            private String ctime;
+            private String type;
 
             public int getIncome() {
                 return income;
@@ -98,19 +99,19 @@ public class RechargeRecordBean {
                 this.pay = pay;
             }
 
-            public long getCtime() {
+            public String getCtime() {
                 return ctime;
             }
 
-            public void setCtime(long ctime) {
+            public void setCtime(String ctime) {
                 this.ctime = ctime;
             }
 
-            public int getType() {
+            public String getType() {
                 return type;
             }
 
-            public void setType(int type) {
+            public void setType(String type) {
                 this.type = type;
             }
         }

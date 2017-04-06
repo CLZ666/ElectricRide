@@ -17,7 +17,6 @@ import com.google.gson.Gson;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-import com.wanle.lequan.sharedbicycle.MainActivity;
 import com.wanle.lequan.sharedbicycle.R;
 import com.wanle.lequan.sharedbicycle.bean.PayResult;
 import com.wanle.lequan.sharedbicycle.bean.WxOrderInfoBean;
@@ -63,7 +62,7 @@ public class DepositActivity extends AppCompatActivity {
                 if (!isIdentify) {
                     startActivity(new Intent(DepositActivity.this, IdentityVeritActivity.class));
                 } else {
-                    startActivity(new Intent(DepositActivity.this, MainActivity.class));
+                    startActivity(new Intent(DepositActivity.this, UserInfoActivity.class));
                 }
                 DepositActivity.this.finish();
             }

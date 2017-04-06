@@ -122,6 +122,7 @@ public class SettingActivity extends AppCompatActivity implements EasyPermission
                 startActivity(new Intent(this, FeedBackActivity.class));
                 break;
             case R.id.rel_about_us:
+                startActivity(new Intent(this,AboutUsActivity.class));
                 break;
             case R.id.btn_exit_login:
                 final AlertDialog dialog = new AlertDialog.Builder(this).create();

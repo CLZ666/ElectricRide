@@ -71,24 +71,23 @@ public class RechargeRecordAdapter extends BaseAdapter {
         RechargeRecordBean.ResponseObjBean.ListBean dataBean = mData.get(position);
         int income = dataBean.getIncome();
         double money=income*1.0/100;
-        String time = stampToDate(dataBean.getCtime() + "");
         holder.mTvAmount.setText("+"+money+"");
-        holder.mTvTime.setText(time);
-        int type = dataBean.getType();
+        holder.mTvTime.setText(dataBean.getCtime());
+        String type = dataBean.getType();
         switch (type){
-            case 1 :
+            case "1" :
                 holder.mTvType.setText("充值增加");
                 break;
-            case 2 :
+            case "2" :
                 holder.mTvType.setText("充值押金");
                 break;
-            case 3 :
+            case "3" :
                 holder.mTvType.setText("退还押金");
                 break;
-            case 4 :
+            case "4" :
                 holder.mTvType.setText("消费支出");
                 break;
-            case 7 :
+            case "7" :
                 holder.mTvType.setText("活动奖励");
                 break;
             default:

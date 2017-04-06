@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+<TextView
+    android:id="@+id/tv_choose_way"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="选择退款方式"
+    android:textSize="15sp"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="10dp"
+    />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_choose_way"
+        android:layout_marginTop="15dp">
+        <TextView
+            android:id="@+id/tv_zfb"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="支付宝"
+            android:textColor="@color/red"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_marginBottom="15dp"
+            />
+        <TextView
+            android:id="@+id/tv_bank"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="银行卡"
+            android:textColor="@color/red"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_marginBottom="15dp"
+            />
+    </LinearLayout>
+</RelativeLayout>

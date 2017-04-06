@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_deposit_return_bank"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.wanle.lequan.sharedbicycle.activity.DepositReturnBankActivity">
+    <include layout="@layout/layout_navigation_bar"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_margin="10dp"
+        android:gravity="center|left"
+        android:text="@string/input_right_info"
+        android:textColor="@color/red"
+        android:textSize="20sp"
+        android:id="@+id/textView5"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="姓名:"
+            android:textColor="@color/black"
+            android:textSize="18sp"/>
+
+        <EditText
+            android:id="@+id/edit_input_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="4"
+            android:background="@drawable/line_et_identify_bg"
+            android:hint="@string/input_name"
+            android:textColorHint="@color/tougrey"
+            android:textCursorDrawable="@null"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="银行名称:"
+            android:textColor="@color/black"
+            android:textSize="18sp"/>
+
+        <EditText
+            android:id="@+id/edit_bank_account"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="4"
+            android:background="@drawable/line_et_identify_bg"
+            android:hint="@string/input_bank_name"
+            android:textColorHint="@color/tougrey"
+            android:textCursorDrawable="@null"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="支行名称:"
+            android:textColor="@color/black"
+            android:textSize="18sp"/>
+
+        <EditText
+            android:id="@+id/edit_branch_account"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="4"
+            android:background="@drawable/line_et_identify_bg"
+            android:hint="@string/input_brance_name"
+            android:textColorHint="@color/tougrey"
+            android:textCursorDrawable="@null"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="银行卡号:"
+            android:textColor="@color/black"
+            android:textSize="18sp"/>
+
+        <EditText
+            android:id="@+id/edit_bank_card"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="4"
+            android:background="@drawable/line_et_identify_bg"
+            android:hint="@string/input_bank_card"
+            android:textColorHint="@color/tougrey"
+            android:textCursorDrawable="@null"
+            />
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center|left"
+        android:text="@string/choose_return_reason"
+        android:textColor="@color/red"
+        android:textSize="20sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="160dp"
+            android:layout_marginTop="3dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="1dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="站点太少"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="1dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="借车不方便"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="1dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="系统不好用"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="1dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="不想用了"
+                android:textColor="@color/black"
+                android:textSize="18sp"/>
+        </LinearLayout>
+
+        <RadioGroup
+            android:id="@+id/rgb_refund_reason"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginRight="15dp"
+            android:background="@color/white2"
+            android:gravity="right">
+
+            <RadioButton
+                android:id="@+id/rb_station_little"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/rb_pay_select"
+                android:button="@null"
+                />
+
+            <RadioButton
+                android:id="@+id/rb_borrow_not_confident"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/rb_pay_select"
+                android:button="@null"/>
+
+            <RadioButton
+                android:id="@+id/rb_system_not_easy_to_use"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/rb_pay_select"
+                android:button="@null"/>
+
+            <RadioButton
+                android:id="@+id/rb_do_not_use"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/rb_pay_select"
+                android:button="@null"/>
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center|left"
+        android:text="@string/refund_desc"
+        android:textColor="@color/red"/>
+
+    <Button
+        android:id="@+id/btn_confim"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="end"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="25dp"
+        android:background="@color/red"
+        android:text="提交"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        />
+</LinearLayout>

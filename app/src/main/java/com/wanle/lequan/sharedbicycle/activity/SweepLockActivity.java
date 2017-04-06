@@ -160,10 +160,12 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     String jsonString = response.body().string();
+                    Log.i("checkcarState",jsonString);
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
                         if (messageBean.getResponseCode().equals("1")) {
+                            Log.i("checkcarState",messageBean.toString());
                             mDialog.show();
                         } else {
                             ToastUtils.getShortToastByString(SweepLockActivity.this, messageBean.getResponseMsg());

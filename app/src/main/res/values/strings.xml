@@ -40,4 +40,12 @@
     <string name="progressbar_dialog_txt">正在处理，请稍后...</string>
     <string name="confim">确定</string>
     <string name="cancel">取消</string>
+    <string name="input_right_info">*请务必填写正确的真实信息</string>
+    <string name="input_num">请输入真实姓名</string>
+    <string name="input_zfb_account">请输入支付宝账号</string>
+    <string name="choose_return_reason">选择退款原因</string>
+    <string name="refund_desc">申请提交成功后，租车押金将在3-7个工作日内退还至您的账户,请注意查看账户资金动态</string>
+    <string name="input_bank_name">请输入银行名称</string>
+    <string name="input_brance_name">请输入支行名称</string>
+    <string name="input_bank_card">请输入银行卡号</string>
 </resources>

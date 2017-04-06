@@ -9,9 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareListener;
@@ -28,14 +27,16 @@ import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMWeb;
 import com.wanle.lequan.sharedbicycle.R;
+import com.wanle.lequan.sharedbicycle.bean.GlobalParmsBean;
 import com.wanle.lequan.sharedbicycle.bean.UserInfoBean;
 import com.wanle.lequan.sharedbicycle.constant.ApiService;
+import com.wanle.lequan.sharedbicycle.utils.GetJsonStringUtil;
 import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
 import com.wanle.lequan.sharedbicycle.utils.ToastUtil;
-import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +44,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import rx.Observable;
 import rx.Subscriber;
 
@@ -74,12 +79,10 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
 
     private boolean mIsDeposit;
     private boolean mIsIdentify;
-    private UserInfoBean mUserInfo;
     private ImageView mIvBack;
     private SharedPreferences mSpUserInfo;
+    private SharedPreferences mSpGlobalParms;
     private boolean mIsBorrow;
-    private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
-    private static final int MY_PERMISSIONS_REQUEST_SHARE_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,19 +91,42 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
         ButterKnife.bind(this);
         mIvBack = (ImageView) findViewById(R.id.iv_back);
         mSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
+        mSpGlobalParms=getSharedPreferences("global",MODE_PRIVATE);
         getUserInfo();
         UpdateUi();
+        getGlobalParms();
     }
 
-    private void getUserInfoString() {
+    private void getGlobalParms() {
+        final String userId = mSpUserInfo.getString("userId", "");
+        final Call<ResponseBody> call = HttpUtil.getService(ApiService.class).globalParms(userId);
+        GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    final String jsonString = response.body().string();
+                    if (null!=jsonString){
+                        Gson gson=new Gson();
+                        final GlobalParmsBean parmsBean = gson.fromJson(jsonString, GlobalParmsBean.class);
+                        if (null!=parmsBean){
+                            mSpGlobalParms.edit().putString("aboutUs",parmsBean.getResponseObj().getAboutUs()).commit();
+                            mSpGlobalParms.edit().putString("customerService",parmsBean.getResponseObj().getCustomerService()).commit();
+                            mSpGlobalParms.edit().putInt("deposit",parmsBean.getResponseObj().getDeposit()).commit();
+                            mSpGlobalParms.edit().putString("userGuide",parmsBean.getResponseObj().getUserGuide()).commit();
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
-        String userId = getSharedPreferences("userinfo", MODE_PRIVATE).getString("userId", "");
-        // String userId = "9DBD039C7DCE2DA86889143946687EF6BD790241761D8CD8147EA299742DBCD6B2DC180FD294EC25F7DEBEB1F2B0DA7";
-        Log.i("userInfo", userId);
-        Map<String, String> map = new HashMap<>();
-        map.put("userId", userId);
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
 
+            }
+        });
     }
+
 
     private void UpdateUi() {
         String headimg = mSpUserInfo.getString("headimg", "");
@@ -133,7 +159,7 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
             mTvDeposit.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.complete_verify), null, null);
             mTvDeposit.setTextColor(getResources().getColor(R.color.red));
         }
-        if (mIsDeposit && mIsIdentify) {
+        if (mIsIdentify) {
             mLineCertification.setBackgroundColor(getResources().getColor(R.color.red));
             mTvIdentify.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.complete_verify), null, null);
             mTvIdentify.setTextColor(getResources().getColor(R.color.red));
@@ -145,7 +171,6 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
      */
     private void getUserInfo() {
         final String userId = mSpUserInfo.getString("userId", "");
-
         // String userId = "99DBD039C7DCE2DA86889143946687EF6BD790241761D8CD8147EA299742DBCD6B2DC180FD294EC25F7DEBEB1F2B0DA7";
         Log.i("userinfo", userId);
         Map<String, String> map = new HashMap<>();
@@ -215,11 +240,7 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
                 }
                 break;
             case R.id.rel_my_account:
-                if (mIsDeposit) {
                     startActivity(new Intent(this, MyAccountActivity.class));
-                } else {
-                    ToastUtils.getShortToastByString(this, "请先充值押金");
-                }
                 break;
             case R.id.rel_my_trip:
                 startActivity(new Intent(this, MyTripActivity.class));
@@ -228,14 +249,13 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
                 startActivity(new Intent(this, MyNewsActivity.class));
                 break;
             case R.id.rel_my_invite:
-                //SharePermission();
                 shareOption();
                 break;
             case R.id.rel_user_guide:
                 startActivity(new Intent(this, UserGuideActivity.class));
                 break;
             case R.id.rel_my_contact_us:
-                testCall();
+                callPhone();
                 break;
             case R.id.tv_setting:
                 startActivity(new Intent(this, SettingActivity.class));
@@ -282,44 +302,18 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
         EventBus.getDefault().unregister(this);
     }
 
-    public void testCall() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, MY_PERMISSIONS_REQUEST_CALL_PHONE);
-        } else {
-            callPhone();
-        }
-    }
 
     public void callPhone() {
-        Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "18855091326"));//跳转到拨号界面，同时传递电话号码
+        String phone=mSpGlobalParms.getString("customerService","");
+        Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));//跳转到拨号界面，同时传递电话号码
         startActivity(dialIntent);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == MY_PERMISSIONS_REQUEST_CALL_PHONE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                callPhone();
-            } else {
-                ToastUtils.getShortToastByString(this, "权限已被拒绝");
-            }
-            return;
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
+
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override

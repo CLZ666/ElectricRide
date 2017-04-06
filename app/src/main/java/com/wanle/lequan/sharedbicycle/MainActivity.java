@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -46,6 +47,19 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.navi.AMapNavi;
+import com.amap.api.navi.AMapNaviListener;
+import com.amap.api.navi.model.AMapLaneInfo;
+import com.amap.api.navi.model.AMapNaviCameraInfo;
+import com.amap.api.navi.model.AMapNaviCross;
+import com.amap.api.navi.model.AMapNaviInfo;
+import com.amap.api.navi.model.AMapNaviLocation;
+import com.amap.api.navi.model.AMapNaviTrafficFacilityInfo;
+import com.amap.api.navi.model.AMapServiceAreaInfo;
+import com.amap.api.navi.model.AimLessModeCongestionInfo;
+import com.amap.api.navi.model.AimLessModeStat;
+import com.amap.api.navi.model.NaviInfo;
+import com.amap.api.navi.model.NaviLatLng;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.GeocodeResult;
@@ -59,6 +73,7 @@ import com.amap.api.services.route.RideRouteResult;
 import com.amap.api.services.route.RouteSearch;
 import com.amap.api.services.route.WalkPath;
 import com.amap.api.services.route.WalkRouteResult;
+import com.autonavi.tbt.TrafficFacilityInfo;
 import com.google.gson.Gson;
 import com.wanle.lequan.sharedbicycle.activity.BlueToothActivity;
 import com.wanle.lequan.sharedbicycle.activity.DepositActivity;
@@ -73,6 +88,7 @@ import com.wanle.lequan.sharedbicycle.adapter.InfoWinAdapter;
 import com.wanle.lequan.sharedbicycle.bean.AddressInfo;
 import com.wanle.lequan.sharedbicycle.bean.CarState;
 import com.wanle.lequan.sharedbicycle.bean.CarStateBean;
+import com.wanle.lequan.sharedbicycle.bean.GlobalParmsBean;
 import com.wanle.lequan.sharedbicycle.bean.MessageBean;
 import com.wanle.lequan.sharedbicycle.bean.NearByCarBean;
 import com.wanle.lequan.sharedbicycle.constant.ApiService;
@@ -83,6 +99,7 @@ import com.wanle.lequan.sharedbicycle.fragment.CarStateFragment;
 import com.wanle.lequan.sharedbicycle.overlay.WalkRouteOverlay;
 import com.wanle.lequan.sharedbicycle.receiver.BlueToothStateReceiver;
 import com.wanle.lequan.sharedbicycle.receiver.NetInfoReceiver;
+import com.wanle.lequan.sharedbicycle.utils.ErrorInfo;
 import com.wanle.lequan.sharedbicycle.utils.GetJsonStringUtil;
 import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
 import com.wanle.lequan.sharedbicycle.utils.NetWorkUtil;
@@ -112,7 +129,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, LocationSource, AMapLocationListener, AMap.OnCameraChangeListener, GeocodeSearch.OnGeocodeSearchListener, RouteSearch.OnRouteSearchListener, AMap.OnMarkerClickListener, AMap.OnMapClickListener {
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, LocationSource, AMapLocationListener, AMap.OnCameraChangeListener, GeocodeSearch.OnGeocodeSearchListener, RouteSearch.OnRouteSearchListener, AMap.OnMarkerClickListener, AMap.OnMapClickListener, AMapNaviListener {
     @BindView(R.id.map)
     MapView mMap;
     @BindView(R.id.btn_use_car)
@@ -121,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     ImageView mIvEndPoint;
     @BindView(R.id.iv_bike_station)
     ImageView mIvBikeStation;
+    @BindView(R.id.iv_guide)
+    ImageView mIvGuide;
     private SharedPreferences mSp_isLogin;
     private AMap aMap;
     private UiSettings mUiSettings;//定义一个UiSettings对象
@@ -165,8 +184,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private NetInfoReceiver mNetinfoReceiver;
     private String mStreet;
     private String mStreet1;
-    private String mResponseCode;
-
+    private AMapNavi mAMapNavi;
+    private Marker mClickMarker;
+    private SharedPreferences mSpGlobalParms;
+    private SharedPreferences mSpUserInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -201,16 +222,45 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (mCenterPoint != null) {
             regeocdeQuery();
         }
+        //获取AMapNavi实例
+        mAMapNavi = AMapNavi.getInstance(getApplicationContext());
+        //添加监听回调，用于处理算路成功
+        mAMapNavi.addAMapNaviListener(this);
+        getGlobalParms();
     }
 
-   /* *//**
-     * 监测内存泄漏
-     *//*
-   private void monitiorMemoryLeak() {
-        RefWatcher refWatcher =  MyApp.getRefWatcher(this);
-        refWatcher.watch(this);
-    }*/
+    /**
+     * 获得全局参数
+     */
+    private void getGlobalParms() {
+        final String userId = mSpUserInfo.getString("userId", "");
+        final Call<ResponseBody> call = HttpUtil.getService(ApiService.class).globalParms(userId);
+        GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    final String jsonString = response.body().string();
+                    if (null!=jsonString){
+                        Gson gson=new Gson();
+                        final GlobalParmsBean parmsBean = gson.fromJson(jsonString, GlobalParmsBean.class);
+                        if (null!=parmsBean){
+                            mSpGlobalParms.edit().putString("aboutUs",parmsBean.getResponseObj().getAboutUs()).commit();
+                            mSpGlobalParms.edit().putString("customerService",parmsBean.getResponseObj().getCustomerService()).commit();
+                            mSpGlobalParms.edit().putInt("deposit",parmsBean.getResponseObj().getDeposit()).commit();
+                            mSpGlobalParms.edit().putString("userGuide",parmsBean.getResponseObj().getUserGuide()).commit();
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
     /**
      * 监测网络连接状态
      */
@@ -271,7 +321,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         gson = new Gson();
                         MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
                         if (null != messageBean) {
-                            mResponseCode = messageBean.getResponseCode();
                             if (messageBean.getResponseCode().equals("1")) {
                                 showBikeStation();
                                 setCarStutsFragment();
@@ -340,6 +389,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         mRouteSearch.setRouteSearchListener(this);
         mSp_isLogin = getSharedPreferences("isLogin", MODE_PRIVATE);
         EventBus.getDefault().register(this);
+        mSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
+        mSpGlobalParms=getSharedPreferences("global",MODE_PRIVATE);
     }
 
     public String sHA1() {
@@ -372,12 +423,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      * 得到屏幕的中心点经纬度
      */
     public void setCenter() {
-            /*mCenterMarker = aMap.addMarker(new MarkerOptions()
-                    .anchor(0.5f, 0.5f)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.end_point)));*/
         aMap.setOnCameraChangeListener(this);
-        //  aMap.getMyLocation();
-
     }
 
     /**
@@ -450,7 +496,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         aMap.setMyLocationRotateAngle(180);
     }
 
-    @OnClick({R.id.iv_toolbarmore, R.id.iv_search, R.id.iv_gps_start, R.id.iv_bike_station, R.id.btn_use_car, R.id.iv_end_point})
+    @OnClick({R.id.iv_toolbarmore, R.id.iv_search, R.id.iv_gps_start, R.id.iv_kefu, R.id.iv_guide, R.id.iv_bike_station, R.id.btn_use_car, R.id.iv_end_point})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_toolbarmore:
@@ -464,6 +510,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             case R.id.iv_search:
                 startActivityForResult(new Intent(this, SearchActivity.class), REQUEST_CODE);
                 //startActivityForResult(new Intent(this, DepositActivity.class), REQUEST_CODE);
+                break;
+            case R.id.iv_kefu:
+                callPhone();
                 break;
             case R.id.iv_gps_start:
                 mapPermission();
@@ -520,6 +569,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
+    public void callPhone() {
+        final String phone = getSharedPreferences("global", MODE_PRIVATE).getString("customerService", "");
+        Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));//跳转到拨号界面，同时传递电话号码
+        startActivity(dialIntent);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+    }
+
     private void gps_start(final boolean isFirst) {
         if (NetWorkUtil.isNetworkAvailable(this)) {
             mapPermission();
@@ -527,6 +585,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             isUserCar();
             if (mWalkRouteOverlay != null) {
                 mWalkRouteOverlay.removeFromMap();
+            }
+            if (mOldMarker != null) {
+                mOldMarker.hideInfoWindow();
             }
             aMap.setLocationSource(this);// 设置定位监听
             aMap.setMyLocationEnabled(true);
@@ -719,7 +780,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onResume();
         mMap.onResume();
         monitorBlueTooth();
-        // mMCdt.start();
     }
 
 
@@ -986,9 +1046,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      * marker的点击事件
      */
     @Override
-    public boolean onMarkerClick(Marker marker) {
+    public boolean onMarkerClick(final Marker marker) {
         if (NetWorkUtil.isNetworkAvailable(this)) {
             mOldMarker = marker;
+            mClickMarker = marker;
             routeLine(marker.getPosition());
         }
         return false;
@@ -1208,4 +1269,171 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    public void onInitNaviFailure() {
+        Log.i("err1","init navi Failed");
+    }
+
+    @Override
+    public void onInitNaviSuccess() {
+        if (mClickMarker != null) {
+            mIvGuide.setVisibility(View.VISIBLE);
+            mIvGuide.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    NaviLatLng start = null, end = null;
+                    if (mAmapocation != null) {
+                        start = new NaviLatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
+                        end = new NaviLatLng(mClickMarker.getPosition().latitude, mClickMarker.getPosition().longitude);
+                        mAMapNavi.calculateRideRoute(start, end);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onStartNavi(int i) {
+
+    }
+
+    @Override
+    public void onTrafficStatusUpdate() {
+
+    }
+
+    @Override
+    public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
+
+    }
+
+    @Override
+    public void onGetNavigationText(int i, String s) {
+
+    }
+
+    @Override
+    public void onEndEmulatorNavi() {
+
+    }
+
+    @Override
+    public void onArriveDestination() {
+
+    }
+
+    @Override
+    public void onCalculateRouteSuccess() {
+        Log.i("guide1", "可以导航了");
+    }
+
+    @Override
+    public void onCalculateRouteFailure(int errorInfo) {
+//路线计算失败
+        Log.e("dm1", "--------------------------------------------");
+        Log.i("dm1", "路线计算失败：错误码=" + errorInfo + ",Error Message= " + ErrorInfo.getError(errorInfo));
+        Log.i("dm1", "错误码详细链接见：http://lbs.amap.com/api/android-navi-sdk/guide/tools/errorcode/");
+        Log.e("dm1", "--------------------------------------------");
+        Toast.makeText(this, "errorInfo：" + errorInfo + ",Message：" + ErrorInfo.getError(errorInfo), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onReCalculateRouteForYaw() {
+
+    }
+
+    @Override
+    public void onReCalculateRouteForTrafficJam() {
+
+    }
+
+    @Override
+    public void onArrivedWayPoint(int i) {
+
+    }
+
+    @Override
+    public void onGpsOpenStatus(boolean b) {
+
+    }
+
+    @Override
+    public void onNaviInfoUpdate(NaviInfo naviInfo) {
+
+    }
+
+    @Override
+    public void onNaviInfoUpdated(AMapNaviInfo aMapNaviInfo) {
+
+    }
+
+    @Override
+    public void updateCameraInfo(AMapNaviCameraInfo[] aMapNaviCameraInfos) {
+
+    }
+
+    @Override
+    public void onServiceAreaUpdate(AMapServiceAreaInfo[] aMapServiceAreaInfos) {
+
+    }
+
+    @Override
+    public void showCross(AMapNaviCross aMapNaviCross) {
+
+    }
+
+    @Override
+    public void hideCross() {
+
+    }
+
+    @Override
+    public void showLaneInfo(AMapLaneInfo[] aMapLaneInfos, byte[] bytes, byte[] bytes1) {
+
+    }
+
+    @Override
+    public void hideLaneInfo() {
+
+    }
+
+    @Override
+    public void onCalculateMultipleRoutesSuccess(int[] ints) {
+
+    }
+
+    @Override
+    public void notifyParallelRoad(int i) {
+
+    }
+
+    @Override
+    public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
+
+    }
+
+    @Override
+    public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
+
+    }
+
+    @Override
+    public void OnUpdateTrafficFacility(TrafficFacilityInfo trafficFacilityInfo) {
+
+    }
+
+    @Override
+    public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
+
+    }
+
+    @Override
+    public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {
+
+    }
+
+    @Override
+    public void onPlayRing(int i) {
+
+    }
 }

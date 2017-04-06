@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,6 +87,7 @@ public class RechargeRecordActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     String jsonString = response.body().string();
+                    Log.i("RECORD1", jsonString);
                     if (jsonString != null) {
                         Gson gson = new Gson();
                         RechargeRecordBean dataBean = gson.fromJson(jsonString, RechargeRecordBean.class);

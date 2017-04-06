@@ -119,4 +119,14 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("car/useCarCheckStatus.html")
     Call<ResponseBody> checkCarState(@FieldMap Map<String, String> map);
+
+    //申请退还押金的接口
+    @FormUrlEncoded
+    @POST("recharge/rechargeBack.html")
+    Call<ResponseBody> depositRefund(@FieldMap Map<String, String> map);
+
+    //获得全局参数的接口
+    @FormUrlEncoded
+    @POST("user/note.html")
+    Call<ResponseBody> globalParms(@Field("userId") String userId);
 }

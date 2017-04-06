@@ -3,8 +3,10 @@ package com.wanle.lequan.sharedbicycle.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,7 +14,6 @@ import android.widget.TextView;
 import com.wanle.lequan.sharedbicycle.R;
 import com.wanle.lequan.sharedbicycle.bean.UserInfoBean;
 import com.wanle.lequan.sharedbicycle.utils.GetUserInfo;
-import com.wanle.lequan.sharedbicycle.utils.ToastUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,12 +34,17 @@ public class MyAccountActivity extends AppCompatActivity {
     @BindView(R.id.tv_deposit_refund)
     TextView mTvDepositRefund;
     private SharedPreferences mSpUserInfo;
+    private boolean mIsDeposit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_account);
         ButterKnife.bind(this);
+        initView();
+    }
+
+    private void initView() {
         mTvTitl.setText("我的账户");
         mTvSetting.setText("明细");
         mTvTitl.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
@@ -53,6 +59,14 @@ public class MyAccountActivity extends AppCompatActivity {
         mSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
         String balance = mSpUserInfo.getString("balance", "");
         mTvFareBalance.setText(balance);
+        mIsDeposit = mSpUserInfo.getBoolean(getResources().getString(R.string.is_deposit), false);
+        if (mIsDeposit){
+            mTvDepositRefund.setText("押金退款");
+            mTvDepositRefund.setTextColor(getResources().getColor(R.color.red));
+        }else{
+            mTvDepositRefund.setText("充值押金");
+            mTvDepositRefund.setTextColor(getResources().getColor(R.color.colorRed));
+        }
     }
 
     private void getUserInfo() {
@@ -69,10 +83,14 @@ public class MyAccountActivity extends AppCompatActivity {
 
             @Override
             public void onNext(UserInfoBean userInfoBean) {
-                if (null!=userInfoBean&&userInfoBean.getResponseCode().equals("1")){
+                if (null != userInfoBean && userInfoBean.getResponseCode().equals("1")) {
                     int balance = userInfoBean.getResponseObj().getBalance();
                     double mbalance = balance * 1.0 / 100;
                     mTvFareBalance.setText(mbalance + "");
+                    final int payDeposit = userInfoBean.getResponseObj().getPayDeposit();
+                    if (payDeposit > 0) {
+                        mSpUserInfo.edit().putBoolean(getResources().getString(R.string.is_deposit), true);
+                    }
                 }
             }
         });
@@ -83,6 +101,7 @@ public class MyAccountActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         getUserInfo();
+        initView();
     }
 
 
@@ -93,7 +112,11 @@ public class MyAccountActivity extends AppCompatActivity {
                 startActivity(new Intent(this, RechargeRecordActivity.class));
                 break;
             case R.id.tv_deposit_refund:
-                ToastUtil.show(this,"暂时不支持押金退款哦");
+                if (mIsDeposit){
+                    rechargeReturn();
+                }else{
+                    startActivity(new Intent(this,DepositActivity.class));
+                }
                 break;
             case R.id.btn_recharge:
                 startActivity(new Intent(this, BalanceRechargeActivity.class));
@@ -101,5 +124,28 @@ public class MyAccountActivity extends AppCompatActivity {
             default:
                 break;
         }
+    }
+
+    private void rechargeReturn() {
+        final AlertDialog builder = new AlertDialog.Builder(this).create();
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_recharge_refund, null);
+        builder.setView(dialogView);
+        TextView tv_zfb = (TextView) dialogView.findViewById(R.id.tv_zfb);
+        TextView tv_bank = (TextView) dialogView.findViewById(R.id.tv_bank);
+        tv_zfb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MyAccountActivity.this,DepositReturnZfbActivity.class));
+                builder.cancel();
+            }
+        });
+        tv_bank.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MyAccountActivity.this,DepositReturnBankActivity.class));
+                builder.cancel();
+            }
+        });
+        builder.show();
     }
 }
