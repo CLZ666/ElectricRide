@@ -10,10 +10,11 @@ import java.util.List;
 
 public class NearByStationBean {
 
+
     /**
      * responseCode : 1
      * responseMsg :
-     * responseObj : [{"createTime":null,"createUserId":"","id":"","placeAddress":"XX路128号","placeImg":"","placeLatitude":"31.243429","placeLongitude":"121.442930","placeName":"128号","placeNo":"128","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","placeAddress":"XX路129号","placeImg":"","placeLatitude":"31.243329","placeLongitude":"121.442830","placeName":"129号","placeNo":"129","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","placeAddress":"XX路130号","placeImg":"","placeLatitude":"31.243529","placeLongitude":"121.442730","placeName":"130号","placeNo":"130","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","placeAddress":"XX路131号","placeImg":"","placeLatitude":"31.243629","placeLongitude":"121.442630","placeName":"131号","placeNo":"131","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","placeAddress":"XX路132号","placeImg":"","placeLatitude":"31.243729","placeLongitude":"121.442530","placeName":"132号","placeNo":"132","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","placeAddress":"XX路133号","placeImg":"","placeLatitude":"31.243829","placeLongitude":"121.442430","placeName":"133号","placeNo":"133","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","placeAddress":"XX路134号","placeImg":"","placeLatitude":"31.243929","placeLongitude":"121.442330","placeName":"134号","placeNo":"134","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","placeAddress":"XX路135号","placeImg":"","placeLatitude":"31.241329","placeLongitude":"121.442230","placeName":"135号","placeNo":"135","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","placeAddress":"XX路136号","placeImg":"","placeLatitude":"31.242329","placeLongitude":"121.442130","placeName":"136号","placeNo":"136","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","placeAddress":"XX路136号","placeImg":"","placeLatitude":"31.243329","placeLongitude":"121.441830","placeName":"137号","placeNo":"137","status":null,"updateTime":null,"updateUserId":""}]
+     * responseObj : [{"createTime":null,"createUserId":"","id":"","latitude":"31.243429","longitude":"121.442930","placeAddress":"XX路128号","placeImg":"","placeName":"","placeNo":"128","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","latitude":"31.243329","longitude":"121.442830","placeAddress":"XX路129号","placeImg":"","placeName":"","placeNo":"129","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","latitude":"31.243529","longitude":"121.442730","placeAddress":"XX路130号","placeImg":"","placeName":"","placeNo":"130","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","latitude":"31.243629","longitude":"121.442630","placeAddress":"XX路131号","placeImg":"","placeName":"","placeNo":"131","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","latitude":"31.243729","longitude":"121.442530","placeAddress":"XX路132号","placeImg":"","placeName":"","placeNo":"132","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","latitude":"31.243829","longitude":"121.442430","placeAddress":"XX路133号","placeImg":"","placeName":"","placeNo":"133","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","latitude":"31.243929","longitude":"121.442330","placeAddress":"XX路134号","placeImg":"","placeName":"","placeNo":"134","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","latitude":"31.241329","longitude":"121.442230","placeAddress":"XX路135号","placeImg":"","placeName":"","placeNo":"135","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","latitude":"31.242329","longitude":"121.442130","placeAddress":"XX路136号","placeImg":"","placeName":"","placeNo":"136","status":null,"updateTime":null,"updateUserId":""},{"createTime":null,"createUserId":"","id":"","latitude":"31.243329","longitude":"121.441830","placeAddress":"XX路136号","placeImg":"","placeName":"","placeNo":"137","status":null,"updateTime":null,"updateUserId":""}]
      */
 
     private String responseCode;
@@ -49,11 +50,11 @@ public class NearByStationBean {
          * createTime : null
          * createUserId :
          * id :
+         * latitude : 31.243429
+         * longitude : 121.442930
          * placeAddress : XX路128号
          * placeImg :
-         * placeLatitude : 31.243429
-         * placeLongitude : 121.442930
-         * placeName : 128号
+         * placeName :
          * placeNo : 128
          * status : null
          * updateTime : null
@@ -63,10 +64,10 @@ public class NearByStationBean {
         private Object createTime;
         private String createUserId;
         private String id;
+        private String latitude;
+        private String longitude;
         private String placeAddress;
         private String placeImg;
-        private String placeLatitude;
-        private String placeLongitude;
         private String placeName;
         private String placeNo;
         private Object status;
@@ -97,6 +98,22 @@ public class NearByStationBean {
             this.id = id;
         }
 
+        public String getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(String latitude) {
+            this.latitude = latitude;
+        }
+
+        public String getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(String longitude) {
+            this.longitude = longitude;
+        }
+
         public String getPlaceAddress() {
             return placeAddress;
         }
@@ -111,22 +128,6 @@ public class NearByStationBean {
 
         public void setPlaceImg(String placeImg) {
             this.placeImg = placeImg;
-        }
-
-        public String getPlaceLatitude() {
-            return placeLatitude;
-        }
-
-        public void setPlaceLatitude(String placeLatitude) {
-            this.placeLatitude = placeLatitude;
-        }
-
-        public String getPlaceLongitude() {
-            return placeLongitude;
-        }
-
-        public void setPlaceLongitude(String placeLongitude) {
-            this.placeLongitude = placeLongitude;
         }
 
         public String getPlaceName() {
@@ -167,6 +168,24 @@ public class NearByStationBean {
 
         public void setUpdateUserId(String updateUserId) {
             this.updateUserId = updateUserId;
+        }
+
+        @Override
+        public String toString() {
+            return "ResponseObjBean{" +
+                    "createTime=" + createTime +
+                    ", createUserId='" + createUserId + '\'' +
+                    ", id='" + id + '\'' +
+                    ", latitude='" + latitude + '\'' +
+                    ", longitude='" + longitude + '\'' +
+                    ", placeAddress='" + placeAddress + '\'' +
+                    ", placeImg='" + placeImg + '\'' +
+                    ", placeName='" + placeName + '\'' +
+                    ", placeNo='" + placeNo + '\'' +
+                    ", status=" + status +
+                    ", updateTime=" + updateTime +
+                    ", updateUserId='" + updateUserId + '\'' +
+                    '}';
         }
     }
 }

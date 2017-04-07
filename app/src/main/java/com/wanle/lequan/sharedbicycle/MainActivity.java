@@ -194,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         //String s = sHA1();
         //Log.i("sha1", s);
         setCenter();
+        isUserCar();
         gps_start();
         mMCdt = new CountDownTimer(10, 10) {
             @Override
@@ -640,6 +641,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      * 显示附近还车站点
      */
     public void showBikeStation() {
+       /* if (bikeMarkers.size()>0){
+            for (Marker marker:bikeMarkers){
+                marker.remove();
+            }
+        }*/
         mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.station_icon));
         if (null != mAmapocation) {
            queryReturnStation(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
@@ -651,6 +657,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      * 显示附近单车
      */
     public void showBike() {
+        if (stationMarkers.size()>0){
+            for (Marker marker:stationMarkers){
+                marker.remove();
+            }
+        }
         mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.moto));
         if (null != mAmapocation) {
             queryCar(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
@@ -1019,6 +1030,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
      */
     private void addStationMark(List<NearByStationBean.ResponseObjBean> stations) {
+        Log.i("stations",stations.toString());
         for (Marker marker: bikeMarkers){
             marker.remove();
         }
@@ -1027,8 +1039,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             View markerVeiw = LayoutInflater.from(this).inflate(R.layout.layout_map_marker, null);
             ImageView iv_station = (ImageView) markerVeiw.findViewById(R.id.iv_is_bike);
             iv_station.setImageDrawable(getResources().getDrawable(R.drawable.station_icon));
-            double longitude = stringtoDouble(stations.get(i).getPlaceLongitude());
-            double latitude = stringtoDouble(stations.get(i).getPlaceLatitude());
+            double longitude = stringtoDouble(stations.get(i).getLongitude());
+            double latitude = stringtoDouble(stations.get(i).getLatitude());
             LatLng latlng = new LatLng(latitude, longitude);
             Marker marker=aMap.addMarker(new MarkerOptions()
                     .anchor(0.5f, 0.5f)
