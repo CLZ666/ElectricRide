@@ -47,18 +47,6 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
-import com.amap.api.navi.AMapNavi;
-import com.amap.api.navi.AMapNaviListener;
-import com.amap.api.navi.model.AMapLaneInfo;
-import com.amap.api.navi.model.AMapNaviCameraInfo;
-import com.amap.api.navi.model.AMapNaviCross;
-import com.amap.api.navi.model.AMapNaviInfo;
-import com.amap.api.navi.model.AMapNaviLocation;
-import com.amap.api.navi.model.AMapNaviTrafficFacilityInfo;
-import com.amap.api.navi.model.AMapServiceAreaInfo;
-import com.amap.api.navi.model.AimLessModeCongestionInfo;
-import com.amap.api.navi.model.AimLessModeStat;
-import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
@@ -73,7 +61,6 @@ import com.amap.api.services.route.RideRouteResult;
 import com.amap.api.services.route.RouteSearch;
 import com.amap.api.services.route.WalkPath;
 import com.amap.api.services.route.WalkRouteResult;
-import com.autonavi.tbt.TrafficFacilityInfo;
 import com.google.gson.Gson;
 import com.wanle.lequan.sharedbicycle.activity.BlueToothActivity;
 import com.wanle.lequan.sharedbicycle.activity.DepositActivity;
@@ -81,6 +68,7 @@ import com.wanle.lequan.sharedbicycle.activity.EndRideActivity;
 import com.wanle.lequan.sharedbicycle.activity.IdentityVeritActivity;
 import com.wanle.lequan.sharedbicycle.activity.IsLoginActivity;
 import com.wanle.lequan.sharedbicycle.activity.LoginActivity;
+import com.wanle.lequan.sharedbicycle.activity.NaviActivity;
 import com.wanle.lequan.sharedbicycle.activity.SearchActivity;
 import com.wanle.lequan.sharedbicycle.activity.SweepLockActivity;
 import com.wanle.lequan.sharedbicycle.activity.UserInfoActivity;
@@ -91,6 +79,7 @@ import com.wanle.lequan.sharedbicycle.bean.CarStateBean;
 import com.wanle.lequan.sharedbicycle.bean.GlobalParmsBean;
 import com.wanle.lequan.sharedbicycle.bean.MessageBean;
 import com.wanle.lequan.sharedbicycle.bean.NearByCarBean;
+import com.wanle.lequan.sharedbicycle.bean.NearByStationBean;
 import com.wanle.lequan.sharedbicycle.constant.ApiService;
 import com.wanle.lequan.sharedbicycle.event.CarStateEvent;
 import com.wanle.lequan.sharedbicycle.event.MyEvent;
@@ -99,7 +88,6 @@ import com.wanle.lequan.sharedbicycle.fragment.CarStateFragment;
 import com.wanle.lequan.sharedbicycle.overlay.WalkRouteOverlay;
 import com.wanle.lequan.sharedbicycle.receiver.BlueToothStateReceiver;
 import com.wanle.lequan.sharedbicycle.receiver.NetInfoReceiver;
-import com.wanle.lequan.sharedbicycle.utils.ErrorInfo;
 import com.wanle.lequan.sharedbicycle.utils.GetJsonStringUtil;
 import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
 import com.wanle.lequan.sharedbicycle.utils.NetWorkUtil;
@@ -113,6 +101,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -129,7 +118,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, LocationSource, AMapLocationListener, AMap.OnCameraChangeListener, GeocodeSearch.OnGeocodeSearchListener, RouteSearch.OnRouteSearchListener, AMap.OnMarkerClickListener, AMap.OnMapClickListener, AMapNaviListener {
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, LocationSource, AMapLocationListener, AMap.OnCameraChangeListener, GeocodeSearch.OnGeocodeSearchListener, RouteSearch.OnRouteSearchListener, AMap.OnMarkerClickListener, AMap.OnMapClickListener {
     @BindView(R.id.map)
     MapView mMap;
     @BindView(R.id.btn_use_car)
@@ -184,10 +173,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private NetInfoReceiver mNetinfoReceiver;
     private String mStreet;
     private String mStreet1;
-    private AMapNavi mAMapNavi;
-    private Marker mClickMarker;
     private SharedPreferences mSpGlobalParms;
     private SharedPreferences mSpUserInfo;
+    private List<Marker> bikeMarkers;
+    private List<Marker> stationMarkers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -202,10 +191,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
         monitorBlueTooth();
         monitiorNetInfo();
-        String s = sHA1();
-        Log.i("sha1", s);
+        //String s = sHA1();
+        //Log.i("sha1", s);
         setCenter();
-        gps_start(true);
+        gps_start();
         mMCdt = new CountDownTimer(10, 10) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -222,10 +211,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (mCenterPoint != null) {
             regeocdeQuery();
         }
-        //获取AMapNavi实例
-        mAMapNavi = AMapNavi.getInstance(getApplicationContext());
-        //添加监听回调，用于处理算路成功
-        mAMapNavi.addAMapNaviListener(this);
         getGlobalParms();
     }
 
@@ -234,20 +219,21 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      */
     private void getGlobalParms() {
         final String userId = mSpUserInfo.getString("userId", "");
+        Log.i("userId", userId);
         final Call<ResponseBody> call = HttpUtil.getService(ApiService.class).globalParms(userId);
         GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     final String jsonString = response.body().string();
-                    if (null!=jsonString){
-                        Gson gson=new Gson();
+                    if (null != jsonString) {
+                        Gson gson = new Gson();
                         final GlobalParmsBean parmsBean = gson.fromJson(jsonString, GlobalParmsBean.class);
-                        if (null!=parmsBean){
-                            mSpGlobalParms.edit().putString("aboutUs",parmsBean.getResponseObj().getAboutUs()).commit();
-                            mSpGlobalParms.edit().putString("customerService",parmsBean.getResponseObj().getCustomerService()).commit();
-                            mSpGlobalParms.edit().putInt("deposit",parmsBean.getResponseObj().getDeposit()).commit();
-                            mSpGlobalParms.edit().putString("userGuide",parmsBean.getResponseObj().getUserGuide()).commit();
+                        if (null != parmsBean) {
+                            mSpGlobalParms.edit().putString("aboutUs", parmsBean.getResponseObj().getAboutUs()).commit();
+                            mSpGlobalParms.edit().putString("customerService", parmsBean.getResponseObj().getCustomerService()).commit();
+                            mSpGlobalParms.edit().putInt("deposit", parmsBean.getResponseObj().getDeposit()).commit();
+                            mSpGlobalParms.edit().putString("userGuide", parmsBean.getResponseObj().getUserGuide()).commit();
                         }
                     }
                 } catch (IOException e) {
@@ -261,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
         });
     }
+
     /**
      * 监测网络连接状态
      */
@@ -283,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (msg != null) {
             if (msg.equals("网络连接成功")) {
                 if (null != mlocationClient && null != mCenterPoint) {
-                    gps_start(false);
+                    gps_start();
                 }
             }
         }
@@ -382,6 +369,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void initView() {
+        bikeMarkers=new ArrayList<>();
+        stationMarkers=new ArrayList<>();
         mSpUserinfo = getSharedPreferences("userinfo", MODE_PRIVATE);
         mGeocodeSearch = new GeocodeSearch(this);
         mGeocodeSearch.setOnGeocodeSearchListener(this);
@@ -390,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         mSp_isLogin = getSharedPreferences("isLogin", MODE_PRIVATE);
         EventBus.getDefault().register(this);
         mSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
-        mSpGlobalParms=getSharedPreferences("global",MODE_PRIVATE);
+        mSpGlobalParms = getSharedPreferences("global", MODE_PRIVATE);
     }
 
     public String sHA1() {
@@ -420,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     /**
-     * 得到屏幕的中心点经纬度
+     * 得到屏幕的中心点经纬度,设置中心点的marker
      */
     public void setCenter() {
         aMap.setOnCameraChangeListener(this);
@@ -516,7 +505,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 break;
             case R.id.iv_gps_start:
                 mapPermission();
-                gps_start(false);
+                gps_start();
                 break;
             case R.id.iv_bike_station:
                 if (NetWorkUtil.isNetworkAvailable(this)) {
@@ -527,13 +516,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         mWalkRouteOverlay.removeFromMap();
                     }
                     if (!mIsStation) {
-                        mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.station_icon));
-                        queryCar(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
-                        mIsStation = true;
+                       showBikeStation();
                     } else {
-                        mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.moto));
-                        queryCar(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
-                        mIsStation = false;
+                       showBike();
                     }
                 }
                 break;
@@ -562,6 +547,25 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 }
                 break;
             case R.id.iv_end_point:
+                mIvGuide.setVisibility(View.VISIBLE);
+                mIvGuide.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mAmapocation != null && mCenterPoint != null) {
+                            NaviLatLng start = null, end = null;
+                            start = new NaviLatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
+                            end = new NaviLatLng(mCenterPoint.latitude, mCenterPoint.longitude);
+                            Intent intent = new Intent(MainActivity.this, NaviActivity.class);
+                            intent.putExtra("start", start);
+                            intent.putExtra("end", end);
+                            startActivity(intent);
+                            if (mWalkRouteOverlay != null) {
+                                mWalkRouteOverlay.removeFromMap();
+                            }
+                            mIvGuide.setVisibility(View.GONE);
+                        }
+                    }
+                });
                 routeLine(mCenterPoint);
                 break;
             default:
@@ -578,11 +582,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
-    private void gps_start(final boolean isFirst) {
+    private void gps_start() {
         if (NetWorkUtil.isNetworkAvailable(this)) {
             mapPermission();
             //isUserCar();
-            isUserCar();
+            mIvGuide.setVisibility(View.GONE);
             if (mWalkRouteOverlay != null) {
                 mWalkRouteOverlay.removeFromMap();
             }
@@ -594,23 +598,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             if (null != mlocationClient) {
                 mlocationClient.startLocation();//启动定位
             }
-            mProgersssDialog = new ProgersssDialog(this);
-            mProgersssDialog.setMsg("正在定位中");
-
             CountDownTimer cdt = new CountDownTimer(2000, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     if (isOPen(MainActivity.this)) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mProgersssDialog.dismiss();
-                                if (null != mCenterPoint) {
-                                    regeocdeQuery();
-                                }
-                            }
-
-                        }, 800);
+                        if (null != mCenterPoint) {
+                            regeocdeQuery();
+                        }
                         if (mAmapocation == null) {
                             return;
                         }
@@ -627,7 +621,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         }
                         Log.i("start", latitude + "" + longitude);
                     } else {
-                        mProgersssDialog.dismiss();
                         ToastUtils.getShortToastByString(MainActivity.this, "定位失败,请打开gps");
                         openGPS(MainActivity.this);
                     }
@@ -649,7 +642,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void showBikeStation() {
         mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.station_icon));
         if (null != mAmapocation) {
-            queryCar(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
+           queryReturnStation(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
         }
         mIsStation = true;
     }
@@ -876,13 +869,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (mListener != null && amapLocation != null) {
             if (amapLocation.getErrorCode() == 0) {
                 mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
-                double longitude = amapLocation.getLongitude();
-                double latitude = amapLocation.getLatitude();
-                LatLng latlng = new LatLng(latitude, longitude);
                 mLocalLatlng = new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
                 aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLocalLatlng, 18));
-                queryCar(latlng);
-                //  aMap.moveCamera(CameraUpdateFactory.zoomTo(16));
+                if (!mIsStation){
+                    showBike();
+                }
             } else {
                 String errText = "定位失败," + amapLocation.getErrorCode() + ": " + amapLocation.getErrorInfo();
                 Log.e("AmapErr", errText);
@@ -911,6 +902,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     if (response.code() == 200) {
                         try {
                             String stringJson = response.body().string();
+                            Log.i("near1", stringJson);
                             if (stringJson != null) {
                                 Gson gson = new Gson();
                                 NearByCarBean nearByCarBean = gson.fromJson(stringJson, NearByCarBean.class);
@@ -921,11 +913,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                         if (null != nearbyCars) {
                                             mCar_amount = nearbyCars.size();
                                             Log.i("car_amount", mCar_amount + "");
-                                            if (!mIsStation) {
                                                 addBikeMark(nearbyCars);
-                                            } else {
-                                                addStationMark(nearbyCars);
-                                            }
                                         }
                                     } else {
                                         ToastUtil.show(MainActivity.this, nearByCarBean.getResponseMsg());
@@ -950,47 +938,107 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     /**
+     * 查找附近还车站点
+     */
+    public void queryReturnStation(LatLng latlng) {
+        if (null != latlng) {
+            Log.i("latlng1", latlng.toString());
+            Point point = new Point(0, 0);
+            LatLng start = aMap.getProjection().fromScreenLocation(point);
+            int distance = testDistance(start, mCenterPoint);
+            Log.i("distance", distance + "");
+            Map<String, String> map = new HashMap<>();
+            map.put("radius", 1000 + "");
+            map.put("longitude", latlng.longitude + "");
+            map.put("latitude", latlng.latitude + "");
+            Call<ResponseBody> call = HttpUtil.getService(ApiService.class).queryReturnStation(map);
+            GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        try {
+                            String stringJson = response.body().string();
+                            Log.i("returnStation", stringJson);
+                            if (stringJson != null) {
+                                Gson gson = new Gson();
+                                NearByStationBean nearByStationBean = gson.fromJson(stringJson, NearByStationBean.class);
+                                if (null != nearByStationBean) {
+                                    if (nearByStationBean.getResponseCode().equals("1")) {
+                                        Log.i("nearby", nearByStationBean.toString());
+                                        List<NearByStationBean.ResponseObjBean> nearbyStations = nearByStationBean.getResponseObj();
+                                        if (null != nearbyStations) {
+                                                addStationMark(nearbyStations);
+                                        }
+                                    } else {
+                                        ToastUtil.show(MainActivity.this, nearByStationBean.getResponseMsg());
+                                    }
+                                }
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
+    /**
      * 给有车的位置加上标记
      *
      * @param cars
      */
     private void addBikeMark(List<NearByCarBean.ResponseObjBean> cars) {
-        for (int i = 0; i < cars.size(); i++) {
-            View markerVeiw = LayoutInflater.from(this).inflate(R.layout.layout_map_marker, null);
-            double longitude = stringtoDouble(cars.get(i).getLongitude());
-            double latitude = stringtoDouble(cars.get(i).getLatitude());
-            LatLng latlng = new LatLng(latitude, longitude);
-            aMap.addMarker(new MarkerOptions()
-                    .anchor(0.5f, 0.5f)
-                    .position(latlng)
-                    .icon(BitmapDescriptorFactory.fromView(markerVeiw))
-            );
-
+        for (Marker marker: stationMarkers){
+            marker.remove();
+        }
+        if (cars!=null){
+            for (int i = 0; i < cars.size(); i++) {
+                View markerVeiw = LayoutInflater.from(this).inflate(R.layout.layout_map_marker, null);
+                double longitude = stringtoDouble(cars.get(i).getLongitude());
+                double latitude = stringtoDouble(cars.get(i).getLatitude());
+                LatLng latlng = new LatLng(latitude, longitude);
+                Marker marker=aMap.addMarker(new MarkerOptions()
+                        .anchor(0.5f, 0.5f)
+                        .position(latlng)
+                        .icon(BitmapDescriptorFactory.fromView(markerVeiw))
+                );
+                bikeMarkers.add(marker);
+            }
         }
 
     }
 
     /**
      * 给有站点的位置加上标记
-     *
-     * @param cars
+
      */
-    private void addStationMark(List<NearByCarBean.ResponseObjBean> cars) {
-        for (int i = 0; i < cars.size(); i++) {
+    private void addStationMark(List<NearByStationBean.ResponseObjBean> stations) {
+        for (Marker marker: bikeMarkers){
+            marker.remove();
+        }
+        stationMarkers.clear();
+        for (int i = 0; i < stations.size(); i++) {
             View markerVeiw = LayoutInflater.from(this).inflate(R.layout.layout_map_marker, null);
             ImageView iv_station = (ImageView) markerVeiw.findViewById(R.id.iv_is_bike);
             iv_station.setImageDrawable(getResources().getDrawable(R.drawable.station_icon));
-            double longitude = stringtoDouble(cars.get(i).getLongitude());
-            double latitude = stringtoDouble(cars.get(i).getLatitude());
+            double longitude = stringtoDouble(stations.get(i).getPlaceLongitude());
+            double latitude = stringtoDouble(stations.get(i).getPlaceLatitude());
             LatLng latlng = new LatLng(latitude, longitude);
-            aMap.addMarker(new MarkerOptions()
+            Marker marker=aMap.addMarker(new MarkerOptions()
                     .anchor(0.5f, 0.5f)
                     .position(latlng)
                     .title("")
                     .setInfoWindowOffset(0, 8)
                     .icon(BitmapDescriptorFactory.fromView(markerVeiw))
             );
-
+            marker.setObject(stations.get(i));
+            stationMarkers.add(marker);
         }
 
     }
@@ -1013,7 +1061,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void onCameraChangeFinish(CameraPosition cameraPosition) {
         //String s = cameraPosition.target.toStrig();
         mCenterPoint = cameraPosition.target;
-        queryCar(new LatLng(mCenterPoint.latitude, mCenterPoint.longitude));
+        if (!mIsStation){
+            queryCar(new LatLng(mCenterPoint.latitude, mCenterPoint.longitude));
+        }
         regeocdeQuery();
     }
 
@@ -1043,17 +1093,36 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     /**
-     * marker的点击事件
+     * marker的点击事件,和导航
      */
     @Override
     public boolean onMarkerClick(final Marker marker) {
         if (NetWorkUtil.isNetworkAvailable(this)) {
             mOldMarker = marker;
-            mClickMarker = marker;
             routeLine(marker.getPosition());
+            mIvGuide.setVisibility(View.VISIBLE);
+            mIvGuide.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mAmapocation != null && mCenterPoint != null) {
+                        NaviLatLng start = null, end = null;
+                        start = new NaviLatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
+                        end = new NaviLatLng(mCenterPoint.latitude, mCenterPoint.longitude);
+                        Intent intent = new Intent(MainActivity.this, NaviActivity.class);
+                        intent.putExtra("start", start);
+                        intent.putExtra("end", end);
+                        if (mWalkRouteOverlay != null) {
+                            mWalkRouteOverlay.removeFromMap();
+                        }
+                        startActivity(intent);
+                        mIvGuide.setVisibility(View.GONE);
+                    }
+                }
+            });
         }
         return false;
     }
+
 
     @Override
     public void onMapClick(LatLng latLng) {
@@ -1269,171 +1338,4 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
-    public void onInitNaviFailure() {
-        Log.i("err1","init navi Failed");
-    }
-
-    @Override
-    public void onInitNaviSuccess() {
-        if (mClickMarker != null) {
-            mIvGuide.setVisibility(View.VISIBLE);
-            mIvGuide.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    NaviLatLng start = null, end = null;
-                    if (mAmapocation != null) {
-                        start = new NaviLatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
-                        end = new NaviLatLng(mClickMarker.getPosition().latitude, mClickMarker.getPosition().longitude);
-                        mAMapNavi.calculateRideRoute(start, end);
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onStartNavi(int i) {
-
-    }
-
-    @Override
-    public void onTrafficStatusUpdate() {
-
-    }
-
-    @Override
-    public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-
-    }
-
-    @Override
-    public void onGetNavigationText(int i, String s) {
-
-    }
-
-    @Override
-    public void onEndEmulatorNavi() {
-
-    }
-
-    @Override
-    public void onArriveDestination() {
-
-    }
-
-    @Override
-    public void onCalculateRouteSuccess() {
-        Log.i("guide1", "可以导航了");
-    }
-
-    @Override
-    public void onCalculateRouteFailure(int errorInfo) {
-//路线计算失败
-        Log.e("dm1", "--------------------------------------------");
-        Log.i("dm1", "路线计算失败：错误码=" + errorInfo + ",Error Message= " + ErrorInfo.getError(errorInfo));
-        Log.i("dm1", "错误码详细链接见：http://lbs.amap.com/api/android-navi-sdk/guide/tools/errorcode/");
-        Log.e("dm1", "--------------------------------------------");
-        Toast.makeText(this, "errorInfo：" + errorInfo + ",Message：" + ErrorInfo.getError(errorInfo), Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onReCalculateRouteForYaw() {
-
-    }
-
-    @Override
-    public void onReCalculateRouteForTrafficJam() {
-
-    }
-
-    @Override
-    public void onArrivedWayPoint(int i) {
-
-    }
-
-    @Override
-    public void onGpsOpenStatus(boolean b) {
-
-    }
-
-    @Override
-    public void onNaviInfoUpdate(NaviInfo naviInfo) {
-
-    }
-
-    @Override
-    public void onNaviInfoUpdated(AMapNaviInfo aMapNaviInfo) {
-
-    }
-
-    @Override
-    public void updateCameraInfo(AMapNaviCameraInfo[] aMapNaviCameraInfos) {
-
-    }
-
-    @Override
-    public void onServiceAreaUpdate(AMapServiceAreaInfo[] aMapServiceAreaInfos) {
-
-    }
-
-    @Override
-    public void showCross(AMapNaviCross aMapNaviCross) {
-
-    }
-
-    @Override
-    public void hideCross() {
-
-    }
-
-    @Override
-    public void showLaneInfo(AMapLaneInfo[] aMapLaneInfos, byte[] bytes, byte[] bytes1) {
-
-    }
-
-    @Override
-    public void hideLaneInfo() {
-
-    }
-
-    @Override
-    public void onCalculateMultipleRoutesSuccess(int[] ints) {
-
-    }
-
-    @Override
-    public void notifyParallelRoad(int i) {
-
-    }
-
-    @Override
-    public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo aMapNaviTrafficFacilityInfo) {
-
-    }
-
-    @Override
-    public void OnUpdateTrafficFacility(AMapNaviTrafficFacilityInfo[] aMapNaviTrafficFacilityInfos) {
-
-    }
-
-    @Override
-    public void OnUpdateTrafficFacility(TrafficFacilityInfo trafficFacilityInfo) {
-
-    }
-
-    @Override
-    public void updateAimlessModeStatistics(AimLessModeStat aimLessModeStat) {
-
-    }
-
-    @Override
-    public void updateAimlessModeCongestionInfo(AimLessModeCongestionInfo aimLessModeCongestionInfo) {
-
-    }
-
-    @Override
-    public void onPlayRing(int i) {
-
-    }
 }
