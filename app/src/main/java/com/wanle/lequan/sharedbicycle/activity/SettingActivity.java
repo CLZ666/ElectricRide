@@ -247,7 +247,7 @@ public class SettingActivity extends AppCompatActivity implements EasyPermission
             Bitmap photo = extras.getParcelable("data");
             // photo = UpLoadUtils.toRoundBitmap(photo, tempUri); // 这个时候的图片已经被处理成圆形的了
             mIvUserIcon.setImageBitmap(photo);
-            byte[] data1 = bitmap2Bytes(photo);
+
 
             // Log.i("upload", new String(data1));
             ToastUtil.show(this, "头像上传中");

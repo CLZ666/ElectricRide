@@ -15,19 +15,26 @@
     />
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:text="临时锁车期间将继续收费"
+        android:layout_height="wrap_content"
+        android:text="@string/lock_bike_reminder"
         android:textSize="18sp"
         android:gravity="center"
         android:layout_marginTop="20dp"
         android:textColor="@color/white"
+        />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/big_lock"
         />
     <TextView
         android:id="@+id/tv_know"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:background="@color/white"
-        android:text="我知道了"
+        android:text="上锁"
         android:textSize="18sp"
         android:gravity="center"
         android:layout_marginTop="20dp"

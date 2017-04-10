@@ -35,9 +35,9 @@ public class RechargeRecordAdapter extends BaseAdapter {
         return mData.size();
     }
 
-    public void setData(List<RechargeRecordBean.ResponseObjBean.ListBean> data,boolean isRefresh) {
+    public void setData(List<RechargeRecordBean.ResponseObjBean.ListBean> data, boolean isRefresh) {
         if (data != null) {
-            if (isRefresh){
+            if (isRefresh) {
                 mData.clear();
             }
             mData.addAll(data);
@@ -61,38 +61,44 @@ public class RechargeRecordAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.item_recharge_record, parent, false);
             holder = new ViewHolder();
-            holder.mTvType= (TextView) convertView.findViewById(R.id.tv_type);
-            holder.mTvTime= (TextView) convertView.findViewById(R.id.tv_time);
-            holder.mTvAmount= (TextView) convertView.findViewById(R.id.tv_amount);
+            holder.mTvType = (TextView) convertView.findViewById(R.id.tv_type);
+            holder.mTvTime = (TextView) convertView.findViewById(R.id.tv_time);
+            holder.mTvAmount = (TextView) convertView.findViewById(R.id.tv_amount);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
         RechargeRecordBean.ResponseObjBean.ListBean dataBean = mData.get(position);
         int income = dataBean.getIncome();
-        double money=income*1.0/100;
-        holder.mTvAmount.setText("+"+money+"");
-        holder.mTvTime.setText(dataBean.getCtime());
         String type = dataBean.getType();
-        switch (type){
-            case "1" :
+        final int pay = dataBean.getPay();
+        if (type .equals("4")) {
+            double money = (pay * 1.0) / 100;
+            holder.mTvAmount.setText("-" + money + "");
+        } else {
+            double money = (income * 1.0) / 100;
+            holder.mTvAmount.setText("+" + money + "");
+        }
+        holder.mTvTime.setText(dataBean.getCtime());
+        switch (type) {
+            case "1":
                 holder.mTvType.setText("充值增加");
                 break;
-            case "2" :
+            case "2":
                 holder.mTvType.setText("充值押金");
                 break;
-            case "3" :
+            case "3":
                 holder.mTvType.setText("退还押金");
                 break;
-            case "4" :
+            case "4":
                 holder.mTvType.setText("消费支出");
                 break;
-            case "7" :
+            case "7":
                 holder.mTvType.setText("活动奖励");
                 break;
             default:
                 break;
-            }
+        }
         return convertView;
     }
 
@@ -105,6 +111,7 @@ public class RechargeRecordAdapter extends BaseAdapter {
 
         TextView mTvAmount;
     }
+
     /*
    * 将时间戳转换为时间
    */

@@ -68,7 +68,6 @@ public class LoginActivity extends AppCompatActivity {
         mEditIdentify.setOnKeyListener(onKey);
         showKeyboard(mEditPhone);
         showKeyboard(mEditIdentify);
-
     }
 
 
@@ -87,7 +86,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (NetWorkUtil.isNetworkAvailable(this)) {
                     login();
                 }
-                //  startActivity(new Intent(this,IdentityVeritActivity.class));
                 break;
             default:
                 break;

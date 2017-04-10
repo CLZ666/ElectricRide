@@ -48,4 +48,7 @@
     <string name="input_bank_name">请输入银行名称</string>
     <string name="input_brance_name">请输入支行名称</string>
     <string name="input_bank_card">请输入银行卡号</string>
+    <string name="lock_bike_reminder">最多为您锁车半小时哦，超过时间将会自动锁上还车哦</string>
+    <string name="return_bike_reminder">亲爱的用户，人和车必须在同一地点才能还车哦</string>
+    <string name="return_bike_reminder2">亲爱的用户，您未在指定站点内还车，如果强行还车您的信用分将会减少哦</string>
 </resources>

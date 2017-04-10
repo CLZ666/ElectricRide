@@ -69,6 +69,8 @@ public class DepositReturnZfbActivity extends AppCompatActivity {
             case R.id.btn_confim:
                 depositRefund();
                 break;
+            default:
+                break;
         }
     }
 

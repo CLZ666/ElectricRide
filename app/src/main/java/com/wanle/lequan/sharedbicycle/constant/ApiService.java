@@ -106,7 +106,7 @@ public interface ApiService {
     //我要还车的接口
     @FormUrlEncoded
     @POST("car/returnCar.html")
-    Call<ResponseBody> returnCar(@Field("userId") String userId);
+    Call<ResponseBody> returnCar(@FieldMap Map<String, String> map);
 
     //查询当前用车状态的接口
     @FormUrlEncoded

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -62,6 +63,8 @@ public class CarStateFragment extends Fragment {
     TextView mTvCarStatus;
     @BindView(R.id.tv_is_lock)
     TextView mTvIsLock;
+    @BindView(R.id.iv_bike_state)
+    ImageView mIvBikeState;
     private ProgersssDialog mProgersssDialog;
     private String mCarNo;
     private int mCarPower;
@@ -87,7 +90,6 @@ public class CarStateFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 
     @OnClick({R.id.tv_car_status, R.id.tv_is_lock})
@@ -99,6 +101,7 @@ public class CarStateFragment extends Fragment {
                         mProgersssDialog = new ProgersssDialog(getActivity());
                         mProgersssDialog.setMsg("正在开锁");
                         continueUse();
+                        mIvBikeState.setImageResource(R.drawable.using_bike_state);
                     } else if (mUseStatus == 1) {
                         final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_lock_car, null);
                         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -115,6 +118,7 @@ public class CarStateFragment extends Fragment {
                             }
                         });
                         dialog.show();
+                        mIvBikeState.setImageResource(R.drawable.smal_lock);
                     }
                 }
                 break;
@@ -147,7 +151,7 @@ public class CarStateFragment extends Fragment {
                                     @Override
                                     public void onFinish() {
                                         dialog.dismiss();
-                                        mUseStatus = 1;
+                                        mUseStatus = 2;
                                         mTvIsLock.setText("继续使用");
                                         mTvCarStatus.setText("车辆锁定中");
                                     }
@@ -175,7 +179,7 @@ public class CarStateFragment extends Fragment {
     @Subscribe
     public void onEventMainThread(CarStateEvent event) {
         CarState carState = event.getCarState();
-        Log.i("carstate",carState.toString());
+        Log.i("carstate", carState.toString());
         mCarNo = carState.getCarNo();
         mCarPower = carState.getCarPower();
         mCycleTime = carState.getCycleTime();
@@ -190,14 +194,16 @@ public class CarStateFragment extends Fragment {
     private void updateUi() {
         mTvCarNo.setText("车辆编号: " + mCarNo);
         mTvDumpEnergy.setText(mCarPower + "%");
-        mTvRidingTime.setText(getStandardTime((long) (mCycleTime*60)));
+        mTvRidingTime.setText(getStandardTime((long) (mCycleTime * 60)));
         mTvRideCost.setText("￥ " + (mCycleCharge / 100));
         if (mUseStatus == 1) {
             mTvIsLock.setText("临时锁车");
             mTvCarStatus.setText("车辆骑行中");
+            mIvBikeState.setImageResource(R.drawable.using_bike_state);
         } else {
             mTvIsLock.setText("继续使用");
             mTvCarStatus.setText("车辆锁定中");
+            mIvBikeState.setImageResource(R.drawable.smal_lock);
         }
     }
 
@@ -237,7 +243,7 @@ public class CarStateFragment extends Fragment {
                                     @Override
                                     public void onFinish() {
                                         mProgersssDialog.dismiss();
-                                        mUseStatus = 2;
+                                        mUseStatus = 1;
                                         mTvIsLock.setText("临时锁车");
                                         mTvCarStatus.setText("车辆骑行中");
                                         mProgersssDialog.dismiss();
