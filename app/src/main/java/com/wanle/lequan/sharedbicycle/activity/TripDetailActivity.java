@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.TextView;
 
 import com.amap.api.maps.AMap;
@@ -18,6 +19,11 @@ import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareListener;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMWeb;
 import com.wanle.lequan.sharedbicycle.R;
 import com.wanle.lequan.sharedbicycle.bean.TripDetailBean;
 import com.wanle.lequan.sharedbicycle.constant.ApiService;
@@ -45,7 +51,7 @@ import retrofit2.Response;
 /**
  * 充值记录页面
  */
-public class TripDetailActivity extends AppCompatActivity {
+public class TripDetailActivity extends AppCompatActivity implements UMShareListener {
 
 
     @BindView(R.id.tv_title)
@@ -100,7 +106,6 @@ public class TripDetailActivity extends AppCompatActivity {
 
     private void getTripDetail() {
         Map<String, String> map = new HashMap<>();
-        String userid = "DA961CB39B60CDE164DC8B568220AC5BD40687D41E238F08AFE96DA695AE31086B2DC180FD294EC25F7DEBEB1F2B0DA7";
         map.put("userId", mUserId);
         map.put("itineraryId", mItineraryId);
         Log.i("ID", mItineraryId);
@@ -212,10 +217,6 @@ public class TripDetailActivity extends AppCompatActivity {
         mTvPhone.setText(phone);
     }
 
-    @OnClick(R.id.iv_back)
-    public void onClick() {
-        finish();
-    }
 
     @Override
     protected void onDestroy() {
@@ -243,5 +244,52 @@ public class TripDetailActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，保存地图当前的状态
         mMapView.onSaveInstanceState(outState);
+    }
+
+    @OnClick({R.id.iv_back, R.id.btn_share})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_back:
+                finish();
+                break;
+            case R.id.btn_share:
+                shareOption();
+                break;
+        }
+    }
+    private void shareOption() {
+        UMImage image = new UMImage(this, "http://img.lequangroup.cn/Categroy/48f493ad138d400b91b17c0a1f941060_750x300.png");
+        UMImage thumb = new UMImage(this, R.drawable.logo);
+        image.setThumb(thumb);
+        image.compressStyle = UMImage.CompressStyle.SCALE;
+        UMWeb web = new UMWeb("http://h5.lequangroup.cn/");
+        web.setTitle("乐圈国际馆");//标题
+        web.setThumb(thumb);  //缩略图
+        web.setDescription("精选全球好货");//描述
+        new ShareAction(this).withText("hello")
+                .withMedia(image)
+                .withMedia(web)
+                .setDisplayList(SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE, SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE)
+                .setCallback(this).open();
+    }
+
+    @Override
+    public void onStart(SHARE_MEDIA share_media) {
+
+    }
+
+    @Override
+    public void onResult(SHARE_MEDIA share_media) {
+        ToastUtil.show(TripDetailActivity.this, "分享成功");
+    }
+
+    @Override
+    public void onError(SHARE_MEDIA share_media, Throwable throwable) {
+        ToastUtil.show(TripDetailActivity.this, "分享失败");
+    }
+
+    @Override
+    public void onCancel(SHARE_MEDIA share_media) {
+        ToastUtil.show(TripDetailActivity.this, "分享取消");
     }
 }

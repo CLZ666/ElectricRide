@@ -22,7 +22,7 @@ import com.clj.fastble.scan.ListScanCallback;
 import com.clj.fastble.utils.HexUtil;
 import com.google.gson.Gson;
 import com.wanle.lequan.sharedbicycle.R;
-import com.wanle.lequan.sharedbicycle.bean.MessageBean;
+import com.wanle.lequan.sharedbicycle.bean.CarStateCheckBean;
 import com.wanle.lequan.sharedbicycle.constant.ApiService;
 import com.wanle.lequan.sharedbicycle.utils.BlueToothControl;
 import com.wanle.lequan.sharedbicycle.utils.GetJsonStringUtil;
@@ -122,12 +122,11 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
     }
 
     private void car_stuts() {
-        checkCarState();
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_car_stuts, null);
+        checkCarState(view);
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         mDialog = builder.create();
         mDialog.setCanceledOnTouchOutside(true);
-        mDialog.setView(view);
         TextView tv_change = (TextView) view.findViewById(R.id.tv_change_car);
         TextView tv_unlock = (TextView) view.findViewById(R.id.tv_unlock);
         tv_change.setOnClickListener(new View.OnClickListener() {
@@ -148,7 +147,9 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
         mQRCodeView.startSpot();
     }
 
-    public void checkCarState() {
+    public void checkCarState(final View dialogView) {
+        final TextView tv_car_power = (TextView) dialogView.findViewById(R.id.tv_car_power);
+        final TextView tv_distance = (TextView) dialogView.findViewById(R.id.tv_distance);
         String userId = getSharedPreferences("userinfo", MODE_PRIVATE).getString("userId", "");
         String carNo = "24929615696887809";
         Map<String, String> map = new HashMap<>();
@@ -160,15 +161,17 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     String jsonString = response.body().string();
-                    Log.i("checkcarState",jsonString);
+                    Log.i("checkcarState", jsonString);
                     if (null != jsonString) {
                         Gson gson = new Gson();
-                        MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                        if (messageBean.getResponseCode().equals("1")) {
-                            Log.i("checkcarState",messageBean.toString());
+                        CarStateCheckBean carStateCheckBean = gson.fromJson(jsonString, CarStateCheckBean.class);
+                        if (carStateCheckBean.getResponseCode().equals("1")) {
+                            tv_car_power.setText(carStateCheckBean.getResponseObj().getCarPower()+"%");
+                            tv_distance.setText(carStateCheckBean.getResponseObj().getDistance()/1000+"km");
+                            mDialog.setView(dialogView);
                             mDialog.show();
                         } else {
-                            ToastUtils.getShortToastByString(SweepLockActivity.this, messageBean.getResponseMsg());
+                            ToastUtils.getShortToastByString(SweepLockActivity.this, carStateCheckBean.getResponseMsg());
                         }
                     }
                 } catch (IOException e) {
@@ -205,7 +208,6 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
                     mQRCodeView.closeFlashlight();
                     isOpen = false;
                 }
-                break;
             case R.id.tv_open_light:
                 if (!isOpen) {
                     mQRCodeView.openFlashlight();

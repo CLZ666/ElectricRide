@@ -76,6 +76,7 @@ import com.wanle.lequan.sharedbicycle.adapter.InfoWinAdapter;
 import com.wanle.lequan.sharedbicycle.bean.AddressInfo;
 import com.wanle.lequan.sharedbicycle.bean.CarState;
 import com.wanle.lequan.sharedbicycle.bean.CarStateBean;
+import com.wanle.lequan.sharedbicycle.bean.EndRideBean;
 import com.wanle.lequan.sharedbicycle.bean.GlobalParmsBean;
 import com.wanle.lequan.sharedbicycle.bean.MessageBean;
 import com.wanle.lequan.sharedbicycle.bean.NearByCarBean;
@@ -308,8 +309,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     Gson gson;
                     String jsonString = null;
                     if (null != response) {
-                        if (null != response.body()) {
-                            jsonString = response.body().string();
+                        if (response.code() == 200) {
+                            if (null != response.body()) {
+                                jsonString = response.body().string();
+                            }
                         }
                     }
                     if (null != jsonString) {
@@ -536,22 +539,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     userCar();
                 } else if (mBtnUseCar.getText().equals("我要还车")) {
                     if (NetWorkUtil.isNetworkAvailable(this)) {
-
-                       /* View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_return_car, null);
-                        final AlertDialog dialog = new AlertDialog.Builder(this).create();
-                        dialog.setView(dialogView);
-                        TextView tv_confim = (TextView) dialogView.findViewById(R.id.tv_confim);
-                        TextView tv_address = (TextView) dialogView.findViewById(R.id.tv_address);
-                        tv_address.setText(mStreet1);
-                        tv_confim.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mProgersssDialog = new ProgersssDialog(MainActivity.this);
-                                returnCar();
-                                dialog.cancel();
-                            }
-                        });
-                        dialog.show();*/
                         toReturnBike();
                     }
                 }
@@ -750,7 +737,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 btn_confim_return.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mProgersssDialog=new ProgersssDialog(MainActivity.this);
+                        mProgersssDialog = new ProgersssDialog(MainActivity.this);
                         mProgersssDialog.setMsg("正在还车中");
                         returnCar(1);
                         dialogInStation.cancel();
@@ -787,7 +774,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         tv_confim_return.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                mProgersssDialog=new ProgersssDialog(MainActivity.this);
+                                mProgersssDialog = new ProgersssDialog(MainActivity.this);
+                                mProgersssDialog.setMsg("正在还车中");
                                 returnCar(2);
                                 dialogReminder.cancel();
                                 dialogOutStation.cancel();
@@ -816,14 +804,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     public void returnCar(int isInStation) {
         String userId = mSpUserinfo.getString("userId", "");
-        Map<String,String> map=new HashMap<>();
-        map.put("userId",userId);
-        if (null!=mAmapocation){
+        Map<String, String> map = new HashMap<>();
+        map.put("userId", userId);
+        if (null != mAmapocation) {
             final double longitude = mAmapocation.getLongitude();
             final double latitude = mAmapocation.getLatitude();
-            map.put("longitude",longitude+"");
-            map.put("latitude",latitude+"");
-            map.put("isInStation",isInStation+"");
+            map.put("longitude", longitude + "");
+            map.put("latitude", latitude + "");
+            map.put("isInStation", isInStation + "");
         }
         Call<ResponseBody> call = HttpUtil.getService(ApiService.class).returnCar(map);
         GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
@@ -834,20 +822,22 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     Log.i("returncar", jsonString);
                     if (null != jsonString) {
                         Gson gson = new Gson();
-                        MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                        if (null != messageBean) {
-                            if (messageBean.getResponseCode().equals("1")) {
+                        EndRideBean endRideBean = gson.fromJson(jsonString, EndRideBean.class);
+                        if (null != endRideBean) {
+                            if (endRideBean.getResponseCode().equals("1")) {
                                 mProgersssDialog.dismiss();
-                                for (Marker marker:stationMarkers){
+                                for (Marker marker : stationMarkers) {
                                     marker.remove();
                                 }
-                                startActivity(new Intent(MainActivity.this, EndRideActivity.class));
+                                Intent intent = new Intent(MainActivity.this, EndRideActivity.class);
+                                intent.putExtra("endRide", endRideBean);
+                                startActivity(intent);
                                 mBtnUseCar.setText("我要用车");
                                 showBike();
                                 mlocationClient.startLocation();//启动定位
                                 MainActivity.this.setAdressInfoFragment();
                             } else {
-                                ToastUtil.show(MainActivity.this, messageBean.getResponseMsg());
+                                ToastUtil.show(MainActivity.this, endRideBean.getResponseMsg());
                             }
                         }
 

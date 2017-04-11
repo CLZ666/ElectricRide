@@ -67,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
         mEdit_userinfo = mSp_userinfo.edit();
         mEditIdentify.setOnKeyListener(onKey);
         showKeyboard(mEditPhone);
-        showKeyboard(mEditIdentify);
     }
 
 

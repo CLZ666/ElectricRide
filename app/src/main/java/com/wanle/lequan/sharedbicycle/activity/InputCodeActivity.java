@@ -30,7 +30,7 @@ import com.clj.fastble.scan.ListScanCallback;
 import com.clj.fastble.utils.HexUtil;
 import com.google.gson.Gson;
 import com.wanle.lequan.sharedbicycle.R;
-import com.wanle.lequan.sharedbicycle.bean.MessageBean;
+import com.wanle.lequan.sharedbicycle.bean.CarStateCheckBean;
 import com.wanle.lequan.sharedbicycle.constant.ApiService;
 import com.wanle.lequan.sharedbicycle.utils.BlueToothControl;
 import com.wanle.lequan.sharedbicycle.utils.GetJsonStringUtil;
@@ -77,6 +77,7 @@ public class InputCodeActivity extends AppCompatActivity {
     private static final String TAG = "device1";
     private boolean isFind;
     private BleManager mBleManager;
+    private View mDialogView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,13 +142,12 @@ public class InputCodeActivity extends AppCompatActivity {
     }
 
     public void showCarState() {
-        View view = LayoutInflater.from(InputCodeActivity.this).inflate(R.layout.dialog_car_stuts, null);
+        mDialogView = LayoutInflater.from(InputCodeActivity.this).inflate(R.layout.dialog_car_stuts, null);
         final AlertDialog.Builder builder = new AlertDialog.Builder(InputCodeActivity.this);
         mDialog = builder.create();
         mDialog.setCanceledOnTouchOutside(true);
-        mDialog.setView(view);
-        TextView tv_change = (TextView) view.findViewById(R.id.tv_change_car);
-        TextView tv_unlock = (TextView) view.findViewById(R.id.tv_unlock);
+        TextView tv_change = (TextView) mDialogView.findViewById(R.id.tv_change_car);
+        TextView tv_unlock = (TextView) mDialogView.findViewById(R.id.tv_unlock);
         tv_change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,6 +166,8 @@ public class InputCodeActivity extends AppCompatActivity {
     }
 
     public void checkCarState() {
+        final TextView tv_car_power = (TextView) mDialogView.findViewById(R.id.tv_car_power);
+        final TextView tv_distance = (TextView) mDialogView.findViewById(R.id.tv_distance);
         String userId = mSpUserInfo.getString("userId", "");
         String carNo = "24929615696887809";
         Map<String, String> map = new HashMap<>();
@@ -179,9 +181,9 @@ public class InputCodeActivity extends AppCompatActivity {
                     String jsonString = response.body().string();
                     if (null != jsonString) {
                         Gson gson = new Gson();
-                        MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                        if (null != messageBean) {
-                            if (messageBean.getResponseCode().equals("1")) {
+                        final CarStateCheckBean carStateCheckBean = gson.fromJson(jsonString, CarStateCheckBean.class);
+                        if (null != carStateCheckBean) {
+                            if (carStateCheckBean.getResponseCode().equals("1")) {
                                 mCdt = new CountDownTimer(1000, 1000) {
                                     @Override
                                     public void onTick(long millisUntilFinished) {
@@ -191,13 +193,16 @@ public class InputCodeActivity extends AppCompatActivity {
                                     @Override
                                     public void onFinish() {
                                         mProgersssDialog.dismiss();
+                                        tv_car_power.setText(carStateCheckBean.getResponseObj().getCarPower()+"%");
+                                        tv_distance.setText(carStateCheckBean.getResponseObj().getDistance()/1000+"km");
+                                        mDialog.setView(mDialogView);
                                         mDialog.show();
                                     }
                                 };
                                 mCdt.start();
                             } else {
                                 mProgersssDialog.dismiss();
-                                ToastUtils.getShortToastByString(InputCodeActivity.this, messageBean.getResponseMsg());
+                                ToastUtils.getShortToastByString(InputCodeActivity.this, carStateCheckBean.getResponseMsg());
                             }
                         }
                     }
