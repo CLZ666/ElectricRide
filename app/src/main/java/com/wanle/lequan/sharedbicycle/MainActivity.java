@@ -539,7 +539,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     userCar();
                 } else if (mBtnUseCar.getText().equals("我要还车")) {
                     if (NetWorkUtil.isNetworkAvailable(this)) {
-                        toReturnBike();
+                        //toReturnBike();
+                        returnCar(1);
                     }
                 }
                 break;
@@ -721,6 +722,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 }
             }
         }
+        Log.i("minDisatance", minDistance + "");
         if (null != nearEstMarker) {
             final NearByStationBean.ResponseObjBean markerInfo = (NearByStationBean.ResponseObjBean) nearEstMarker.getObject();
             if (minDistance > 0 && minDistance <= 100) {
@@ -728,8 +730,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_in_station, null);
                 TextView tv_address = (TextView) dialogView.findViewById(R.id.tv_station_address);
                 ImageView iv_station = (ImageView) dialogView.findViewById(R.id.iv_station);
+                ImageView iv_cancel = (ImageView) dialogView.findViewById(R.id.iv_cancel);
                 Button btn_confim_return = (Button) dialogView.findViewById(R.id.btn_confim_return);
                 dialogInStation.setView(dialogView);
+                iv_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogInStation.cancel();
+                    }
+                });
                 if (null != markerInfo) {
                     tv_address.setText(markerInfo.getPlaceAddress());
                     //Glide.with(MainActivity.this).load(markerInfo.getPlaceImg()).into(iv_station);
@@ -749,6 +758,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_out_station, null);
                 TextView tv_address = (TextView) dialogView.findViewById(R.id.tv_station_address);
                 ImageView iv_station = (ImageView) dialogView.findViewById(R.id.iv_station);
+                ImageView iv_cancel = (ImageView) dialogView.findViewById(R.id.iv_cancel);
                 Button btn_confim_return = (Button) dialogView.findViewById(R.id.btn_confim_return);
                 Button btn_follow_me = (Button) dialogView.findViewById(R.id.btn_follow_me);
                 dialogOutStation.setView(dialogView);
@@ -756,6 +766,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                     tv_address.setText(markerInfo.getPlaceAddress());
                     //Glide.with(MainActivity.this).load(markerInfo.getPlaceImg()).into(iv_station);
                 }
+                iv_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogOutStation.cancel();
+                    }
+                });
                 btn_confim_return.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -65,6 +66,10 @@ public class CarStateFragment extends Fragment {
     TextView mTvIsLock;
     @BindView(R.id.iv_bike_state)
     ImageView mIvBikeState;
+    @BindView(R.id.tv_lock_time)
+    TextView mTvLockTime;
+    @BindView(R.id.linear_lock_time)
+    LinearLayout mLinearLockTime;
     private ProgersssDialog mProgersssDialog;
     private String mCarNo;
     private int mCarPower;
@@ -101,7 +106,6 @@ public class CarStateFragment extends Fragment {
                         mProgersssDialog = new ProgersssDialog(getActivity());
                         mProgersssDialog.setMsg("正在开锁");
                         continueUse();
-                        mIvBikeState.setImageResource(R.drawable.using_bike_state);
                     } else if (mUseStatus == 1) {
                         final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_lock_car, null);
                         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -118,7 +122,6 @@ public class CarStateFragment extends Fragment {
                             }
                         });
                         dialog.show();
-                        mIvBikeState.setImageResource(R.drawable.smal_lock);
                     }
                 }
                 break;
@@ -154,6 +157,8 @@ public class CarStateFragment extends Fragment {
                                         mUseStatus = 2;
                                         mTvIsLock.setText("继续使用");
                                         mTvCarStatus.setText("车辆锁定中");
+                                        mIvBikeState.setImageResource(R.drawable.smal_lock);
+                                        mLinearLockTime.setVisibility(View.VISIBLE);
                                     }
                                 };
                                 mCdt.start();
@@ -200,10 +205,12 @@ public class CarStateFragment extends Fragment {
             mTvIsLock.setText("临时锁车");
             mTvCarStatus.setText("车辆骑行中");
             mIvBikeState.setImageResource(R.drawable.using_bike_state);
+            mLinearLockTime.setVisibility(View.GONE);
         } else {
             mTvIsLock.setText("继续使用");
             mTvCarStatus.setText("车辆锁定中");
             mIvBikeState.setImageResource(R.drawable.smal_lock);
+            mLinearLockTime.setVisibility(View.VISIBLE);
         }
     }
 
@@ -247,6 +254,8 @@ public class CarStateFragment extends Fragment {
                                         mTvIsLock.setText("临时锁车");
                                         mTvCarStatus.setText("车辆骑行中");
                                         mProgersssDialog.dismiss();
+                                        mIvBikeState.setImageResource(R.drawable.using_bike_state);
+                                        mLinearLockTime.setVisibility(View.GONE);
                                     }
                                 };
                                 mCdt.start();

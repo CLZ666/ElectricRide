@@ -7,6 +7,7 @@ package com.wanle.lequan.sharedbicycle.bean;
  */
 
 public class CarState {
+
     private int cycleTime;
     private int cycleCharge;
     private String carNo;

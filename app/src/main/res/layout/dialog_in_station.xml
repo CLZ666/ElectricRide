@@ -5,14 +5,30 @@
               android:background="@color/white2"
               android:orientation="vertical">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginTop="15dp"
-        android:gravity="center"
-        android:text="请确认还车站点信息"
-        android:textColor="@color/black"
-        android:textSize="20sp"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="6"
+            android:gravity="center"
+            android:text="请确认还车站点信息"
+            android:textColor="@color/black"
+            android:textSize="20sp"/>
+
+        <ImageView
+            android:id="@+id/iv_cancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/cancel"/>
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -22,7 +38,6 @@
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="@string/return_bike_reminder"
-        android:textColor="@color/black"
         android:textSize="18sp"
         />
 

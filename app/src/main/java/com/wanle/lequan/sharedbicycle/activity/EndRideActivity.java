@@ -1,6 +1,7 @@
 package com.wanle.lequan.sharedbicycle.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
@@ -36,6 +37,7 @@ public class EndRideActivity extends AppCompatActivity implements UMShareListene
     @BindView(R.id.tv_ride_time)
     TextView mTvRideTime;
     private EndRideBean mEndRideBean;
+    private SharedPreferences mSpUserInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,8 @@ public class EndRideActivity extends AppCompatActivity implements UMShareListene
         mTvTitle.setText("骑行结束");
         mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         mEndRideBean = getIntent().getParcelableExtra("endRide");
+        mSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
+
         if (null != mEndRideBean) {
             final int balance = mEndRideBean.getResponseObj().getBalance();
             double banlce = balance * 1.0 / 100;
@@ -56,6 +60,7 @@ public class EndRideActivity extends AppCompatActivity implements UMShareListene
             mTvRideCost.setText("支付: ￥ " + mEndRideBean.getResponseObj().getCycleCharge() / 100);
             int time = mEndRideBean.getResponseObj().getTimeTotal();
             mTvRideTime.setText(getStandardTime(time));
+            mSpUserInfo.edit().putString("balance",mEndRideBean.getResponseObj().getBalance()*1.0/100+"").commit();
         }
     }
 

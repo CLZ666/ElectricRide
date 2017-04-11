@@ -11,7 +11,7 @@ public class CarStateBean {
     /**
      * responseCode : 1
      * responseMsg :
-     * responseObj : {"cycleTime":126,"cycleCharge":600,"carNo":"24929615696887808","carPower":100,"useStatus":2}
+     * responseObj : {"cycleTime":1,"cycleCharge":200,"carNo":"24929615696887809","carPower":99,"lockTime":13,"useStatus":2}
      */
 
     private String responseCode;
@@ -44,10 +44,11 @@ public class CarStateBean {
 
     public static class ResponseObjBean {
         /**
-         * cycleTime : 126
-         * cycleCharge : 600
-         * carNo : 24929615696887808
-         * carPower : 100
+         * cycleTime : 1
+         * cycleCharge : 200
+         * carNo : 24929615696887809
+         * carPower : 99
+         * lockTime : 13
          * useStatus : 2
          */
 
@@ -55,6 +56,7 @@ public class CarStateBean {
         private int cycleCharge;
         private String carNo;
         private int carPower;
+        private int lockTime;
         private int useStatus;
 
         public int getCycleTime() {
@@ -89,6 +91,14 @@ public class CarStateBean {
             this.carPower = carPower;
         }
 
+        public int getLockTime() {
+            return lockTime;
+        }
+
+        public void setLockTime(int lockTime) {
+            this.lockTime = lockTime;
+        }
+
         public int getUseStatus() {
             return useStatus;
         }
@@ -96,25 +106,5 @@ public class CarStateBean {
         public void setUseStatus(int useStatus) {
             this.useStatus = useStatus;
         }
-
-        @Override
-        public String toString() {
-            return "ResponseObjBean{" +
-                    "cycleTime=" + cycleTime +
-                    ", cycleCharge=" + cycleCharge +
-                    ", carNo='" + carNo + '\'' +
-                    ", carPower=" + carPower +
-                    ", useStatus=" + useStatus +
-                    '}';
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "CarStateBean{" +
-                "responseCode='" + responseCode + '\'' +
-                ", responseMsg='" + responseMsg + '\'' +
-                ", responseObj=" + responseObj +
-                '}';
     }
 }
