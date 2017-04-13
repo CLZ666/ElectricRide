@@ -72,8 +72,6 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
     LinearLayout mLinearBorrow;
     @BindView(R.id.tv_username)
     TextView mTvUsername;
-    @BindView(R.id.tv_balance)
-    TextView mTvBalance;
     @BindView(R.id.user_icon)
     CircleImageView mUserIcon;
 
@@ -87,7 +85,7 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_info);
+        setContentView(R.layout.activity_personal_info);
         ButterKnife.bind(this);
         mIvBack = (ImageView) findViewById(R.id.iv_back);
         mSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
@@ -134,7 +132,6 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
            Glide.with(UserInfoActivity.this).load(headimg).into(mUserIcon);
         }
         String balance = mSpUserInfo.getString("balance", "");
-        mTvBalance.setText("￥" + balance);
         mIvBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,6 +160,10 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
             mLineCertification.setBackgroundColor(getResources().getColor(R.color.red));
             mTvIdentify.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.complete_verify), null, null);
             mTvIdentify.setTextColor(getResources().getColor(R.color.red));
+        }
+        if (mIsDeposit&&mIsIdentify){
+            mSpUserInfo.edit().putBoolean("isBorrow", true).commit();
+            mLinearBorrow.setVisibility(View.GONE);
         }
     }
 

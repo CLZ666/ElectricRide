@@ -312,36 +312,39 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         if (response.code() == 200) {
                             if (null != response.body()) {
                                 jsonString = response.body().string();
+                                if (null != jsonString) {
+                                    // Log.i("isUserCar", jsonString);
+                                    gson = new Gson();
+                                    MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
+                                    if (null != messageBean) {
+                                        if (messageBean.getResponseCode().equals("1")) {
+                                            showBikeStation();
+                                            setCarStutsFragment();
+                                            mBtnUseCar.setText("我要还车");
+                                            gson = new Gson();
+                                            final CarStateBean carStateBean = gson.fromJson(jsonString, CarStateBean.class);
+                                            if (null != carStateBean) {
+                                                Log.i("carStateBean", carStateBean.toString());
+                                                sendCarValue(carStateBean);
+                                            }
+                                        } else {
+                                            carStateHandler.removeCallbacks(mRunnable);
+                                            if (null != mlocationClient) {
+                                                mlocationClient.startLocation();
+                                            }
+                                            regeocdeQuery();
+                                            setAdressInfoFragment();
+                                            showBike();
+                                            mBtnUseCar.setText("我要用车");
+                                        }
+                                    }
+                                }
                             }
+                        } else {
+
                         }
                     }
-                    if (null != jsonString) {
-                        Log.i("isUserCar", jsonString);
-                        gson = new Gson();
-                        MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                        if (null != messageBean) {
-                            if (messageBean.getResponseCode().equals("1")) {
-                                showBikeStation();
-                                setCarStutsFragment();
-                                mBtnUseCar.setText("我要还车");
-                                gson = new Gson();
-                                final CarStateBean carStateBean = gson.fromJson(jsonString, CarStateBean.class);
-                                if (null != carStateBean) {
-                                    Log.i("carStateBean", carStateBean.toString());
-                                    sendCarValue(carStateBean);
-                                }
-                            } else {
-                                carStateHandler.removeCallbacks(mRunnable);
-                                if (null != mlocationClient) {
-                                    mlocationClient.startLocation();
-                                }
-                                regeocdeQuery();
-                                setAdressInfoFragment();
-                                showBike();
-                                mBtnUseCar.setText("我要用车");
-                            }
-                        }
-                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -540,6 +543,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 } else if (mBtnUseCar.getText().equals("我要还车")) {
                     if (NetWorkUtil.isNetworkAvailable(this)) {
                         //toReturnBike();
+                        mProgersssDialog = new ProgersssDialog(this);
                         returnCar(1);
                     }
                 }
@@ -677,6 +681,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         boolean isLogin1 = mSp_isLogin.getBoolean("isLogin", false);
         boolean isDeposit = mSpUserinfo.getBoolean(getResources().getString(R.string.is_deposit), false);
         boolean isIdentify = mSpUserinfo.getBoolean(getResources().getString(R.string.is_identity), false);
+        String blance=mSpUserinfo.getString("balance","");
+        double blance1 = 0;
+        if (!"".equals(blance)){
+             blance1=stringtoDouble(blance);
+        }
         if (!isLogin1) {
             startActivity(new Intent(this, LoginActivity.class));
             return;
@@ -689,7 +698,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             startActivity(new Intent(this, IdentityVeritActivity.class));
             return;
         }
-        if (isLogin1 && isDeposit && isIdentify) {
+        if (blance1<=0){
+            ToastUtils.getShortToastByString(this,"您的余额不足,请充值后使用哦");
+            return;
+        }
+        if (isLogin1 && isDeposit && isIdentify&&blance1>0) {
             QRCodePermission();
         }
     }
@@ -1093,7 +1106,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     /**
      * 查找附近还车站点
      */
-    public void queryReturnStation(LatLng latlng) {
+    public void
+    queryReturnStation(LatLng latlng) {
         if (null != latlng) {
             Log.i("latlng1", latlng.toString());
             Point point = new Point(0, 0);
@@ -1104,6 +1118,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             map.put("radius", 1000 + "");
             map.put("longitude", latlng.longitude + "");
             map.put("latitude", latlng.latitude + "");
+            Log.i("returnStation", latlng.toString());
             Call<ResponseBody> call = HttpUtil.getService(ApiService.class).queryReturnStation(map);
             GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
                 @Override
@@ -1140,6 +1155,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             });
         }
     }
+
 
     /**
      * 给有车的位置加上标记

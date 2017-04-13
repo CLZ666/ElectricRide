@@ -12,7 +12,7 @@ import rx.schedulers.Schedulers;
 
 /**
  * autor:Jerry
- * fuction:网络请求工具类
+ * fuction:网络请求api
  * Date: 2017/2/24.
  */
 

@@ -6,7 +6,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -43,6 +42,8 @@ public class RechargeRecordActivity extends AppCompatActivity {
     private SharedPreferences mMSpUserInfo;
     private String mUserId;
     private RechargeRecordAdapter mAdapter;
+    private View mEmptyView;
+    private TextView mTv_empty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +74,18 @@ public class RechargeRecordActivity extends AppCompatActivity {
         mMSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
         mUserId = mMSpUserInfo.getString("userId", "");
         mAdapter = new RechargeRecordAdapter(this);
-        View emptyView = LayoutInflater.from(this).inflate(R.layout.layout_empty_view, null);
-        TextView tv_empty = (TextView) emptyView.findViewById(R.id.tv_empty);
-        tv_empty.setText("暂时没有充值记录哦");
-        mLvRechargeRecord.setEmptyView(emptyView);
+        mEmptyView = findViewById(R.id.empty_view);
+        mTv_empty = (TextView) mEmptyView.findViewById(R.id.tv_empty);
+        mTv_empty.setText("暂时没有充值记录哦");
+        netBug();
+        mLvRechargeRecord.setEmptyView(mEmptyView);
         mLvRechargeRecord.setAdapter(mAdapter);
+        mEmptyView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getRecord(true);
+            }
+        });
     }
 
     private void getRecord(final boolean isRefresh) {
@@ -93,6 +101,7 @@ public class RechargeRecordActivity extends AppCompatActivity {
                         RechargeRecordBean dataBean = gson.fromJson(jsonString, RechargeRecordBean.class);
                         if (null != dataBean) {
                             mAdapter.setData(dataBean.getResponseObj().getList(), isRefresh);
+                            abnormalView();
                         }
                     }
                 } catch (IOException e) {
@@ -110,5 +119,23 @@ public class RechargeRecordActivity extends AppCompatActivity {
     @OnClick(R.id.iv_back)
     public void onClick() {
         finish();
+    }
+    public void abnormalView(){
+        if (NetWorkUtil.isNetworkAvailable(RechargeRecordActivity.this)){
+            if (mAdapter.getCount()==0){
+                mEmptyView.setVisibility(View.VISIBLE);
+                mSwipRefresh.setVisibility(View.GONE);
+            }else{
+                mEmptyView.setVisibility(View.GONE);
+                mSwipRefresh.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+    public void netBug(){
+        if (!NetWorkUtil.isNetworkAvailable(RechargeRecordActivity.this)) {
+            mTv_empty.setText("网络连接失败，连接后点击刷新");
+            mEmptyView.setVisibility(View.VISIBLE);
+            mSwipRefresh.setVisibility(View.GONE);
+        }
     }
 }

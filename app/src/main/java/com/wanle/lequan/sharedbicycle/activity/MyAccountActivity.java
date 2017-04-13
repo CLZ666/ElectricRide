@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.wanle.lequan.sharedbicycle.R;
 import com.wanle.lequan.sharedbicycle.bean.UserInfoBean;
 import com.wanle.lequan.sharedbicycle.utils.GetUserInfo;
+import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +36,7 @@ public class MyAccountActivity extends AppCompatActivity {
     TextView mTvDepositRefund;
     private SharedPreferences mSpUserInfo;
     private boolean mIsDeposit;
+    private double mBalance1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +87,8 @@ public class MyAccountActivity extends AppCompatActivity {
             public void onNext(UserInfoBean userInfoBean) {
                 if (null != userInfoBean && userInfoBean.getResponseCode().equals("1")) {
                     int balance = userInfoBean.getResponseObj().getBalance();
-                    double mbalance = balance * 1.0 / 100;
-                    mTvFareBalance.setText(mbalance + "");
+                    mBalance1 = balance * 1.0 / 100;
+                    mTvFareBalance.setText(mBalance1 + "");
                     final int payDeposit = userInfoBean.getResponseObj().getPayDeposit();
                     if (payDeposit > 0) {
                         mSpUserInfo.edit().putBoolean(getResources().getString(R.string.is_deposit), true);
@@ -113,7 +115,11 @@ public class MyAccountActivity extends AppCompatActivity {
                 break;
             case R.id.tv_deposit_refund:
                 if (mIsDeposit){
-                    rechargeReturn();
+                    if (mBalance1>0){
+                        rechargeReturn();
+                    }else{
+                        ToastUtils.getShortToastByString(this,"您的余额不足,不能退还押金哦!");
+                    }
                 }else{
                     startActivity(new Intent(this,DepositActivity.class));
                 }

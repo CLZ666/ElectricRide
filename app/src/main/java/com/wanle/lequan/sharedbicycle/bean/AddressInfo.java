@@ -12,6 +12,8 @@ public class AddressInfo {
     private String distance;
     private String time;
 
+    private AddressInfo(){
+    }
     public AddressInfo(String street,String car_amount,String distance, String time) {
         this.srtreet = street;
         this.car_amount=car_amount;

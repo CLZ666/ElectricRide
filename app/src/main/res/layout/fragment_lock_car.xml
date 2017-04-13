@@ -143,34 +143,4 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linear_lock_time"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/touming"
-        android:orientation="vertical"
-        android:visibility="gone"
-        >
-
-        <TextView
-            android:layout_width="3dp"
-            android:layout_height="40dp"
-            android:layout_gravity="right"
-            android:layout_marginLeft="19dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/colorRed"
-            android:gravity="center"/>
-
-        <TextView
-            android:id="@+id/tv_lock_time"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="right"
-            android:background="@drawable/tv_circle"
-            android:gravity="center"
-            android:text="00:00"
-            android:textColor="@color/colorRed"/>
-    </LinearLayout>
 </LinearLayout>

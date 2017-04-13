@@ -16,10 +16,10 @@
     <string name="my_account">我的账户</string>
     <string name="my_trip">我的行程</string>
     <string name="my_news">我的消息</string>
-    <string name="my_invite">我的邀请</string>
+    <string name="my_invite">邀请好友</string>
     <string name="user_guide">用户指南</string>
-    <string name="user_center">用户中心</string>
-    <string name="contact_us">联系我们</string>
+    <string name="user_center">个人中心</string>
+    <string name="contact_us">联系客服</string>
     <string name="min_amount">￥299.0</string>
     <string name="zhifubao_pay">支付宝支付</string>
     <string name="wx_pay">微信支付</string>
@@ -37,11 +37,9 @@
     <string name="recharge_desc">疯狂充值季,150元以上充多少送多少!</string>
     <string name="recharge_custom">按需输入充值金额，最低一元</string>
     <string name="no_result">对不起，没有搜索到相关数据！</string>
-    <string name="progressbar_dialog_txt">正在处理，请稍后...</string>
     <string name="confim">确定</string>
     <string name="cancel">取消</string>
     <string name="input_right_info">*请务必填写正确的真实信息</string>
-    <string name="input_num">请输入真实姓名</string>
     <string name="input_zfb_account">请输入支付宝账号</string>
     <string name="choose_return_reason">选择退款原因</string>
     <string name="refund_desc">申请提交成功后，租车押金将在3-7个工作日内退还至您的账户,请注意查看账户资金动态</string>

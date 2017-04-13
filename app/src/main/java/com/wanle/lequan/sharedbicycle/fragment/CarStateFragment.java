@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -66,10 +65,7 @@ public class CarStateFragment extends Fragment {
     TextView mTvIsLock;
     @BindView(R.id.iv_bike_state)
     ImageView mIvBikeState;
-    @BindView(R.id.tv_lock_time)
-    TextView mTvLockTime;
-    @BindView(R.id.linear_lock_time)
-    LinearLayout mLinearLockTime;
+
     private ProgersssDialog mProgersssDialog;
     private String mCarNo;
     private int mCarPower;
@@ -158,7 +154,7 @@ public class CarStateFragment extends Fragment {
                                         mTvIsLock.setText("继续使用");
                                         mTvCarStatus.setText("车辆锁定中");
                                         mIvBikeState.setImageResource(R.drawable.smal_lock);
-                                        mLinearLockTime.setVisibility(View.VISIBLE);
+                                     /*   mLinearLockTime.setVisibility(View.VISIBLE);*/
                                     }
                                 };
                                 mCdt.start();
@@ -205,12 +201,12 @@ public class CarStateFragment extends Fragment {
             mTvIsLock.setText("临时锁车");
             mTvCarStatus.setText("车辆骑行中");
             mIvBikeState.setImageResource(R.drawable.using_bike_state);
-            mLinearLockTime.setVisibility(View.GONE);
+           /* mLinearLockTime.setVisibility(View.GONE);*/
         } else {
             mTvIsLock.setText("继续使用");
             mTvCarStatus.setText("车辆锁定中");
             mIvBikeState.setImageResource(R.drawable.smal_lock);
-            mLinearLockTime.setVisibility(View.VISIBLE);
+           /* mLinearLockTime.setVisibility(View.VISIBLE);*/
         }
     }
 
@@ -255,7 +251,7 @@ public class CarStateFragment extends Fragment {
                                         mTvCarStatus.setText("车辆骑行中");
                                         mProgersssDialog.dismiss();
                                         mIvBikeState.setImageResource(R.drawable.using_bike_state);
-                                        mLinearLockTime.setVisibility(View.GONE);
+                                        /*mLinearLockTime.setVisibility(View.GONE);*/
                                     }
                                 };
                                 mCdt.start();

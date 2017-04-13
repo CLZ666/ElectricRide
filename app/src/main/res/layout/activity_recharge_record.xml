@@ -27,5 +27,7 @@
 
         </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>
-
+    <include
+        android:id="@+id/empty_view"
+        layout="@layout/layout_empty_view"/>
 </RelativeLayout>

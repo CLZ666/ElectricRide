@@ -29,7 +29,7 @@ import rx.Observable;
 
 public interface ApiService {
     public static final String BASE_URL = "http://test.car.lequangroup.cn/";
-    public String testurl = "http://192.168.1.7:8089/wanle-car-web/";
+    public String testurl = "http://192.168.0.103:8080/car/";
 
     //获取验证码的接口
     @GET("smsCode/getSmsCodeByReg.html")
