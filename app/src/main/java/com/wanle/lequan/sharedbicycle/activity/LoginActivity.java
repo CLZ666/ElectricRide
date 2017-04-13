@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -65,8 +66,11 @@ public class LoginActivity extends AppCompatActivity {
         mEditPhone.addTextChangedListener(textWatcher);
         mSp_userinfo = getSharedPreferences("userinfo", MODE_PRIVATE);
         mEdit_userinfo = mSp_userinfo.edit();
-        mEditIdentify.setOnKeyListener(onKey);
         showKeyboard(mEditPhone);
+        showKeyboard(mEditIdentify);
+        mEditPhone.setInputType(EditorInfo.TYPE_CLASS_PHONE);
+        mEditIdentify.setInputType(EditorInfo.TYPE_CLASS_PHONE);
+        mEditIdentify.setOnKeyListener(onKey);
     }
 
 
