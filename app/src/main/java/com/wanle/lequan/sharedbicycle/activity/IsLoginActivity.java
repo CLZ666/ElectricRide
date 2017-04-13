@@ -48,6 +48,7 @@ public class IsLoginActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.btn_login_register:
                 startActivity(new Intent(this,LoginActivity.class));
+                finish();
                 break;
             case R.id.iv_back:
                 finish();

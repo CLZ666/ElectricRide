@@ -163,7 +163,6 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
         }
         if (mIsDeposit&&mIsIdentify){
             mSpUserInfo.edit().putBoolean("isBorrow", true).commit();
-            mLinearBorrow.setVisibility(View.GONE);
         }
     }
 

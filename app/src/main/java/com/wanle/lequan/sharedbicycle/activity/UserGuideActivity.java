@@ -6,8 +6,10 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.wanle.lequan.sharedbicycle.R;
@@ -23,6 +25,8 @@ public class UserGuideActivity extends AppCompatActivity {
     TextView mTvTitle;
     @BindView(R.id.webView)
     WebView mWebView;
+    @BindView(R.id.myProgressBar)
+    ProgressBar mMyProgressBar;
     private SharedPreferences mSpGlobalParms;
     private View emptyView;
     private TextView mTv_empty;
@@ -37,7 +41,6 @@ public class UserGuideActivity extends AppCompatActivity {
         mTvTitle.setText("用户指南");
         mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         final String userGuide = mSpGlobalParms.getString("userGuide", "");
-        mWebView.loadUrl(userGuide);
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -45,20 +48,37 @@ public class UserGuideActivity extends AppCompatActivity {
                 return true;
             }
         });
+        mWebView.setWebChromeClient(new WebChromeClient() {
+
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                if (newProgress == 100) {
+                    mMyProgressBar.setVisibility(View.GONE);
+                } else {
+                    if (View.INVISIBLE == mMyProgressBar.getVisibility()) {
+                        mMyProgressBar.setVisibility(View.VISIBLE);
+                    }
+                    mMyProgressBar.setProgress(newProgress);
+                }
+                super.onProgressChanged(view, newProgress);
+            }
+
+        });
+        mWebView.loadUrl(userGuide);
         emptyView = findViewById(R.id.empty_view);
         mTv_empty = (TextView) emptyView.findViewById(R.id.tv_empty);
         netBug();
         emptyView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (NetWorkUtil.isNetworkAvailable(UserGuideActivity.this)){
+                if (NetWorkUtil.isNetworkAvailable(UserGuideActivity.this)) {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             mWebView.setVisibility(View.VISIBLE);
                             emptyView.setVisibility(View.GONE);
                         }
-                    },1000);
+                    }, 1000);
 
                 }
             }

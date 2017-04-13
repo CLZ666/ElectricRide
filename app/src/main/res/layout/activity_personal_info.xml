@@ -154,6 +154,7 @@
                     android:drawableTop="@drawable/complete_verify"
                     android:gravity="center"
                     android:text="@string/phoneverification"
+                    android:layout_marginLeft="2dp"
                     android:textColor="@color/red"
                     android:textSize="11sp"
                     />
@@ -215,7 +216,9 @@
                     android:drawableTop="@drawable/bike_verify"
                     android:gravity="center"
                     android:text="@string/startborrow"
-                    android:textSize="11sp"/>
+                    android:layout_marginRight="2dp"
+                    android:textSize="11sp"
+                    android:id="@+id/textView6"/>
 
             </LinearLayout>
 

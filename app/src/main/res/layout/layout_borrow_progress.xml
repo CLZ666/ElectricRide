@@ -16,6 +16,7 @@
         android:drawableTop="@drawable/complete_verify"
         android:gravity="center"
         android:text="@string/phoneverification"
+        android:layout_marginLeft="2dp"
         android:textColor="@color/red"
         android:textSize="11sp"
         />
@@ -80,6 +81,7 @@
         android:drawableTop="@drawable/bike_verify"
         android:gravity="center"
         android:text="@string/startborrow"
+        android:layout_marginRight="2dp"
         android:textColor="@color/black"
         android:textSize="11sp"/>
 
