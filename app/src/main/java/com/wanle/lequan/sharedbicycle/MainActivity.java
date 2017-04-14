@@ -291,9 +291,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (!isOpen) {
             startActivity(new Intent(this, BlueToothActivity.class));
         }
-        IntentFilter filter1;
-        filter1 = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(mBlueToothStateReceiver, filter1);
+        IntentFilter filter;
+        filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(mBlueToothStateReceiver, filter);
     }
 
     /**
@@ -484,7 +484,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         mUiSettings = aMap.getUiSettings();
         mUiSettings.setZoomControlsEnabled(false);
         aMap.setLocationSource(this);// 设置定位监听
-        mUiSettings.setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
+        mUiSettings.setMyLocationButtonEnabled(false);// 设置默认定位按钮是否显示
         aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         MyLocationStyle myLocationStyle = new MyLocationStyle();
             /*myLocationStyle.myLocationIcon(BitmapDescriptorFactory
