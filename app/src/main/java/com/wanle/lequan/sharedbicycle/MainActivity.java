@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                     MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
                                     if (null != messageBean) {
                                         if (messageBean.getResponseCode().equals("1")) {
-                                            showBikeStation();
+                                            showChargeStation();
                                             setCarStutsFragment();
                                             mBtnUseCar.setText("我要还车");
                                             gson = new Gson();
@@ -531,7 +531,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         mWalkRouteOverlay.removeFromMap();
                     }
                     if (!mIsStation) {
-                        showBikeStation();
+                        showChargeStation();
                     } else {
                         showBike();
                     }
@@ -646,17 +646,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     /**
-     * 显示附近还车站点
+     * 显示附近充电站点
      */
-    public void showBikeStation() {
+    public void showChargeStation() {
         if (bikeMarkers.size() > 0) {
             for (Marker marker : bikeMarkers) {
                 marker.remove();
             }
         }
-        mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.station_icon));
+        mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.station));
         if (null != mAmapocation) {
-            queryReturnStation(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
+            queryChargeStation(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
         }
         mIsStation = true;
     }
@@ -1106,8 +1106,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     /**
      * 查找附近还车站点
      */
-    public void
-    queryReturnStation(LatLng latlng) {
+    public void queryChargeStation(LatLng latlng) {
         if (null != latlng) {
             Log.i("latlng1", latlng.toString());
             Point point = new Point(0, 0);
@@ -1119,7 +1118,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             map.put("longitude", latlng.longitude + "");
             map.put("latitude", latlng.latitude + "");
             Log.i("returnStation", latlng.toString());
-            Call<ResponseBody> call = HttpUtil.getService(ApiService.class).queryReturnStation(map);
+            Call<ResponseBody> call = HttpUtil.getService(ApiService.class).queryChargeStation(map);
             GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -1135,7 +1134,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                         Log.i("nearby", nearByStationBean.toString());
                                         List<NearByStationBean.ResponseObjBean> nearbyStations = nearByStationBean.getResponseObj();
                                         if (null != nearbyStations) {
-                                            addStationMark(nearbyStations);
+                                            addChargeMark(nearbyStations);
                                         }
                                     } else {
                                         ToastUtil.show(MainActivity.this, nearByStationBean.getResponseMsg());
@@ -1185,9 +1184,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     /**
-     * 给有站点的位置加上标记
+     * 给有充电站点的位置加上标记
      */
-    private void addStationMark(List<NearByStationBean.ResponseObjBean> stations) {
+    private void addChargeMark(List<NearByStationBean.ResponseObjBean> stations) {
         Log.i("stations", stations.toString());
         for (Marker marker : bikeMarkers) {
             marker.remove();

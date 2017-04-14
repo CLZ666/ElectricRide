@@ -31,8 +31,6 @@ public class AddressInfoFragment extends Fragment {
     TextView mTvAmount;
     @BindView(R.id.tv_distance)
     TextView mTvDistance;
-    @BindView(R.id.tv_time)
-    TextView mTvTime;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,10 +49,9 @@ public class AddressInfoFragment extends Fragment {
     public void onEventMainThread(MyEvent event) {
         AddressInfo info = event.getInfo();
         if (null!=info){
-            mTvAmount.setText(info.getCar_amount());
+            mTvAmount.setText("剩余"+info.getCar_amount()+"辆");
             mTvStreet.setText(info.getSrtreet());
-            mTvDistance.setText(info.getDistance());
-            mTvTime.setText(info.getTime());
+            mTvDistance.setText("距离"+info.getDistance()+"米");
         }
     }
     @Override

@@ -65,9 +65,9 @@ public interface ApiService {
     @GET("car/searchCar.html")
     Call<ResponseBody> queryCar(@QueryMap Map<String, String> map);
 
-    //查找附近还车站点的接口
+    //查找附近充电站点的接口
     @GET("place/selectPlaceList.html")
-    Call<ResponseBody> queryReturnStation(@QueryMap Map<String, String> map);
+    Call<ResponseBody> queryChargeStation(@QueryMap Map<String, String> map);
     //充值接口
     @FormUrlEncoded
     @POST("recharge/rechargeCreate.html")
