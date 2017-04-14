@@ -34,6 +34,7 @@
             android:textColor="@color/red"
             android:textSize="20sp"
             />
+
         <ImageView
             android:id="@+id/iv_search"
             android:layout_width="0dp"
@@ -44,86 +45,103 @@
             />
     </LinearLayout>
 
-    <com.amap.api.maps.MapView
-        android:id="@+id/map"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/linear_bar"
         >
-    </com.amap.api.maps.MapView>
-    <ImageView
-        android:id="@+id/iv_end_point"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/end_point"
-        android:layout_marginTop="10dp"
-        android:layout_centerInParent="true"
-        />
-    <ImageView
-        android:id="@+id/iv_gps_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="center"
-        android:layout_marginBottom="40dp"
-        android:layout_marginLeft="30dp"
-        android:background="@drawable/bgd_circle"
-        android:src="@drawable/gps_start"
-        />
 
+        <com.amap.api.maps.MapView
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+        </com.amap.api.maps.MapView>
 
-    <ImageView
-        android:id="@+id/iv_bike_station"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="center"
-        android:layout_marginBottom="40dp"
-        android:layout_marginRight="30dp"
-        android:background="@drawable/bgd_circle"
-        android:src="@drawable/moto"
-        />
-    <ImageView
-        android:id="@+id/iv_kefu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/kefu"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/bgd_circle"
-        android:layout_above="@id/iv_bike_station"/>
-    <ImageView
-        android:id="@+id/iv_guide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/route_guide"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/bgd_circle"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="8dp"
-        android:visibility="invisible"
-        android:layout_above="@id/iv_kefu"/>
-    <android.support.v7.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        app:cardCornerRadius="20dp">
-
-        <Button
-            android:id="@+id/btn_use_car"
+        <ImageView
+            android:id="@+id/iv_end_point"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/toolbar"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:text="我要用车"
-            android:textColor="@color/white"
-            android:textSize="18sp"/>
-    </android.support.v7.widget.CardView>
+            android:layout_centerInParent="true"
+            android:layout_marginTop="15dp"
+            android:src="@drawable/end_point"
+            />
+
+        <ImageView
+            android:id="@+id/iv_gps_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:layout_marginBottom="40dp"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/bgd_circle"
+            android:src="@drawable/gps_start"
+            />
+
+
+        <ImageView
+            android:id="@+id/iv_bike_station"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:layout_marginBottom="40dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/bgd_circle"
+            android:src="@drawable/moto"
+            />
+
+        <ImageView
+            android:id="@+id/iv_kefu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/iv_bike_station"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/bgd_circle"
+            android:src="@drawable/kefu"/>
+
+        <ImageView
+            android:id="@+id/iv_guide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/iv_kefu"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/bgd_circle"
+            android:src="@drawable/route_guide"
+            android:visibility="invisible"/>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            app:contentPaddingLeft="5dp"
+            app:contentPaddingRight="5dp"
+            app:cardBackgroundColor="@color/toolbar"
+            app:cardCornerRadius="15dp">
+
+            <TextView
+                android:id="@+id/btn_use_car"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/toolbar"
+                android:paddingBottom="3dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="3dp"
+                android:text="我要用车"
+                android:textColor="@color/white"
+                android:textSize="18sp"/>
+        </android.support.v7.widget.CardView>
+
+    </RelativeLayout>
 
     <FrameLayout
         android:id="@+id/fl_fragment_replace"
