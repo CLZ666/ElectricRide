@@ -163,8 +163,6 @@
         </activity>
         <activity android:name=".activity.InputCodeActivity">
         </activity>
-        <activity android:name=".activity.LoadingActivity">
-        </activity>
         <activity android:name=".activity.EndRideActivity">
         </activity>
         <activity
@@ -233,10 +231,6 @@
         <activity
             android:name=".activity.FirstBootActivity"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
-        </activity>
-        <activity android:name=".activity.DepositReturnZfbActivity">
-        </activity>
-        <activity android:name=".activity.DepositReturnBankActivity">
         </activity>
         <activity android:name=".activity.AboutUsActivity">
         </activity>

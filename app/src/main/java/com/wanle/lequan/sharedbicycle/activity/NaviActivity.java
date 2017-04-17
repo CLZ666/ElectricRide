@@ -3,7 +3,6 @@ package com.wanle.lequan.sharedbicycle.activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -31,7 +30,7 @@ import com.wanle.lequan.sharedbicycle.utils.TTSController;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class NaviActivity extends AppCompatActivity implements AMapNaviListener, AMapNaviViewListener {
+public class NaviActivity extends BaseActivity implements AMapNaviListener, AMapNaviViewListener {
     @BindView(R.id.navi_view)
     AMapNaviView mAMapNaviView;
     //private AMapNaviView mAMapNaviView;

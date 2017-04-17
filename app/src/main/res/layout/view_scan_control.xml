@@ -36,7 +36,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/iv_open_light"
+            android:id="@+id/iv_open_light1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/lighting_icon"/>

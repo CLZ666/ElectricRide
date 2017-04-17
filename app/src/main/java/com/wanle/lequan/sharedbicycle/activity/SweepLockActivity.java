@@ -55,6 +55,8 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
     TextView mTvTitl;
     @BindView(R.id.tv_setting)
     TextView mTvSetting;
+    @BindView(R.id.tv_open_light)
+    TextView mTvOpenLight;
 
     private QRCodeView mQRCodeView;
     boolean isOpen = false;
@@ -166,8 +168,8 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
                         Gson gson = new Gson();
                         CarStateCheckBean carStateCheckBean = gson.fromJson(jsonString, CarStateCheckBean.class);
                         if (carStateCheckBean.getResponseCode().equals("1")) {
-                            tv_car_power.setText(carStateCheckBean.getResponseObj().getCarPower()+"%");
-                            tv_distance.setText(carStateCheckBean.getResponseObj().getDistance()/1000+"km");
+                            tv_car_power.setText(carStateCheckBean.getResponseObj().getCarPower() + "%");
+                            tv_distance.setText(carStateCheckBean.getResponseObj().getDistance() / 1000 + "km");
                             mDialog.setView(dialogView);
                             mDialog.show();
                         } else {
@@ -191,7 +193,7 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
         Log.e(TAG, "打开相机出错");
     }
 
-    @OnClick({R.id.iv_manual_input, R.id.tv_manual_input, R.id.iv_open_light, R.id.tv_open_light})
+    @OnClick({R.id.iv_manual_input, R.id.tv_manual_input, R.id.iv_open_light1, R.id.tv_open_light})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_manual_input:
@@ -200,20 +202,25 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
             case R.id.tv_manual_input:
                 startActivity(new Intent(SweepLockActivity.this, InputCodeActivity.class));
                 break;
-            case R.id.iv_open_light:
+            case R.id.iv_open_light1:
                 if (!isOpen) {
                     mQRCodeView.openFlashlight();
                     isOpen = true;
+                    mTvOpenLight.setText("关闭照明");
                 } else {
                     mQRCodeView.closeFlashlight();
+                    mTvOpenLight.setText("开启照明");
                     isOpen = false;
                 }
+                break;
             case R.id.tv_open_light:
                 if (!isOpen) {
                     mQRCodeView.openFlashlight();
+                    mTvOpenLight.setText("关闭照明");
                     isOpen = true;
                 } else {
                     mQRCodeView.closeFlashlight();
+                    mTvOpenLight.setText("开启照明");
                     isOpen = false;
                 }
                 break;

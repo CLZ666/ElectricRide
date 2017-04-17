@@ -79,9 +79,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="3.5dp"
             android:background="@drawable/iv_bgd_circle"
-            android:src="@drawable/running_man"/>
+            android:src="@drawable/running_man"
+            android:id="@+id/imageView3"/>
     </FrameLayout>
 
     <FrameLayout
@@ -117,7 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="5.5dp"
+            android:layout_marginTop="4.5dp"
             android:background="@drawable/iv_bgd_circle1"
             android:src="@drawable/small_moto"/>
     </FrameLayout>

@@ -2,7 +2,6 @@ package com.wanle.lequan.sharedbicycle.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,7 +16,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class IsLoginActivity extends AppCompatActivity {
+public class IsLoginActivity extends BaseActivity {
     @BindView(R.id.user_icon)
     CircleImageView mUserIcon;
 

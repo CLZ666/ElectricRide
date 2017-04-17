@@ -2,7 +2,6 @@ package com.wanle.lequan.sharedbicycle.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -26,7 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class SearchActivity extends AppCompatActivity implements Inputtips.InputtipsListener {
+public class SearchActivity extends BaseActivity implements Inputtips.InputtipsListener {
 
     @BindView(R.id.edit_search)
     EditText mEditSearch;

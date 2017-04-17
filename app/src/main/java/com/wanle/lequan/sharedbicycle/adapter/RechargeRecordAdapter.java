@@ -79,7 +79,7 @@ public class RechargeRecordAdapter extends BaseAdapter {
             double money = (income * 1.0) / 100;
             holder.mTvAmount.setText("+" + money + "");
         }
-        holder.mTvTime.setText(dataBean.getCtime());
+        holder.mTvTime.setText(stampToDate(dataBean.getCtime()));
         switch (type) {
             case "1":
                 holder.mTvType.setText("充值增加");

@@ -1,7 +1,6 @@
 package com.wanle.lequan.sharedbicycle.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.Window;
@@ -12,7 +11,7 @@ import com.wanle.lequan.sharedbicycle.adapter.FirstBootAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FirstBootActivity extends FragmentActivity {
+public class FirstBootActivity extends BaseActivity {
 
     @BindView(R.id.vp_first_boot)
     ViewPager mVpFirstBoot;

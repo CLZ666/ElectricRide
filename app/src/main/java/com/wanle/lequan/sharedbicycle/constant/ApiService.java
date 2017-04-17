@@ -68,6 +68,7 @@ public interface ApiService {
     //查找附近充电站点的接口
     @GET("place/selectPlaceList.html")
     Call<ResponseBody> queryChargeStation(@QueryMap Map<String, String> map);
+
     //充值接口
     @FormUrlEncoded
     @POST("recharge/rechargeCreate.html")
@@ -103,6 +104,11 @@ public interface ApiService {
     @POST("car/temporaryLockCar.html")
     Call<ResponseBody> tempLock(@Field("userId") String userId);
 
+    //还车校验的接口
+    @FormUrlEncoded
+    @POST("car/checkIfPark.html")
+    Call<ResponseBody> returnCheck(@FieldMap Map<String, String> map);
+
     //我要还车的接口
     @FormUrlEncoded
     @POST("car/returnCar.html")
@@ -126,7 +132,7 @@ public interface ApiService {
     //申请退还押金的接口
     @FormUrlEncoded
     @POST("recharge/rechargeBack.html")
-    Call<ResponseBody> depositRefund(@FieldMap Map<String, String> map);
+    Call<ResponseBody> depositRefund(@Field("userId") String userId);
 
     //获得全局参数的接口
     @FormUrlEncoded

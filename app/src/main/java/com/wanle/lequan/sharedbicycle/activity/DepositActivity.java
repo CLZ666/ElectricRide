@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
@@ -42,7 +41,7 @@ import retrofit2.Response;
 /**
  * 押金充值页面
  */
-public class DepositActivity extends AppCompatActivity {
+public class DepositActivity extends BaseActivity {
     private static final int SDK_PAY_FLAG = 1;
     private SharedPreferences mSp_borrow;
     private SharedPreferences.Editor mEdit_borrow;

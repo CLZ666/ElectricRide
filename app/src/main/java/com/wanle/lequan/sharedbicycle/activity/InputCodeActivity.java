@@ -12,7 +12,6 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -59,12 +58,14 @@ import retrofit2.Response;
 /**
  * 输入车辆编码页面
  */
-public class InputCodeActivity extends AppCompatActivity {
+public class InputCodeActivity extends BaseActivity {
 
     @BindView(R.id.tv_title)
     TextView mTvTitle;
     @BindView(R.id.ppe_num)
     PayNumberEditText mPpeNum;
+    @BindView(R.id.tv_open_light)
+    TextView mTvOpenLight;
     private Camera m_camera;
     private boolean isOpen = false;
     private ArrayList<EditText> edits = new ArrayList<>();
@@ -100,7 +101,7 @@ public class InputCodeActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick({R.id.iv_back, R.id.iv_erweima, R.id.iv_open_light, R.id.tv_erweima, R.id.v_open_light, R.id.btn_confim})
+    @OnClick({R.id.iv_back, R.id.iv_erweima, R.id.iv_open_light, R.id.tv_erweima, R.id.tv_open_light, R.id.btn_confim})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
@@ -112,28 +113,32 @@ public class InputCodeActivity extends AppCompatActivity {
             case R.id.iv_open_light:
                 if (!isOpen) {
                     onLight();
+                    mTvOpenLight.setText("关闭照明");
                     isOpen = true;
                 } else {
                     offLight();
+                    mTvOpenLight.setText("开启照明");
                     isOpen = false;
                 }
                 break;
             case R.id.tv_erweima:
                 startActivity(new Intent(this, SweepLockActivity.class));
                 break;
-            case R.id.v_open_light:
+            case R.id.tv_open_light:
                 if (!isOpen) {
                     onLight();
+                    mTvOpenLight.setText("关闭照明");
                     isOpen = true;
                 } else {
                     offLight();
+                    mTvOpenLight.setText("开启照明");
                     isOpen = false;
                 }
                 break;
             case R.id.btn_confim:
                 if (NetWorkUtil.isNetworkAvailable(this)) {
-                     unLockCar();
-                   // connectBle();
+                    unLockCar();
+                    // connectBle();
                 }
                 break;
             default:
@@ -193,8 +198,8 @@ public class InputCodeActivity extends AppCompatActivity {
                                     @Override
                                     public void onFinish() {
                                         mProgersssDialog.dismiss();
-                                        tv_car_power.setText(carStateCheckBean.getResponseObj().getCarPower()+"%");
-                                        tv_distance.setText(carStateCheckBean.getResponseObj().getDistance()/1000+"km");
+                                        tv_car_power.setText(carStateCheckBean.getResponseObj().getCarPower() + "%");
+                                        tv_distance.setText(carStateCheckBean.getResponseObj().getDistance() / 1000 + "km");
                                         mDialog.setView(mDialogView);
                                         mDialog.show();
                                     }
@@ -222,7 +227,7 @@ public class InputCodeActivity extends AppCompatActivity {
         String numText = mPpeNum.getPwdText();
         if (TextUtils.isEmpty(numText) || numText.length() < 9) {
             ToastUtils.getShortToastByString(this, "请确认输入的编号是否正确!");
-        }else {
+        } else {
             mProgersssDialog = new ProgersssDialog(InputCodeActivity.this);
             mProgersssDialog.setMsg("正在获取车辆信息");
             showCarState();
@@ -322,7 +327,7 @@ public class InputCodeActivity extends AppCompatActivity {
                     // final String name = devices[i].getName();
                     final String mac = devices[i].getAddress();
                     if (null != mac && "F0:C7:7F:F9:C9:C4".equals(mac)) {
-                         Log.i(TAG,devices[i].getAddress());
+                        Log.i(TAG, devices[i].getAddress());
                         // connectByName(name);
                         connectByMac(mac);
                         isFind = true;
@@ -394,6 +399,7 @@ public class InputCodeActivity extends AppCompatActivity {
             }
         });
     }
+
     View.OnKeyListener onKey = new View.OnKeyListener() {
 
         @Override
@@ -401,11 +407,10 @@ public class InputCodeActivity extends AppCompatActivity {
         public boolean onKey(View v, int keyCode, KeyEvent event) {
 
 
-
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (NetWorkUtil.isNetworkAvailable(InputCodeActivity.this)) {
-                        unLockCar();
-                        // connectBle();
+                    unLockCar();
+                    // connectBle();
                 }
 
                 return true;

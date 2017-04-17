@@ -2,7 +2,6 @@ package com.wanle.lequan.sharedbicycle.activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -51,7 +50,7 @@ import retrofit2.Response;
 /**
  * 充值记录页面
  */
-public class TripDetailActivity extends AppCompatActivity implements UMShareListener {
+public class TripDetailActivity extends BaseActivity implements UMShareListener {
 
 
     @BindView(R.id.tv_title)

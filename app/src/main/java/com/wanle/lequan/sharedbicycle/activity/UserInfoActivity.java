@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -51,7 +50,7 @@ import retrofit2.Response;
 import rx.Observable;
 import rx.Subscriber;
 
-public class UserInfoActivity extends AppCompatActivity implements UMShareListener {
+public class UserInfoActivity extends BaseActivity implements UMShareListener {
 
 
     @BindView(R.id.tv_phone_verification)
@@ -131,7 +130,6 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
         if (!headimg.equals("")){
            Glide.with(UserInfoActivity.this).load(headimg).into(mUserIcon);
         }
-        String balance = mSpUserInfo.getString("balance", "");
         mIvBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,6 +139,8 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
         mIsBorrow = mSpUserInfo.getBoolean("isBorrow", false);
         if (mIsBorrow) {
             mLinearBorrow.setVisibility(View.GONE);
+        }else {
+            mLinearBorrow.setVisibility(View.VISIBLE);
         }
         //getUserInfoString();
         String username = mSpUserInfo.getString("userName", "");
@@ -155,6 +155,10 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
             mLineDepositrecharge.setBackgroundColor(getResources().getColor(R.color.red));
             mTvDeposit.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.complete_verify), null, null);
             mTvDeposit.setTextColor(getResources().getColor(R.color.red));
+        }else {
+            mLineDepositrecharge.setBackgroundColor(getResources().getColor(R.color.grey));
+            mTvDeposit.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.dispote_verify), null, null);
+            mTvDeposit.setTextColor(getResources().getColor(R.color.tougrey));
         }
         if (mIsIdentify) {
             mLineCertification.setBackgroundColor(getResources().getColor(R.color.red));
@@ -209,6 +213,9 @@ public class UserInfoActivity extends AppCompatActivity implements UMShareListen
                     int isVerified = userInfoBean.getResponseObj().getIsVerified();
                     if (payDeposit > 0) {
                         mSpUserInfo.edit().putBoolean(getResources().getString(R.string.is_deposit), true).commit();
+                    }else{
+                        mSpUserInfo.edit().putBoolean(getResources().getString(R.string.is_deposit), false).commit();
+                        mSpUserInfo.edit().putBoolean("isBorrow", false).commit();
                     }
                     if (isVerified == 1) {
                         mSpUserInfo.edit().putBoolean(getResources().getString(R.string.is_identity), true).commit();

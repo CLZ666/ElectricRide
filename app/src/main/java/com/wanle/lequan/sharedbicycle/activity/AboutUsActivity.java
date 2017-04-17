@@ -2,7 +2,6 @@ package com.wanle.lequan.sharedbicycle.activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.wanle.lequan.sharedbicycle.R;
@@ -11,7 +10,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AboutUsActivity extends AppCompatActivity {
+public class AboutUsActivity extends BaseActivity {
 
     @BindView(R.id.tv_title)
     TextView mTvTitle;

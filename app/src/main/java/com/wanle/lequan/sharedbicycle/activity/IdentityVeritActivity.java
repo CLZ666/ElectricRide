@@ -1,41 +1,40 @@
 package com.wanle.lequan.sharedbicycle.activity;
 
         import android.content.Context;
-        import android.content.Intent;
-        import android.content.SharedPreferences;
-        import android.os.Bundle;
-        import android.support.v7.app.AppCompatActivity;
-        import android.util.Log;
-        import android.view.KeyEvent;
-        import android.view.View;
-        import android.view.inputmethod.InputMethodManager;
-        import android.widget.EditText;
-        import android.widget.TextView;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
 
-        import com.wanle.lequan.sharedbicycle.R;
-        import com.wanle.lequan.sharedbicycle.bean.IdentityVerifyBean;
-        import com.wanle.lequan.sharedbicycle.constant.ApiService;
-        import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
-        import com.wanle.lequan.sharedbicycle.utils.NetWorkUtil;
-        import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
+import com.wanle.lequan.sharedbicycle.R;
+import com.wanle.lequan.sharedbicycle.bean.IdentityVerifyBean;
+import com.wanle.lequan.sharedbicycle.constant.ApiService;
+import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
+import com.wanle.lequan.sharedbicycle.utils.NetWorkUtil;
+import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
 
-        import java.util.HashMap;
-        import java.util.Map;
-        import java.util.Timer;
-        import java.util.TimerTask;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
-        import butterknife.BindView;
-        import butterknife.ButterKnife;
-        import butterknife.OnClick;
-        import okhttp3.ResponseBody;
-        import retrofit2.Call;
-        import rx.Observable;
-        import rx.Subscriber;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import rx.Observable;
+import rx.Subscriber;
 
 /**
  * 实名认证界面
  */
-public class IdentityVeritActivity extends AppCompatActivity {
+public class IdentityVeritActivity extends BaseActivity {
     @BindView(R.id.edit_name)
     EditText mEditName;
     @BindView(R.id.edit_code)

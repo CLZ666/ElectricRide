@@ -3,7 +3,6 @@ package com.wanle.lequan.sharedbicycle.activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -29,7 +28,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RechargeRecordActivity extends AppCompatActivity {
+public class RechargeRecordActivity extends BaseActivity {
 
     @BindView(R.id.tv_titl)
     TextView mTvTitl;

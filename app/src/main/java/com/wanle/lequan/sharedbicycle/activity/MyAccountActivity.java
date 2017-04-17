@@ -4,25 +4,36 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.wanle.lequan.sharedbicycle.R;
+import com.wanle.lequan.sharedbicycle.bean.MessageBean;
 import com.wanle.lequan.sharedbicycle.bean.UserInfoBean;
+import com.wanle.lequan.sharedbicycle.constant.ApiService;
+import com.wanle.lequan.sharedbicycle.utils.GetJsonStringUtil;
 import com.wanle.lequan.sharedbicycle.utils.GetUserInfo;
+import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
+import com.wanle.lequan.sharedbicycle.utils.ToastUtil;
 import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import rx.Subscriber;
 
 
-public class MyAccountActivity extends AppCompatActivity {
+public class MyAccountActivity extends BaseActivity {
 
     @BindView(R.id.tv_titl)
     TextView mTvTitl;
@@ -37,6 +48,7 @@ public class MyAccountActivity extends AppCompatActivity {
     private SharedPreferences mSpUserInfo;
     private boolean mIsDeposit;
     private double mBalance1;
+    private String mBalance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +71,8 @@ public class MyAccountActivity extends AppCompatActivity {
         });
         getUserInfo();
         mSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
-        String balance = mSpUserInfo.getString("balance", "");
-        mTvFareBalance.setText(balance);
+        mBalance = mSpUserInfo.getString("balance", "");
+        mTvFareBalance.setText(mBalance);
         mIsDeposit = mSpUserInfo.getBoolean(getResources().getString(R.string.is_deposit), false);
         if (mIsDeposit){
             mTvDepositRefund.setText("押金退款");
@@ -136,22 +148,51 @@ public class MyAccountActivity extends AppCompatActivity {
         final AlertDialog builder = new AlertDialog.Builder(this).create();
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_recharge_refund, null);
         builder.setView(dialogView);
-        TextView tv_zfb = (TextView) dialogView.findViewById(R.id.tv_zfb);
-        TextView tv_bank = (TextView) dialogView.findViewById(R.id.tv_bank);
-        tv_zfb.setOnClickListener(new View.OnClickListener() {
+        TextView tv_confim = (TextView) dialogView.findViewById(R.id.tv_confim);
+        TextView tv_cancel = (TextView) dialogView.findViewById(R.id.tv_cancel);
+        tv_confim.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MyAccountActivity.this,DepositReturnZfbActivity.class));
+                depositRefund();
                 builder.cancel();
             }
         });
-        tv_bank.setOnClickListener(new View.OnClickListener() {
+        tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MyAccountActivity.this,DepositReturnBankActivity.class));
                 builder.cancel();
             }
         });
         builder.show();
+    }
+    public void depositRefund(){
+        String userId=mSpUserInfo.getString("userId","");
+        final Call<ResponseBody> call = HttpUtil.getService(ApiService.class).depositRefund(userId);
+        GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code()==200){
+                    try {
+                        final String jsonString = response.body().string();
+                        if (null!=jsonString){
+                           Gson gson=new Gson();
+                            final MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
+                            if (messageBean.getResponseCode().equals("1")){
+                                mSpUserInfo.edit().putBoolean(getResources().getString(R.string.is_deposit), false).commit();
+                                mSpUserInfo.edit().putBoolean("isBorrow",false).commit();
+                                ToastUtil.show(MyAccountActivity.this,"退款申请已提交");
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 }

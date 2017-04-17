@@ -21,7 +21,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -62,6 +61,7 @@ import com.amap.api.services.route.RouteSearch;
 import com.amap.api.services.route.WalkPath;
 import com.amap.api.services.route.WalkRouteResult;
 import com.google.gson.Gson;
+import com.wanle.lequan.sharedbicycle.activity.BaseActivity;
 import com.wanle.lequan.sharedbicycle.activity.BlueToothActivity;
 import com.wanle.lequan.sharedbicycle.activity.DepositActivity;
 import com.wanle.lequan.sharedbicycle.activity.EndRideActivity;
@@ -81,11 +81,13 @@ import com.wanle.lequan.sharedbicycle.bean.GlobalParmsBean;
 import com.wanle.lequan.sharedbicycle.bean.MessageBean;
 import com.wanle.lequan.sharedbicycle.bean.NearByCarBean;
 import com.wanle.lequan.sharedbicycle.bean.NearByStationBean;
+import com.wanle.lequan.sharedbicycle.bean.ReturnCheckBean;
 import com.wanle.lequan.sharedbicycle.constant.ApiService;
 import com.wanle.lequan.sharedbicycle.event.CarStateEvent;
 import com.wanle.lequan.sharedbicycle.event.MyEvent;
 import com.wanle.lequan.sharedbicycle.fragment.AddressInfoFragment;
 import com.wanle.lequan.sharedbicycle.fragment.CarStateFragment;
+import com.wanle.lequan.sharedbicycle.fragment.ReturnInStationFragment;
 import com.wanle.lequan.sharedbicycle.overlay.WalkRouteOverlay;
 import com.wanle.lequan.sharedbicycle.receiver.BlueToothStateReceiver;
 import com.wanle.lequan.sharedbicycle.receiver.NetInfoReceiver;
@@ -119,7 +121,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, LocationSource, AMapLocationListener, AMap.OnCameraChangeListener, GeocodeSearch.OnGeocodeSearchListener, RouteSearch.OnRouteSearchListener, AMap.OnMarkerClickListener, AMap.OnMapClickListener {
+public class MainActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks, LocationSource, AMapLocationListener, AMap.OnCameraChangeListener, GeocodeSearch.OnGeocodeSearchListener, RouteSearch.OnRouteSearchListener, AMap.OnMarkerClickListener, AMap.OnMapClickListener {
     @BindView(R.id.map)
     MapView mMap;
     @BindView(R.id.btn_use_car)
@@ -178,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private SharedPreferences mSpUserInfo;
     private List<Marker> bikeMarkers;
     private List<Marker> stationMarkers;
+    private String mUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,9 +225,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
      * 获得全局参数
      */
     private void getGlobalParms() {
-        final String userId = mSpUserInfo.getString("userId", "");
-        Log.i("userId1", userId);
-        final Call<ResponseBody> call = HttpUtil.getService(ApiService.class).globalParms(userId);
+        mUserId = mSpUserInfo.getString("userId", "");
+        Log.i("userId1", mUserId);
+        final Call<ResponseBody> call = HttpUtil.getService(ApiService.class).globalParms(mUserId);
         GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -318,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                                     MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
                                     if (null != messageBean) {
                                         if (messageBean.getResponseCode().equals("1")) {
-                                            showChargeStation();
+                                           // showChargeStation();
                                             setCarStutsFragment();
                                             mBtnUseCar.setText("我要还车");
                                             gson = new Gson();
@@ -487,8 +490,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         mUiSettings.setMyLocationButtonEnabled(false);// 设置默认定位按钮是否显示
         aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         MyLocationStyle myLocationStyle = new MyLocationStyle();
-            /*myLocationStyle.myLocationIcon(BitmapDescriptorFactory
-                    .fromResource(R.drawable.end_point));// 设置小蓝点的图标*/
+        /*myLocationStyle.myLocationIcon(BitmapDescriptorFactory
+                    .fromResource(R.drawable.location_icon));// 设置小蓝点的图标*/
         myLocationStyle.strokeColor(Color.BLUE);// 设置圆形的边框颜色
         myLocationStyle.strokeWidth(3);
         //myLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));// 设置圆形的边框颜色
@@ -543,8 +546,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 } else if (mBtnUseCar.getText().equals("我要还车")) {
                     if (NetWorkUtil.isNetworkAvailable(this)) {
                         //toReturnBike();
-                        mProgersssDialog = new ProgersssDialog(this);
+                        mProgersssDialog = new ProgersssDialog(MainActivity.this);
+                        mProgersssDialog.setMsg("正在还车中");
                         returnCar(1);
+                        //returnCheck();
                     }
                 }
                 break;
@@ -681,10 +686,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         boolean isLogin1 = mSp_isLogin.getBoolean("isLogin", false);
         boolean isDeposit = mSpUserinfo.getBoolean(getResources().getString(R.string.is_deposit), false);
         boolean isIdentify = mSpUserinfo.getBoolean(getResources().getString(R.string.is_identity), false);
-        String blance=mSpUserinfo.getString("balance","");
+        String blance = mSpUserinfo.getString("balance", "");
         double blance1 = 0;
-        if (!"".equals(blance)){
-             blance1=stringtoDouble(blance);
+        if (!"".equals(blance)) {
+            blance1 = stringtoDouble(blance);
         }
         if (!isLogin1) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -698,13 +703,69 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             startActivity(new Intent(this, IdentityVeritActivity.class));
             return;
         }
-        if (blance1<=0){
-            ToastUtils.getShortToastByString(this,"您的余额不足,请充值后使用哦");
+        if (blance1 <= 0) {
+            ToastUtils.getShortToastByString(this, "您的余额不足,请充值后使用哦");
             return;
         }
-        if (isLogin1 && isDeposit && isIdentify&&blance1>0) {
+        if (isLogin1 && isDeposit && isIdentify && blance1 > 0) {
             QRCodePermission();
         }
+    }
+
+    /**
+     * 还车校验
+     */
+    public void returnCheck() {
+        Map<String, String> map = new HashMap<>();
+        map.put("userId", mUserId);
+        map.put("longitude", "123");
+        map.put("latitude", "33");
+        final Call<ResponseBody> call = HttpUtil.getService(ApiService.class).returnCheck(map);
+        GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 200) {
+                    try {
+                        String jsonSting = response.body().string();
+                        Gson gson = new Gson();
+                        final ReturnCheckBean returnCheckBean = gson.fromJson(jsonSting, ReturnCheckBean.class);
+                        if (null != returnCheckBean) {
+                            if (returnCheckBean.getResponseCode().equals("1")) {
+                                final String ifInStation = returnCheckBean.getResponseObj().getIfInStation();
+                                if ("YES".equals(ifInStation)) {
+                                    final ReturnCheckBean.ResponseObjBean.PlaceInBean placeInBean = returnCheckBean.getResponseObj().getPlaceIn().get(0);
+                                    final FragmentManager fm = getSupportFragmentManager();
+                                    if (null != mAmapocation) {
+                                       /* myDialog.showInStation(placeInBean, mAmapocation, fm, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                mProgersssDialog = new ProgersssDialog(MainActivity.this);
+                                                mProgersssDialog.setMsg("正在还车中");
+                                                returnCar(1);
+                                            }
+                                        });*/
+                                        LatLng locatePoint=new LatLng(mAmapocation.getLatitude(),mAmapocation.getLongitude());
+                                        final ReturnInStationFragment inStationFragment = ReturnInStationFragment.newInstance(locatePoint, placeInBean);
+                                        inStationFragment.show(fm.beginTransaction(),"inStation");
+                                    }
+                                } else {
+
+                                }
+                            } else {
+                                ToastUtils.getShortToastByString(MainActivity.this, returnCheckBean.getResponseMsg());
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     /**
@@ -936,7 +997,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     protected void onResume() {
-        NetWorkUtil.isNetworkAvailable(this);
         super.onResume();
         mMap.onResume();
         monitorBlueTooth();
@@ -1036,6 +1096,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             if (amapLocation.getErrorCode() == 0) {
                 mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
                 mLocalLatlng = new LatLng(amapLocation.getLatitude(), amapLocation.getLongitude());
+                Log.i("locate", mLocalLatlng.toString());
                 aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLocalLatlng, 18));
                 if (!mIsStation) {
                     showBike();

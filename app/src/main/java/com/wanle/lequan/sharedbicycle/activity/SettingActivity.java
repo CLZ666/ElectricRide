@@ -11,7 +11,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -51,7 +50,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SettingActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class SettingActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int MY_PERMISSIONS_REQUEST_QR_CODE = 1;
     @BindView(R.id.tv_title)

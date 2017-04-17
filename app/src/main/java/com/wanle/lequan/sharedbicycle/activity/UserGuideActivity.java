@@ -3,7 +3,6 @@ package com.wanle.lequan.sharedbicycle.activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -19,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class UserGuideActivity extends AppCompatActivity {
+public class UserGuideActivity extends BaseActivity {
 
     @BindView(R.id.tv_title)
     TextView mTvTitle;

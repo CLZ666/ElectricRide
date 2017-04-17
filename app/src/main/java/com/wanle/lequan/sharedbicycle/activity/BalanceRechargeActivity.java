@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -61,7 +60,7 @@ import retrofit2.Response;
 /**
  * 余额充值页面
  */
-public class BalanceRechargeActivity extends AppCompatActivity {
+public class BalanceRechargeActivity extends BaseActivity{
     private static final int SDK_PAY_FLAG = 1;
     private static final String APP_ID = "wx1902de5450f7a61e";
     final IWXAPI msgApi = WXAPIFactory.createWXAPI(this, null);
