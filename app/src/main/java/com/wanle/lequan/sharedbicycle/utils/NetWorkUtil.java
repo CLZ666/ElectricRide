@@ -18,6 +18,7 @@ import android.widget.TextView;
  */
 
 public class NetWorkUtil {
+
     /**
      * 判断网络情况
      *
@@ -110,7 +111,7 @@ public class NetWorkUtil {
      * @param context Context
      * @return true 表示网络可用
      */
-    public static boolean isNetworkAvailable(Context context) {
+    public static boolean isNetworkAvailable(Activity context) {
         ConnectivityManager connectivity = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null) {
@@ -130,6 +131,52 @@ public class NetWorkUtil {
             }
         }
         return false;
+    }
+    /**
+     * 检测当前的网络（WLAN、3G/2G）状态
+     * @param context Context
+     * @return true 表示网络可用
+     */
+    public static boolean isNetworkAvailable1(Activity context) {
+        ConnectivityManager connectivity = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getActiveNetworkInfo();
+            if (info != null && info.isConnected())
+            {
+                // 当前网络是连接的
+                if (info.getState() == NetworkInfo.State.CONNECTED)
+                {
+                    // 当前所连接的网络可用
+                    return true;
+                }else{
+                    ToastUtils.getShortToastByString(context,"当前网络连接不可用");
+                }
+            }else{
+                openNetSetting(context);
+            }
+        }
+        return false;
+    }
+    private static void openNetSetting(final Activity activity) {
+        final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(activity);
+        builder.setMessage("网络无法访问，检查网络连接");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                activity.finish();
+            }
+        });
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent;
+                intent = new Intent(Settings.ACTION_SETTINGS);
+                activity.startActivity(intent);
+                builder.create().cancel();
+            }
+        });
+        builder.show();
     }
 }
 

@@ -3,6 +3,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
               android:orientation="vertical"
+              android:background="@color/white2"
              tools:context="com.wanle.lequan.sharedbicycle.fragment.ReturnInStationFragment">
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,13 +41,15 @@
         android:textSize="18sp"
         />
 
-    <com.amap.api.maps.MapView
+    <com.amap.api.maps.TextureMapView
         android:id="@+id/map"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:layout_width="match_parent"
         android:layout_height="200dp">
-    </com.amap.api.maps.MapView>
+    </com.amap.api.maps.TextureMapView>
 
     <TextView
         android:id="@+id/tv_station_address"

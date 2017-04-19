@@ -202,7 +202,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         setCenter();
         isUserCar();
         gps_start();
-        mMCdt = new CountDownTimer(10, 10) {
+        mMCdt = new CountDownTimer(300, 300) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -290,13 +290,15 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     private void monitorBlueTooth() {
         mBlueToothStateReceiver = new BlueToothStateReceiver(this);
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        boolean isOpen = bluetoothAdapter.isEnabled();
-        if (!isOpen) {
-            startActivity(new Intent(this, BlueToothActivity.class));
+        if (null != bluetoothAdapter) {
+            boolean isOpen = bluetoothAdapter.isEnabled();
+            if (!isOpen) {
+                startActivity(new Intent(this, BlueToothActivity.class));
+            }
+            IntentFilter filter;
+            filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+            registerReceiver(mBlueToothStateReceiver, filter);
         }
-        IntentFilter filter;
-        filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(mBlueToothStateReceiver, filter);
     }
 
     /**
@@ -321,14 +323,14 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                                     MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
                                     if (null != messageBean) {
                                         if (messageBean.getResponseCode().equals("1")) {
-                                           // showChargeStation();
-                                            setCarStutsFragment();
+                                            // showChargeStation();
                                             mBtnUseCar.setText("我要还车");
                                             gson = new Gson();
                                             final CarStateBean carStateBean = gson.fromJson(jsonString, CarStateBean.class);
                                             if (null != carStateBean) {
                                                 Log.i("carStateBean", carStateBean.toString());
                                                 sendCarValue(carStateBean);
+                                                setCarStutsFragment();
                                             }
                                         } else {
                                             carStateHandler.removeCallbacks(mRunnable);
@@ -500,7 +502,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         // myLocationStyle.anchor(int,int)//设置小蓝点的锚点
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW);
         aMap.setMyLocationStyle(myLocationStyle);
-        aMap.setMyLocationRotateAngle(180);
+        // aMap.setMyLocationRotateAngle(180);
     }
 
     @OnClick({R.id.iv_toolbarmore, R.id.iv_search, R.id.iv_gps_start, R.id.iv_kefu, R.id.iv_guide, R.id.iv_bike_station, R.id.btn_use_car, R.id.iv_end_point})
@@ -546,10 +548,10 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 } else if (mBtnUseCar.getText().equals("我要还车")) {
                     if (NetWorkUtil.isNetworkAvailable(this)) {
                         //toReturnBike();
-                        mProgersssDialog = new ProgersssDialog(MainActivity.this);
+                       /* mProgersssDialog = new ProgersssDialog(MainActivity.this);
                         mProgersssDialog.setMsg("正在还车中");
-                        returnCar(1);
-                        //returnCheck();
+                        returnCar(1);*/
+                        returnCheck();
                     }
                 }
                 break;
@@ -570,10 +572,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                             intent.putExtra("start", start);
                             intent.putExtra("end", end);
                             startActivity(intent);
-                            if (mWalkRouteOverlay != null) {
-                                mWalkRouteOverlay.removeFromMap();
-                            }
                             mIvGuide.setVisibility(View.GONE);
+                            gps_start();
                         }
                     }
                 });
@@ -736,17 +736,9 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                                     final ReturnCheckBean.ResponseObjBean.PlaceInBean placeInBean = returnCheckBean.getResponseObj().getPlaceIn().get(0);
                                     final FragmentManager fm = getSupportFragmentManager();
                                     if (null != mAmapocation) {
-                                       /* myDialog.showInStation(placeInBean, mAmapocation, fm, new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                mProgersssDialog = new ProgersssDialog(MainActivity.this);
-                                                mProgersssDialog.setMsg("正在还车中");
-                                                returnCar(1);
-                                            }
-                                        });*/
-                                        LatLng locatePoint=new LatLng(mAmapocation.getLatitude(),mAmapocation.getLongitude());
+                                        LatLng locatePoint = new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
                                         final ReturnInStationFragment inStationFragment = ReturnInStationFragment.newInstance(locatePoint, placeInBean);
-                                        inStationFragment.show(fm.beginTransaction(),"inStation");
+                                        inStationFragment.show(fm.beginTransaction(), "inStation");
                                     }
                                 } else {
 
@@ -998,6 +990,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     @Override
     protected void onResume() {
         super.onResume();
+        //NetWorkUtil.isNetworkAvailable(this);
         mMap.onResume();
         monitorBlueTooth();
     }
@@ -1055,6 +1048,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     @Override
     protected void onRestart() {
         super.onRestart();
+        isUserCar();
         regeocdeQuery();
     }
 
@@ -1165,7 +1159,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     }
 
     /**
-     * 查找附近还车站点
+     * 查找充电站点
      */
     public void queryChargeStation(LatLng latlng) {
         if (null != latlng) {
@@ -1340,10 +1334,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                         Intent intent = new Intent(MainActivity.this, NaviActivity.class);
                         intent.putExtra("start", start);
                         intent.putExtra("end", end);
-                        if (mWalkRouteOverlay != null) {
-                            mWalkRouteOverlay.removeFromMap();
-                        }
                         startActivity(intent);
+                        gps_start();
                         mIvGuide.setVisibility(View.GONE);
                     }
                 }

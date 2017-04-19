@@ -1,6 +1,8 @@
 package com.wanle.lequan.sharedbicycle.activity;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.Window;
@@ -11,7 +13,7 @@ import com.wanle.lequan.sharedbicycle.adapter.FirstBootAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FirstBootActivity extends BaseActivity {
+public class FirstBootActivity extends FragmentActivity {
 
     @BindView(R.id.vp_first_boot)
     ViewPager mVpFirstBoot;
@@ -22,6 +24,7 @@ public class FirstBootActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_first_boot);
         ButterKnife.bind(this);
         //全屏显示内容，隐藏覆盖通知栏

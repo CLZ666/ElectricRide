@@ -35,6 +35,7 @@ public class NetInfoReceiver extends BroadcastReceiver {
                 && NetworkInfo.State.CONNECTED != wifiState
                 && NetworkInfo.State.CONNECTED != mobileState) {
             // 手机没有任何的网络
+            EventBus.getDefault().post(new MyEvent("网络未连接"));
         } else if (wifiState != null && NetworkInfo.State.CONNECTED == wifiState) {
             // 无线网络连接成功
             EventBus.getDefault().post(new MyEvent("网络连接成功"));
