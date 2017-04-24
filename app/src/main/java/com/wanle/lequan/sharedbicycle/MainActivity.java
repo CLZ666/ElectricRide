@@ -70,6 +70,7 @@ import com.wanle.lequan.sharedbicycle.activity.IsLoginActivity;
 import com.wanle.lequan.sharedbicycle.activity.LoginActivity;
 import com.wanle.lequan.sharedbicycle.activity.NaviActivity;
 import com.wanle.lequan.sharedbicycle.activity.SearchActivity;
+import com.wanle.lequan.sharedbicycle.activity.SubmitProblemActivity;
 import com.wanle.lequan.sharedbicycle.activity.SweepLockActivity;
 import com.wanle.lequan.sharedbicycle.activity.UserInfoActivity;
 import com.wanle.lequan.sharedbicycle.adapter.InfoWinAdapter;
@@ -87,6 +88,7 @@ import com.wanle.lequan.sharedbicycle.event.CarStateEvent;
 import com.wanle.lequan.sharedbicycle.event.MyEvent;
 import com.wanle.lequan.sharedbicycle.fragment.AddressInfoFragment;
 import com.wanle.lequan.sharedbicycle.fragment.CarStateFragment;
+import com.wanle.lequan.sharedbicycle.fragment.EBikeEnergyFragment;
 import com.wanle.lequan.sharedbicycle.fragment.ReturnInStationFragment;
 import com.wanle.lequan.sharedbicycle.overlay.WalkRouteOverlay;
 import com.wanle.lequan.sharedbicycle.receiver.BlueToothStateReceiver;
@@ -153,12 +155,14 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     private static final int RESULT_CODE = 2;
 
     private AddressInfoFragment mAddressInfoFragment;
+    private EBikeEnergyFragment mEBikeEnergyFragment;
     private FragmentManager mFm;
     private FragmentTransaction mTransaction;
     private ProgersssDialog mProgersssDialog;
     private static final int MY_PERMISSIONS_REQUEST_MAP = 1;
     private static final int MY_PERMISSIONS_REQUEST_QR_CODE = 2;
     private int mCar_amount;
+    private int chargeStationCount;
     private Handler carStateHandler = new Handler();
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -181,6 +185,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     private List<Marker> bikeMarkers;
     private List<Marker> stationMarkers;
     private String mUserId;
+    private AddressInfo mInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -314,6 +319,9 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                     Gson gson;
                     String jsonString = null;
                     if (null != response) {
+                        if (null != response.errorBody()) {
+                            return;
+                        }
                         if (response.code() == 200) {
                             if (null != response.body()) {
                                 jsonString = response.body().string();
@@ -497,7 +505,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         myLocationStyle.strokeColor(Color.BLUE);// 设置圆形的边框颜色
         myLocationStyle.strokeWidth(3);
         //myLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));// 设置圆形的边框颜色
-        myLocationStyle.radiusFillColor(getResources().getColor(R.color.tougrey1));// 设置圆形的填充颜色
+        myLocationStyle.radiusFillColor(getResources().getColor(R.color.tougrey2));// 设置圆形的填充颜色
         // myLocationStyle.radiusFillColor(color)//设置圆形的填充颜色
         // myLocationStyle.anchor(int,int)//设置小蓝点的锚点
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW);
@@ -505,7 +513,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         // aMap.setMyLocationRotateAngle(180);
     }
 
-    @OnClick({R.id.iv_toolbarmore, R.id.iv_search, R.id.iv_gps_start, R.id.iv_kefu, R.id.iv_guide, R.id.iv_bike_station, R.id.btn_use_car, R.id.iv_end_point})
+    @OnClick({R.id.iv_toolbarmore, R.id.iv_search, R.id.iv_gps_start, R.id.iv_submit_problem, R.id.iv_guide, R.id.iv_bike_station, R.id.btn_use_car, R.id.iv_end_point})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_toolbarmore:
@@ -520,8 +528,9 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 startActivityForResult(new Intent(this, SearchActivity.class), REQUEST_CODE);
                 //startActivityForResult(new Intent(this, DepositActivity.class), REQUEST_CODE);
                 break;
-            case R.id.iv_kefu:
-                callPhone();
+            case R.id.iv_submit_problem:
+                // callPhone();
+                startActivity(new Intent(this, SubmitProblemActivity.class));
                 break;
             case R.id.iv_gps_start:
                 mapPermission();
@@ -537,6 +546,11 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                     }
                     if (!mIsStation) {
                         showChargeStation();
+                        if (null != mInfo) {
+                            mInfo.setCar_amount(chargeStationCount + "");
+                            mInfo.setType(1);
+                            EventBus.getDefault().post(mInfo);
+                        }
                     } else {
                         showBike();
                     }
@@ -607,6 +621,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             if (mOldMarker != null) {
                 mOldMarker.hideInfoWindow();
             }
+            hideEBikeEnergyFragment();
             aMap.setLocationSource(this);// 设置定位监听
             aMap.setMyLocationEnabled(true);
             if (null != mlocationClient) {
@@ -616,9 +631,6 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 @Override
                 public void onTick(long millisUntilFinished) {
                     if (isOPen(MainActivity.this)) {
-                        if (null != mCenterPoint) {
-                            regeocdeQuery();
-                        }
                         if (mAmapocation == null) {
                             return;
                         }
@@ -660,8 +672,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             }
         }
         mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.station));
-        if (null != mAmapocation) {
-            queryChargeStation(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
+        if (null != mCenterPoint) {
+            queryChargeStation(new LatLng(mCenterPoint.latitude, mCenterPoint.longitude));
         }
         mIsStation = true;
     }
@@ -676,8 +688,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             }
         }
         mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.moto));
-        if (null != mAmapocation) {
-            queryCar(new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude()));
+        if (null != mCenterPoint) {
+            queryCar(new LatLng(mCenterPoint.latitude, mCenterPoint.longitude));
         }
         mIsStation = false;
     }
@@ -1232,6 +1244,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                         .position(latlng)
                         .icon(BitmapDescriptorFactory.fromView(markerVeiw))
                 );
+                marker.setObject(cars.get(i));
                 bikeMarkers.add(marker);
             }
         }
@@ -1246,6 +1259,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         for (Marker marker : bikeMarkers) {
             marker.remove();
         }
+        chargeStationCount = stations.size();
         for (int i = 0; i < stations.size(); i++) {
             View markerVeiw = LayoutInflater.from(this).inflate(R.layout.layout_map_marker, null);
             ImageView iv_station = (ImageView) markerVeiw.findViewById(R.id.iv_is_bike);
@@ -1256,7 +1270,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             Marker marker = aMap.addMarker(new MarkerOptions()
                     .anchor(0.5f, 0.5f)
                     .position(latlng)
-                    .title("")
+                    .title("charge")
                     .setInfoWindowOffset(0, 8)
                     .icon(BitmapDescriptorFactory.fromView(markerVeiw))
             );
@@ -1286,6 +1300,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         mCenterPoint = cameraPosition.target;
         if (!mIsStation) {
             queryCar(new LatLng(mCenterPoint.latitude, mCenterPoint.longitude));
+        } else {
+            queryChargeStation(new LatLng(mCenterPoint.latitude, mCenterPoint.longitude));
         }
         regeocdeQuery();
     }
@@ -1323,6 +1339,18 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         if (NetWorkUtil.isNetworkAvailable(this)) {
             mOldMarker = marker;
             routeLine(marker.getPosition());
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mCenterPoint = marker.getPosition();
+                    regeocdeQuery();
+                }
+            }, 800);
+
+            final String title = marker.getOptions().getTitle();
+            if (null == title) {
+                showEBikeEnergyFragment(marker);
+            }
             mIvGuide.setVisibility(View.VISIBLE);
             mIvGuide.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1344,6 +1372,32 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         return false;
     }
 
+    /**
+     * 显示每辆车的电池和充电宝信息
+     */
+    private void showEBikeEnergyFragment(Marker marker) {
+        NearByCarBean.ResponseObjBean bean = (NearByCarBean.ResponseObjBean) marker.getObject();
+        if (null != mAmapocation && null != bean) {
+            LatLng locatePoint = new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
+            mFm = getSupportFragmentManager();
+            mTransaction = mFm.beginTransaction();
+            mEBikeEnergyFragment = EBikeEnergyFragment.newInstance(bean, locatePoint);
+            mTransaction.replace(R.id.fl_ebike_energy_replace, mEBikeEnergyFragment);
+            mTransaction.commitAllowingStateLoss();
+        }
+    }
+
+    /**
+     * 隐藏每辆车的电池和充电宝信息
+     */
+    private void hideEBikeEnergyFragment() {
+        mFm = getSupportFragmentManager();
+        mTransaction = mFm.beginTransaction();
+        if (null != mEBikeEnergyFragment) {
+            mTransaction.remove(mEBikeEnergyFragment);
+            mTransaction.commitAllowingStateLoss();
+        }
+    }
 
     @Override
     public void onMapClick(LatLng latLng) {
@@ -1351,6 +1405,10 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             if (mOldMarker != null) {
                 mOldMarker.hideInfoWindow();
             }
+            if (null!=mWalkRouteOverlay){
+                mWalkRouteOverlay.removeFromMap();
+            }
+            hideEBikeEnergyFragment();
         }
     }
 
@@ -1408,9 +1466,9 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 int time = distance / 100;
                 Log.i("car_amount", mCar_amount + "");
                 mStreet1 = subString(regeocodeAddress.getFormatAddress(), province, city, district, mStreet);
-                AddressInfo info = new AddressInfo(mStreet1, mCar_amount + "", distance + "", time + "");
+                mInfo = new AddressInfo(mStreet1, mCar_amount + "", distance + "", time + "");
                 Log.i("address", regeocodeAddress.getFormatAddress());
-                EventBus.getDefault().post(new MyEvent(info));
+                EventBus.getDefault().post(new MyEvent(mInfo));
             } else {
                 ToastUtil.show(this, R.string.no_result);
             }

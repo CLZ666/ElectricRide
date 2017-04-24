@@ -7,6 +7,7 @@ package com.wanle.lequan.sharedbicycle.bean;
  */
 
 public class AddressInfo {
+    private int type;
     private String srtreet;
     private String car_amount;
     private String distance;
@@ -19,6 +20,14 @@ public class AddressInfo {
         this.car_amount=car_amount;
         this.distance = distance;
         this.time = time;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getSrtreet() {

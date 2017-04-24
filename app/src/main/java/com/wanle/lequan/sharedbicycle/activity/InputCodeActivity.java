@@ -41,7 +41,6 @@ import com.wanle.lequan.sharedbicycle.view.PayNumberEditText;
 import com.wanle.lequan.sharedbicycle.view.ProgersssDialog;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -68,7 +67,6 @@ public class InputCodeActivity extends BaseActivity {
     TextView mTvOpenLight;
     private Camera m_camera;
     private boolean isOpen = false;
-    private ArrayList<EditText> edits = new ArrayList<>();
     private AlertDialog mDialog;
     private SharedPreferences mSpUserInfo;
     private ProgersssDialog mProgersssDialog;
@@ -137,7 +135,7 @@ public class InputCodeActivity extends BaseActivity {
                 break;
             case R.id.btn_confim:
                 if (NetWorkUtil.isNetworkAvailable(this)) {
-                    unLockCar();
+                   chooseService();
                     // connectBle();
                 }
                 break;
@@ -223,15 +221,17 @@ public class InputCodeActivity extends BaseActivity {
         });
     }
 
-    private void unLockCar() {
+    private void chooseService() {
         String numText = mPpeNum.getPwdText();
+        String carno="24929615696887809";
         if (TextUtils.isEmpty(numText) || numText.length() < 9) {
             ToastUtils.getShortToastByString(this, "请确认输入的编号是否正确!");
         } else {
-            mProgersssDialog = new ProgersssDialog(InputCodeActivity.this);
-            mProgersssDialog.setMsg("正在获取车辆信息");
-            showCarState();
-            checkCarState();
+          /*  mProgersssDialog = new ProgersssDialog(InputCodeActivity.this);
+            mProgersssDialog.setMsg("正在获取车辆信息");*/
+            //showCarState();
+            //checkCarState();
+            startActivity(new Intent(InputCodeActivity.this,EBikeStatusActivity.class).putExtra("carNo",carno));
         }
     }
 
@@ -366,7 +366,7 @@ public class InputCodeActivity extends BaseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        unLockCar();
+                        chooseService();
                     }
                 });
                 gatt.discoverServices();
@@ -409,7 +409,7 @@ public class InputCodeActivity extends BaseActivity {
 
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 if (NetWorkUtil.isNetworkAvailable(InputCodeActivity.this)) {
-                    unLockCar();
+                    chooseService();
                     // connectBle();
                 }
 

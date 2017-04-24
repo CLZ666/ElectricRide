@@ -154,7 +154,8 @@
         </activity>
         <activity android:name=".activity.SweepLockActivity">
         </activity>
-        <activity android:name=".activity.TripDetailActivity"
+        <activity
+            android:name=".activity.TripDetailActivity"
             android:launchMode="singleTask">
         </activity>
         <activity android:name=".activity.RechargeRecordActivity">
@@ -235,6 +236,16 @@
         <activity android:name=".activity.AboutUsActivity">
         </activity>
         <activity android:name=".activity.NaviActivity">
+        </activity>
+        <activity android:name=".activity.EBikeStatusActivity">
+        </activity>
+        <activity android:name=".activity.MyLeaseActivity">
+        </activity>
+        <activity android:name=".activity.LeaseRecordActivity">
+        </activity>
+        <activity android:name=".activity.IntegralActivity">
+        </activity>
+        <activity android:name=".activity.SubmitProblemActivity">
         </activity>
     </application>
 

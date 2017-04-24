@@ -35,7 +35,7 @@ public class SpalshActivity extends BaseActivity {
         getWindow().setFlags(WindowManager.LayoutParams.TYPE_STATUS_BAR, WindowManager.LayoutParams.TYPE_STATUS_BAR);
         monitiorNetInfo();
         if (!NetWorkUtil.isNetworkAvailable1(this)) {
-            openNetSetting();
+
         } else {
             nextStep(mIsFirst);
         }

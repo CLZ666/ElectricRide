@@ -41,14 +41,14 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.MyView
         return holder;
     }
 
-    public void setData(List<TripListBean.ResponseObjBean> datas,boolean isRefresh) {
+    public void setData(List<TripListBean.ResponseObjBean> datas, boolean isRefresh) {
         if (datas != null) {
-            if (isRefresh){
+            if (isRefresh) {
                 mDatas.clear();
             }
-            Log.i("trip1",datas.size()+"");
+            Log.i("trip1", datas.size() + "");
             mDatas.addAll(datas);
-             notifyDataSetChanged();
+            notifyDataSetChanged();
         }
     }
 
@@ -59,15 +59,15 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.MyView
             double CycleCharge = dataBean.getCycleCharge() * 1.0 / 100;
             holder.mTvDate.setText(stampToDate(dataBean.getStartTime() + ""));
             holder.mTvCarNo.setText(dataBean.getCarNo());
-            holder.mTvTripTime.setText(dataBean.getCycleTime() + " "+"分钟");
-            holder.mTvTripSpend.setText(CycleCharge + " "+"元");
+            holder.mTvTripTime.setText(dataBean.getCycleTime() + " " + "分钟");
+            holder.mTvTripSpend.setText(CycleCharge + " " + "元");
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String itineraryId=dataBean.getId();
-                Intent intent=new Intent(mContext, TripDetailActivity.class);
-                intent.putExtra("itineraryId",itineraryId);
+                String itineraryId = dataBean.getId();
+                Intent intent = new Intent(mContext, TripDetailActivity.class);
+                intent.putExtra("itineraryId", itineraryId);
                 mContext.startActivity(intent);
             }
         });

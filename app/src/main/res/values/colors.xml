@@ -19,10 +19,12 @@
     <color name="tougrey">#66282930</color>
     <color name="icon_bgd">#282832</color>
     <color name="red">#01BBF6</color>
-    <color name="tougrey1">#26282930</color>
+    <color name="tougrey1">#36282930</color>
+    <color name="tougrey2">#16282930</color>
     <color name="blue_500">#40AFFC</color>
     <color name="blue">#019DF5</color>
-    <color name="input_bgd">#2D2C2A</color>
+    <color name="input_bgd">#282832</color>
     <color name="color999999">#999999</color>
     <color name="colorRed">#FF0000</color>
+    <color name="colorPink">#FF5A60</color>
 </resources>

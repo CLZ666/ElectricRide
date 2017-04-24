@@ -1,5 +1,8 @@
 package com.wanle.lequan.sharedbicycle.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
@@ -44,7 +47,7 @@ public class NearByCarBean {
         this.responseObj = responseObj;
     }
 
-    public static class ResponseObjBean {
+    public static class ResponseObjBean implements Parcelable {
         /**
          * carNo : 24929615696887809
          * carPower : 99
@@ -153,6 +156,49 @@ public class NearByCarBean {
                     ", version='" + version + '\'' +
                     '}';
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.carNo);
+            dest.writeInt(this.carPower);
+            dest.writeString(this.createTime);
+            dest.writeString(this.id);
+            dest.writeString(this.latitude);
+            dest.writeString(this.longitude);
+            dest.writeString(this.version);
+        }
+
+        public ResponseObjBean() {
+        }
+
+        protected ResponseObjBean(Parcel in) {
+            this.carNo = in.readString();
+            this.carPower = in.readInt();
+            this.createTime = in.readString();
+            this.id = in.readString();
+            this.latitude = in.readString();
+            this.longitude = in.readString();
+            this.status = in.readParcelable(Object.class.getClassLoader());
+            this.useStatus = in.readParcelable(Object.class.getClassLoader());
+            this.version = in.readString();
+        }
+
+        public static final Parcelable.Creator<ResponseObjBean> CREATOR = new Parcelable.Creator<ResponseObjBean>() {
+            @Override
+            public ResponseObjBean createFromParcel(Parcel source) {
+                return new ResponseObjBean(source);
+            }
+
+            @Override
+            public ResponseObjBean[] newArray(int size) {
+                return new ResponseObjBean[size];
+            }
+        };
     }
 
     @Override

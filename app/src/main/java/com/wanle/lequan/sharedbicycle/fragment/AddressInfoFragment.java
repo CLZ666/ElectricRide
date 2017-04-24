@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.wanle.lequan.sharedbicycle.R;
@@ -31,6 +32,8 @@ public class AddressInfoFragment extends Fragment {
     TextView mTvAmount;
     @BindView(R.id.tv_distance)
     TextView mTvDistance;
+    @BindView(R.id.iv_bike)
+    ImageView mIvBike;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,15 +48,22 @@ public class AddressInfoFragment extends Fragment {
         ButterKnife.bind(this, view);
         return view;
     }
+
     @Subscribe
     public void onEventMainThread(MyEvent event) {
         AddressInfo info = event.getInfo();
-        if (null!=info){
-            mTvAmount.setText("剩余"+info.getCar_amount()+"辆");
+        if (null != info) {
+            mTvAmount.setText("剩余" + info.getCar_amount() + "辆");
             mTvStreet.setText(info.getSrtreet());
-            mTvDistance.setText("距离"+info.getDistance()+"米");
+            mTvDistance.setText("距离" + info.getDistance() + "米");
+            mIvBike.setImageDrawable(getResources().getDrawable(R.drawable.small_moto));
+            if (info.getType() == 1) {
+                mTvAmount.setText("附近有充电基站" + info.getCar_amount() + "个");
+                mIvBike.setImageDrawable(getResources().getDrawable(R.drawable.station));
+            }
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

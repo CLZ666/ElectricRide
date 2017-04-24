@@ -137,10 +137,11 @@
             <LinearLayout
                 android:id="@+id/linear_borrow"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="9dp"
                 android:background="@color/white"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 >
 
                 <TextView
@@ -323,7 +324,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/rel_my_news"
+                    android:id="@+id/rel_my_lease"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
@@ -334,21 +335,22 @@
                     >
 
                     <ImageView
-                        android:id="@+id/iv_my_news"
+                        android:id="@+id/iv_my_lease"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
-                        android:src="@drawable/my_news"/>
+                        android:src="@drawable/my_lease"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/iv_my_news"
+                        android:layout_below="@id/iv_my_lease"
                         android:layout_marginTop="8dp"
                         android:gravity="center"
-                        android:text="@string/my_news"
+                        android:textColor="#476225"
+                        android:text="@string/my_lease"
                         />
 
                 </RelativeLayout>
@@ -378,7 +380,6 @@
                         android:id="@+id/iv_my_invite"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:layout_alignParentTop="true"
                         android:src="@drawable/invite_friend"
                         />
 
@@ -394,10 +395,42 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/rel_user_guide"
+                    android:id="@+id/rel_my_news"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:padding="15dp"
+                    >
+
+                    <ImageView
+                        android:id="@+id/iv_my_news"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:src="@drawable/my_news"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/iv_my_news"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="@string/my_news"
+                        />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rel_user_guide"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
                     android:layout_marginTop="10dp"
                     android:layout_weight="1"
                     android:background="@color/white"
@@ -426,12 +459,21 @@
 
                 </RelativeLayout>
 
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                >
+
                 <RelativeLayout
                     android:id="@+id/rel_my_contact_us"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:background="@color/white"
                     android:gravity="center"
@@ -451,11 +493,33 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/iv_contact_us"
-                        android:layout_marginTop="8dp"
                         android:gravity="center"
                         android:text="@string/contact_us"
                         android:textColor="#13227A"
                         />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:padding="15dp"
+                    >
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+
+                    >
 
                 </RelativeLayout>
             </LinearLayout>

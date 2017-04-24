@@ -123,8 +123,8 @@ public class RouteOverlay {
 
 		endMarker = mAMap.addMarker((new MarkerOptions()).position(endPoint)
 				.icon(getEndBitmapDescriptor()).title("\u7EC8\u70B9"));
-		// mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startPoint,
-		// getShowRouteZoom()));
+		/* mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startPoint,
+		18));*/
 	}
 	/**
 	 * 移动镜头到当前的视角。

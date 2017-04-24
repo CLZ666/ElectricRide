@@ -88,7 +88,7 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
         ButterKnife.bind(this);
         mIvBack = (ImageView) findViewById(R.id.iv_back);
         mSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
-        mSpGlobalParms=getSharedPreferences("global",MODE_PRIVATE);
+        mSpGlobalParms = getSharedPreferences("global", MODE_PRIVATE);
         getUserInfo();
         UpdateUi();
         getGlobalParms();
@@ -102,14 +102,14 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     final String jsonString = response.body().string();
-                    if (null!=jsonString){
-                        Gson gson=new Gson();
+                    if (null != jsonString) {
+                        Gson gson = new Gson();
                         final GlobalParmsBean parmsBean = gson.fromJson(jsonString, GlobalParmsBean.class);
-                        if (null!=parmsBean){
-                            mSpGlobalParms.edit().putString("aboutUs",parmsBean.getResponseObj().getAboutUs()).commit();
-                            mSpGlobalParms.edit().putString("customerService",parmsBean.getResponseObj().getCustomerService()).commit();
-                            mSpGlobalParms.edit().putInt("deposit",parmsBean.getResponseObj().getDeposit()).commit();
-                            mSpGlobalParms.edit().putString("userGuide",parmsBean.getResponseObj().getUserGuide()).commit();
+                        if (null != parmsBean) {
+                            mSpGlobalParms.edit().putString("aboutUs", parmsBean.getResponseObj().getAboutUs()).commit();
+                            mSpGlobalParms.edit().putString("customerService", parmsBean.getResponseObj().getCustomerService()).commit();
+                            mSpGlobalParms.edit().putInt("deposit", parmsBean.getResponseObj().getDeposit()).commit();
+                            mSpGlobalParms.edit().putString("userGuide", parmsBean.getResponseObj().getUserGuide()).commit();
                         }
                     }
                 } catch (IOException e) {
@@ -127,8 +127,8 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
 
     private void UpdateUi() {
         String headimg = mSpUserInfo.getString("headimg", "");
-        if (!headimg.equals("")){
-           Glide.with(UserInfoActivity.this).load(headimg).into(mUserIcon);
+        if (!headimg.equals("")) {
+            Glide.with(UserInfoActivity.this).load(headimg).into(mUserIcon);
         }
         mIvBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,7 +139,7 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
         mIsBorrow = mSpUserInfo.getBoolean("isBorrow", false);
         if (mIsBorrow) {
             mLinearBorrow.setVisibility(View.GONE);
-        }else {
+        } else {
             mLinearBorrow.setVisibility(View.VISIBLE);
         }
         //getUserInfoString();
@@ -155,7 +155,7 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
             mLineDepositrecharge.setBackgroundColor(getResources().getColor(R.color.red));
             mTvDeposit.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.complete_verify), null, null);
             mTvDeposit.setTextColor(getResources().getColor(R.color.red));
-        }else {
+        } else {
             mLineDepositrecharge.setBackgroundColor(getResources().getColor(R.color.grey));
             mTvDeposit.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.dispote_verify), null, null);
             mTvDeposit.setTextColor(getResources().getColor(R.color.tougrey));
@@ -165,7 +165,7 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
             mTvIdentify.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.complete_verify), null, null);
             mTvIdentify.setTextColor(getResources().getColor(R.color.red));
         }
-        if (mIsDeposit&&mIsIdentify){
+        if (mIsDeposit && mIsIdentify) {
             mSpUserInfo.edit().putBoolean("isBorrow", true).commit();
         }
     }
@@ -196,7 +196,7 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
                 //Log.i("888", userInfoBean.toString());
                 if (userInfoBean != null && userInfoBean.getResponseCode().equals("1")) {
                     String headImg = userInfoBean.getResponseObj().getHeadImg();
-                    if (!headImg.equals("")){
+                    if (!headImg.equals("")) {
                         mSpUserInfo.edit().putString("headimg", headImg).commit();
                         Glide.with(UserInfoActivity.this).load(headImg).into(mUserIcon);
                     }
@@ -213,7 +213,7 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
                     int isVerified = userInfoBean.getResponseObj().getIsVerified();
                     if (payDeposit > 0) {
                         mSpUserInfo.edit().putBoolean(getResources().getString(R.string.is_deposit), true).commit();
-                    }else{
+                    } else {
                         mSpUserInfo.edit().putBoolean(getResources().getString(R.string.is_deposit), false).commit();
                         mSpUserInfo.edit().putBoolean("isBorrow", false).commit();
                     }
@@ -230,9 +230,12 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
         });
     }
 
-    @OnClick({R.id.user_icon,R.id.linear_borrow, R.id.rel_my_account, R.id.rel_my_trip, R.id.rel_my_news, R.id.rel_my_invite, R.id.rel_user_guide, R.id.rel_my_contact_us, R.id.iv_back, R.id.tv_setting})
+    @OnClick({R.id.btn_credit_score, R.id.rel_my_lease, R.id.user_icon, R.id.linear_borrow, R.id.rel_my_account, R.id.rel_my_trip, R.id.rel_my_news, R.id.rel_my_invite, R.id.rel_user_guide, R.id.rel_my_contact_us, R.id.iv_back, R.id.tv_setting})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.btn_credit_score:
+                startActivity(new Intent(this, IntegralActivity.class));
+                break;
             case R.id.user_icon:
                 startActivity(new Intent(this, SettingActivity.class));
                 break;
@@ -247,10 +250,13 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
                 }
                 break;
             case R.id.rel_my_account:
-                    startActivity(new Intent(this, MyAccountActivity.class));
+                startActivity(new Intent(this, MyAccountActivity.class));
                 break;
             case R.id.rel_my_trip:
                 startActivity(new Intent(this, MyTripActivity.class));
+                break;
+            case R.id.rel_my_lease:
+                startActivity(new Intent(this, MyLeaseActivity.class));
                 break;
             case R.id.rel_my_news:
                 startActivity(new Intent(this, MyNewsActivity.class));
@@ -284,7 +290,7 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
         new ShareAction(this).withText("hello")
                 .withMedia(image)
                 .withMedia(web)
-                .setDisplayList(SHARE_MEDIA.QQ,SHARE_MEDIA.QZONE,SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE)
+                .setDisplayList(SHARE_MEDIA.QQ, SHARE_MEDIA.QZONE, SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE)
                 .setCallback(this).open();
     }
 
@@ -311,7 +317,7 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
 
 
     public void callPhone() {
-        String phone=mSpGlobalParms.getString("customerService","");
+        String phone = mSpGlobalParms.getString("customerService", "");
         Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));//跳转到拨号界面，同时传递电话号码
         startActivity(dialIntent);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -319,7 +325,6 @@ public class UserInfoActivity extends BaseActivity implements UMShareListener {
         }
 
     }
-
 
 
     @TargetApi(Build.VERSION_CODES.M)

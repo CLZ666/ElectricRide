@@ -119,7 +119,11 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
         Log.i(TAG, "result:" + result);
         //Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
         vibrate();
-        car_stuts();
+        Intent intent = new Intent(SweepLockActivity.this, EBikeStatusActivity.class);
+        intent.putExtra("carNo","24929615696887809");
+        startActivity(intent);
+      // finish();
+       // car_stuts();
         //connectBle();
     }
 

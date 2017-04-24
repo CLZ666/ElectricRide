@@ -16,6 +16,7 @@
     <string name="my_account">我的账户</string>
     <string name="my_trip">我的行程</string>
     <string name="my_news">我的消息</string>
+    <string name="my_lease">我的租赁</string>
     <string name="my_invite">邀请好友</string>
     <string name="user_guide">用户指南</string>
     <string name="user_center">个人中心</string>
@@ -49,7 +50,19 @@
     <string name="lock_bike_reminder">最多为您锁车半小时哦，超过时间将会自动锁上还车哦</string>
     <string name="return_bike_reminder">亲爱的用户，人和车必须在同一地点才能还车哦</string>
     <string name="return_bike_reminder2">亲爱的用户，您未在指定站点内还车，如果强行还车您的信用分将会减少哦</string>
-
+    <string name="unlock_use">1.我要开锁用车</string>
+    <string name="unlock_use_desc">我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案</string>
+    <string name="lease_mobile_power">2.我要租赁充电宝</string>
+    <string name="lease_mobile_power_desc">我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案</string>
+    <string name="replace_battery">3.我要更换电池赚外快</string>
+    <string name="replace_battery_desc">我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案我是介绍文案</string>
+    <string name="cdb_desc">全球共享时代开启，你还在等什么呢，赶快加入我们吧</string>
+    <string name="ebike_battery_desc">如果你想赚外快，那么你找对了，付出总会有回报</string>
+    <string name="other_service">更多服务敬请期待</string>
+    <string name="integral_desc">骑行，让世界充满绿色能量...</string>
+    <string name="choose_problem_type">选择车辆问题类型。</string>
+    <string name="add_image">为了更好地验证信息，麻烦提供车辆照片</string>
+    <string name="problem_desc">请提供车辆信息和问题描述</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
