@@ -77,6 +77,7 @@ public class InputCodeActivity extends BaseActivity {
     private boolean isFind;
     private BleManager mBleManager;
     private View mDialogView;
+    private String mCarno;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,10 +170,8 @@ public class InputCodeActivity extends BaseActivity {
     }
 
     public void checkCarState() {
-        final TextView tv_car_power = (TextView) mDialogView.findViewById(R.id.tv_car_power);
-        final TextView tv_distance = (TextView) mDialogView.findViewById(R.id.tv_distance);
         String userId = mSpUserInfo.getString("userId", "");
-        String carNo = "24929615696887809";
+        String carNo = "181123321170";
         Map<String, String> map = new HashMap<>();
         map.put("userId", userId);
         map.put("carNo", carNo);
@@ -182,6 +181,7 @@ public class InputCodeActivity extends BaseActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     String jsonString = response.body().string();
+                    Log.i("distance1",jsonString);
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         final CarStateCheckBean carStateCheckBean = gson.fromJson(jsonString, CarStateCheckBean.class);
@@ -196,10 +196,10 @@ public class InputCodeActivity extends BaseActivity {
                                     @Override
                                     public void onFinish() {
                                         mProgersssDialog.dismiss();
-                                        tv_car_power.setText(carStateCheckBean.getResponseObj().getCarPower() + "%");
-                                        tv_distance.setText(carStateCheckBean.getResponseObj().getDistance() / 1000 + "km");
-                                        mDialog.setView(mDialogView);
-                                        mDialog.show();
+                                        Intent intent=new Intent(InputCodeActivity.this,EBikeStatusActivity.class);
+                                        intent.putExtra("carStateCheckBean",carStateCheckBean);
+                                        intent.putExtra("carNo", mCarno);
+                                        startActivity(intent);
                                     }
                                 };
                                 mCdt.start();
@@ -223,15 +223,13 @@ public class InputCodeActivity extends BaseActivity {
 
     private void chooseService() {
         String numText = mPpeNum.getPwdText();
-        String carno="24929615696887809";
+        mCarno = "24929615696887809";
         if (TextUtils.isEmpty(numText) || numText.length() < 9) {
             ToastUtils.getShortToastByString(this, "请确认输入的编号是否正确!");
         } else {
-          /*  mProgersssDialog = new ProgersssDialog(InputCodeActivity.this);
-            mProgersssDialog.setMsg("正在获取车辆信息");*/
-            //showCarState();
-            //checkCarState();
-            startActivity(new Intent(InputCodeActivity.this,EBikeStatusActivity.class).putExtra("carNo",carno));
+            mProgersssDialog = new ProgersssDialog(InputCodeActivity.this);
+            mProgersssDialog.setMsg("正在获取车辆信息");
+            checkCarState();
         }
     }
 

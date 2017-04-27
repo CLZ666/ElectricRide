@@ -82,8 +82,8 @@
 
         <ImageView
             android:id="@+id/iv_bike_station"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_gravity="center"

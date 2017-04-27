@@ -1408,6 +1408,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             if (null!=mWalkRouteOverlay){
                 mWalkRouteOverlay.removeFromMap();
             }
+            mIvGuide.setVisibility(View.GONE);
             hideEBikeEnergyFragment();
         }
     }

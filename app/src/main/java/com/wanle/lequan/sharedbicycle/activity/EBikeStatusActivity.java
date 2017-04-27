@@ -3,6 +3,7 @@ package com.wanle.lequan.sharedbicycle.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import com.wanle.lequan.sharedbicycle.bean.CarStateCheckBean;
 import com.wanle.lequan.sharedbicycle.constant.ApiService;
 import com.wanle.lequan.sharedbicycle.utils.GetJsonStringUtil;
 import com.wanle.lequan.sharedbicycle.utils.HttpUtil;
+import com.wanle.lequan.sharedbicycle.utils.NetWorkUtil;
 import com.wanle.lequan.sharedbicycle.utils.ToastUtils;
 
 import java.io.IOException;
@@ -36,8 +38,17 @@ public class EBikeStatusActivity extends BaseActivity {
     TextView mTvBatteryLevel;
     @BindView(R.id.tv_mobile_power_level)
     TextView mTvMobilePowerLevel;
+    @BindView(R.id.tv_unlock_use)
+    TextView mTvUnlockUse;
+    @BindView(R.id.tv_lease_cdb)
+    TextView mTvLeaseCdb;
+    @BindView(R.id.tv_replace_dc)
+    TextView mTvReplaceDc;
+    @BindView(R.id.tv_ride_distance)
+    TextView mTvRideDistance;
     private SharedPreferences mSpUserInfo;
     private String mCarNo;
+    private CarStateCheckBean mCarStateCheckBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,27 +63,20 @@ public class EBikeStatusActivity extends BaseActivity {
         mTvTitle.setText("选择服务");
         mSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
         mCarNo = getIntent().getStringExtra("carNo");
-        mTvEbikeNo.setText("NO."+mCarNo);
-    }
+        mTvEbikeNo.setText("NO." + mCarNo);
+        mCarStateCheckBean = (CarStateCheckBean) getIntent().getSerializableExtra("carStateCheckBean");
+        if (null != mCarStateCheckBean) {
+            mTvRideDistance.setText(mCarStateCheckBean.getResponseObj().getBattery().getDistance() / 1000 + "km");
+            mTvBatteryLevel.setText(mCarStateCheckBean.getResponseObj().getBattery().getCarPower() + "%");
 
-    @OnClick({R.id.iv_back, R.id.btn_unlock_ebike, R.id.btn_lease_mobile_power, R.id.btn_replace_battery})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_back:
-                finish();
-                break;
-            case R.id.btn_unlock_ebike:
-                startActivity(new Intent(this,UnlockActivity.class));
-                break;
-            case R.id.btn_lease_mobile_power:
-                break;
-            case R.id.btn_replace_battery:
-                break;
         }
     }
+
+
     public void checkCarState() {
         String userId = mSpUserInfo.getString("userId", "");
         String carNo = mCarNo;
+        carNo = "181139437395";
         Map<String, String> map = new HashMap<>();
         map.put("userId", userId);
         map.put("carNo", carNo);
@@ -82,12 +86,13 @@ public class EBikeStatusActivity extends BaseActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     String jsonString = response.body().string();
+                    Log.i("carstate", jsonString);
                     if (null != jsonString) {
                         Gson gson = new Gson();
                         final CarStateCheckBean carStateCheckBean = gson.fromJson(jsonString, CarStateCheckBean.class);
                         if (null != carStateCheckBean) {
                             if (carStateCheckBean.getResponseCode().equals("1")) {
-                                mTvBatteryLevel.setText(carStateCheckBean.getResponseObj().getCarPower() + "%");
+                                // mTvBatteryLevel.setText(carStateCheckBean.getResponseObj().getCarPower() + "%");
                             } else {
 
                                 ToastUtils.getShortToastByString(EBikeStatusActivity.this, carStateCheckBean.getResponseMsg());
@@ -104,5 +109,28 @@ public class EBikeStatusActivity extends BaseActivity {
 
             }
         });
+    }
+
+    @OnClick({R.id.iv_back, R.id.linear_unlock, R.id.linear_lease_cdb, R.id.linear_replace_dc, R.id.linear_service_desc})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_back:
+                finish();
+                break;
+            case R.id.linear_unlock:
+                if (NetWorkUtil.isNetworkAvailable(this)) {
+                    startActivity(new Intent(this, UnlockActivity.class));
+                }
+                break;
+            case R.id.linear_lease_cdb:
+                ToastUtils.getShortToastByString(this, "敬请期待");
+                break;
+            case R.id.linear_replace_dc:
+                ToastUtils.getShortToastByString(this, "敬请期待");
+                break;
+            case R.id.linear_service_desc:
+                ToastUtils.getShortToastByString(this, "敬请期待");
+                break;
+        }
     }
 }

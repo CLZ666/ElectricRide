@@ -66,6 +66,7 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
     private boolean isFind;
     private BleManager mBleManager;
     private ProgersssDialog mProgersssDialog;
+    private String mCarno = "181123321170";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,17 +120,18 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
         Log.i(TAG, "result:" + result);
         //Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
         vibrate();
-        Intent intent = new Intent(SweepLockActivity.this, EBikeStatusActivity.class);
+        /*Intent intent = new Intent(SweepLockActivity.this, EBikeStatusActivity.class);
         intent.putExtra("carNo","24929615696887809");
-        startActivity(intent);
-      // finish();
-       // car_stuts();
+        startActivity(intent);*/
+        checkCarState();
+        // finish();
+        // car_stuts();
         //connectBle();
     }
 
     private void car_stuts() {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_car_stuts, null);
-        checkCarState(view);
+        //checkCarState(view);
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         mDialog = builder.create();
         mDialog.setCanceledOnTouchOutside(true);
@@ -153,11 +155,15 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
         mQRCodeView.startSpot();
     }
 
-    public void checkCarState(final View dialogView) {
-        final TextView tv_car_power = (TextView) dialogView.findViewById(R.id.tv_car_power);
-        final TextView tv_distance = (TextView) dialogView.findViewById(R.id.tv_distance);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mQRCodeView.startSpot();
+    }
+
+    public void checkCarState() {
         String userId = getSharedPreferences("userinfo", MODE_PRIVATE).getString("userId", "");
-        String carNo = "24929615696887809";
+        String carNo = "181123321170";
         Map<String, String> map = new HashMap<>();
         map.put("userId", userId);
         map.put("carNo", carNo);
@@ -167,17 +173,19 @@ public class SweepLockActivity extends BaseActivity implements QRCodeView.Delega
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     String jsonString = response.body().string();
-                    Log.i("checkcarState", jsonString);
                     if (null != jsonString) {
                         Gson gson = new Gson();
-                        CarStateCheckBean carStateCheckBean = gson.fromJson(jsonString, CarStateCheckBean.class);
-                        if (carStateCheckBean.getResponseCode().equals("1")) {
-                            tv_car_power.setText(carStateCheckBean.getResponseObj().getCarPower() + "%");
-                            tv_distance.setText(carStateCheckBean.getResponseObj().getDistance() / 1000 + "km");
-                            mDialog.setView(dialogView);
-                            mDialog.show();
-                        } else {
-                            ToastUtils.getShortToastByString(SweepLockActivity.this, carStateCheckBean.getResponseMsg());
+                        final CarStateCheckBean carStateCheckBean = gson.fromJson(jsonString, CarStateCheckBean.class);
+                        if (null != carStateCheckBean) {
+                            if (carStateCheckBean.getResponseCode().equals("1")) {
+                                Intent intent = new Intent(SweepLockActivity.this, EBikeStatusActivity.class);
+                                intent.putExtra("carStateCheckBean", carStateCheckBean);
+                                intent.putExtra("carNo", mCarno);
+                                startActivity(intent);
+                            } else {
+
+                                ToastUtils.getShortToastByString(SweepLockActivity.this, carStateCheckBean.getResponseMsg());
+                            }
                         }
                     }
                 } catch (IOException e) {
