@@ -74,10 +74,10 @@ public class MyAccountActivity extends BaseActivity {
         mBalance = mSpUserInfo.getString("balance", "");
         mTvFareBalance.setText(mBalance);
         mIsDeposit = mSpUserInfo.getBoolean(getResources().getString(R.string.is_deposit), false);
-        if (mIsDeposit){
+        if (mIsDeposit) {
             mTvDepositRefund.setText("押金退款");
             mTvDepositRefund.setTextColor(getResources().getColor(R.color.red));
-        }else{
+        } else {
             mTvDepositRefund.setText("充值押金");
             mTvDepositRefund.setTextColor(getResources().getColor(R.color.colorRed));
         }
@@ -119,25 +119,28 @@ public class MyAccountActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.tv_setting, R.id.tv_deposit_refund, R.id.btn_recharge})
+    @OnClick({R.id.tv_setting, R.id.tv_deposit_refund, R.id.btn_recharge, R.id.tv_my_coupon})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_setting:
                 startActivity(new Intent(this, RechargeRecordActivity.class));
                 break;
             case R.id.tv_deposit_refund:
-                if (mIsDeposit){
-                    if (mBalance1>0){
+                if (mIsDeposit) {
+                    if (mBalance1 > 0) {
                         rechargeReturn();
-                    }else{
-                        ToastUtils.getShortToastByString(this,"您的余额不足,不能退还押金哦!");
+                    } else {
+                        ToastUtils.getShortToastByString(this, "您的余额不足,不能退还押金哦!");
                     }
-                }else{
-                    startActivity(new Intent(this,DepositActivity.class));
+                } else {
+                    startActivity(new Intent(this, DepositActivity.class));
                 }
                 break;
             case R.id.btn_recharge:
                 startActivity(new Intent(this, BalanceRechargeActivity.class));
+                break;
+            case R.id.tv_my_coupon:
+                startActivity(new Intent(this, CouPonActivity.class));
                 break;
             default:
                 break;
@@ -165,22 +168,23 @@ public class MyAccountActivity extends BaseActivity {
         });
         builder.show();
     }
-    public void depositRefund(){
-        String userId=mSpUserInfo.getString("userId","");
+
+    public void depositRefund() {
+        String userId = mSpUserInfo.getString("userId", "");
         final Call<ResponseBody> call = HttpUtil.getService(ApiService.class).depositRefund(userId);
         GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.code()==200){
+                if (response.code() == 200) {
                     try {
                         final String jsonString = response.body().string();
-                        if (null!=jsonString){
-                           Gson gson=new Gson();
+                        if (null != jsonString) {
+                            Gson gson = new Gson();
                             final MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                            if (messageBean.getResponseCode().equals("1")){
+                            if (messageBean.getResponseCode().equals("1")) {
                                 mSpUserInfo.edit().putBoolean(getResources().getString(R.string.is_deposit), false).commit();
-                                mSpUserInfo.edit().putBoolean("isBorrow",false).commit();
-                                ToastUtil.show(MyAccountActivity.this,"退款申请已提交");
+                                mSpUserInfo.edit().putBoolean("isBorrow", false).commit();
+                                ToastUtil.show(MyAccountActivity.this, "退款申请已提交");
                             }
                         }
                     } catch (IOException e) {

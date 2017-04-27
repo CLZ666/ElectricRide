@@ -23,7 +23,7 @@ import java.util.List;
 
 public class RechargeRecordAdapter extends BaseAdapter {
     private Context mContext;
-    private List<RechargeRecordBean.ResponseObjBean.ListBean> mData;
+    private List<RechargeRecordBean.ResponseObjBean.RowsBean> mData;
 
     public RechargeRecordAdapter(Context context) {
         this.mContext = context;
@@ -35,7 +35,7 @@ public class RechargeRecordAdapter extends BaseAdapter {
         return mData.size();
     }
 
-    public void setData(List<RechargeRecordBean.ResponseObjBean.ListBean> data, boolean isRefresh) {
+    public void setData(List<RechargeRecordBean.ResponseObjBean.RowsBean> data, boolean isRefresh) {
         if (data != null) {
             if (isRefresh) {
                 mData.clear();
@@ -68,9 +68,9 @@ public class RechargeRecordAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        RechargeRecordBean.ResponseObjBean.ListBean dataBean = mData.get(position);
+        RechargeRecordBean.ResponseObjBean.RowsBean dataBean = mData.get(position);
         int income = dataBean.getIncome();
-        String type = dataBean.getType();
+        String type = dataBean.getType()+"";
         final int pay = dataBean.getPay();
         if (type .equals("4")) {
             double money = (pay * 1.0) / 100;
@@ -79,7 +79,7 @@ public class RechargeRecordAdapter extends BaseAdapter {
             double money = (income * 1.0) / 100;
             holder.mTvAmount.setText("+" + money + "");
         }
-        holder.mTvTime.setText(stampToDate(dataBean.getCtime()));
+        holder.mTvTime.setText(stampToDate(dataBean.getCtime()+""));
         switch (type) {
             case "1":
                 holder.mTvType.setText("充值增加");

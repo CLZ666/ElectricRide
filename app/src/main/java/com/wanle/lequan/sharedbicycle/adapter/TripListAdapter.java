@@ -27,7 +27,7 @@ import java.util.List;
 public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.MyViewHolder> {
 
     private Context mContext;
-    private List<TripListBean.ResponseObjBean> mDatas;
+    private List<TripListBean.ResponseObjBean.RowsBean> mDatas;
 
     public TripListAdapter(Context context) {
         this.mContext = context;
@@ -41,7 +41,7 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.MyView
         return holder;
     }
 
-    public void setData(List<TripListBean.ResponseObjBean> datas, boolean isRefresh) {
+    public void setData(List<TripListBean.ResponseObjBean.RowsBean> datas, boolean isRefresh) {
         if (datas != null) {
             if (isRefresh) {
                 mDatas.clear();
@@ -54,7 +54,7 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        final TripListBean.ResponseObjBean dataBean = mDatas.get(position);
+        final TripListBean.ResponseObjBean.RowsBean dataBean = mDatas.get(position);
         if (dataBean != null) {
             double CycleCharge = dataBean.getCycleCharge() * 1.0 / 100;
             holder.mTvDate.setText(stampToDate(dataBean.getStartTime() + ""));

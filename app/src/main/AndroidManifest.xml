@@ -247,6 +247,12 @@
         </activity>
         <activity android:name=".activity.SubmitProblemActivity">
         </activity>
+        <activity android:name=".activity.BatteryReplaceRecordActivity">
+        </activity>
+        <activity android:name=".activity.IntegralRecordActivity">
+        </activity>
+        <activity android:name=".activity.CouPonActivity">
+        </activity>
     </application>
 
 </manifest>

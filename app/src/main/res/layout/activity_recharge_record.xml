@@ -14,19 +14,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
         android:id="@+id/swip_refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/include">
 
+        <include
+            android:id="@id/swipe_refresh_header"
+            layout="@layout/layout_twitter_header"/>
+
         <ListView
-            android:id="@+id/lv_recharge_record"
+            android:id="@id/swipe_target"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
         </ListView>
-    </android.support.v4.widget.SwipeRefreshLayout>
+
+        <include
+            android:id="@id/swipe_load_more_footer"
+            layout="@layout/layout_classic_footer"/>
+    </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
+
     <include
         android:id="@+id/empty_view"
         layout="@layout/layout_empty_view"/>

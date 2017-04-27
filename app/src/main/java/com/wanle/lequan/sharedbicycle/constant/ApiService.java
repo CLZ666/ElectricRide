@@ -92,7 +92,7 @@ public interface ApiService {
     //充值记录的接口
     @FormUrlEncoded
     @POST("recharge/rechargeRecord.html")
-    Call<ResponseBody> rechargeRecord(@Field("userId") String userId);
+    Call<ResponseBody> rechargeRecord(@FieldMap Map<String, String> map);
 
     //我要用车的接口
     @FormUrlEncoded

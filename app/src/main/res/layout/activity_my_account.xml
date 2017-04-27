@@ -84,4 +84,14 @@
         android:textColor="@color/white"
         android:textSize="20sp"
         />
+    <TextView
+        android:id="@+id/tv_my_coupon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="我的优惠券"
+        android:textColor="@color/colorPink"
+        android:layout_below="@id/btn_recharge"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="20dp"/>
 </RelativeLayout>

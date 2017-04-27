@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="4dp"
+              android:layout_marginTop="4dp"
+              android:background="@color/white"
+              android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/iv_cdb"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/power_box"/>
+
+        <TextView
+            android:id="@+id/tv_battery_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/iv_cdb"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/iv_cdb"
+            android:text="编号:124123123214"
+            android:textColor="@color/black"/>
+
+        <LinearLayout
+            android:id="@+id/linear_lease_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tv_battery_no"
+            android:layout_below="@id/tv_battery_no"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/iv_cdb"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="已取出:"
+                />
+
+            <TextView
+                android:id="@+id/tv_lease_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:text="3"
+                android:textColor="@color/colorPink"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="小时  "/>
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_lease_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tv_battery_no"
+            android:layout_below="@id/linear_lease_desc"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/iv_cdb"
+            android:text="2017-04-23 10:13:10"
+            />
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/tv_circle"
+            android:text="取"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorPink"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp"/>
+    </RelativeLayout>
+</LinearLayout>

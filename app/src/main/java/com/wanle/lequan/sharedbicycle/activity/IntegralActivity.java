@@ -1,5 +1,6 @@
 package com.wanle.lequan.sharedbicycle.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -35,6 +36,7 @@ public class IntegralActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.tv_look_record:
+                startActivity(new Intent(this,IntegralRecordActivity.class));
                 break;
             case R.id.iv_integral_rule:
                 break;

@@ -5,22 +5,33 @@
     android:id="@+id/activity_my_trip"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white2"
+    android:orientation="vertical"
     tools:context="com.wanle.lequan.sharedbicycle.activity.MyTripActivity">
-<include
-    layout="@layout/layout_navigation_bar"/>
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swip_refresh"
+
+    <include
+        layout="@layout/layout_navigation_bar"/>
+
+    <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
+        android:id="@+id/swipeToLoadLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <include
+            android:id="@id/swipe_refresh_header"
+            layout="@layout/layout_twitter_header"/>
+
         <com.wanle.lequan.sharedbicycle.view.EmptyRecyclerView
-            android:id="@+id/rec_list_trip"
+            android:id="@id/swipe_target"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"></com.wanle.lequan.sharedbicycle.view.EmptyRecyclerView>
 
-    </android.support.v4.widget.SwipeRefreshLayout>>
-<include
-    android:id="@+id/empty_view"
-    layout="@layout/layout_empty_view"/>
+        <include
+            android:id="@id/swipe_load_more_footer"
+            layout="@layout/layout_classic_footer"/>
+    </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
+
+    <include
+        android:id="@+id/empty_view"
+        layout="@layout/layout_empty_view"/>
 </LinearLayout>

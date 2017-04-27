@@ -1,20 +1,22 @@
 package com.wanle.lequan.sharedbicycle.bean;
 
+
+// FIXME generate failure  field _$Rows324
+
 import java.util.List;
 
 /**
  * autor:Jerry
- * fuction:
+ * fuction
  * Date: 2017/3/9.
  */
 
 public class RechargeRecordBean {
 
-
     /**
      * responseCode : 1
      * responseMsg :
-     * responseObj : {"resultCode":1,"list":[{"income":1000,"pay":0,"ctime":"2017-04-06 14:42:56","type":"7"},{"income":1,"pay":0,"ctime":"2017-04-06 14:42:56","type":"2"},{"income":1000,"pay":0,"ctime":"2017-03-16 12:33:56","type":"7"},{"income":1,"pay":0,"ctime":"2017-03-16 12:33:56","type":"2"}]}
+     * responseObj : {"total":57,"page":6,"rows":[{"income":0,"pay":200,"ctime":1492053364000,"type":4},{"income":1000,"pay":0,"ctime":1492052986000,"type":7},{"income":1,"pay":0,"ctime":1492052986000,"type":2},{"income":0,"pay":200,"ctime":1491975267000,"type":4},{"income":0,"pay":200,"ctime":1491969949000,"type":4},{"income":0,"pay":200,"ctime":1491968222000,"type":4},{"income":1,"pay":0,"ctime":1491967307000,"type":1}]}
      */
 
     private String responseCode;
@@ -47,41 +49,51 @@ public class RechargeRecordBean {
 
     public static class ResponseObjBean {
         /**
-         * resultCode : 1
-         * list : [{"income":1000,"pay":0,"ctime":"2017-04-06 14:42:56","type":"7"},{"income":1,"pay":0,"ctime":"2017-04-06 14:42:56","type":"2"},{"income":1000,"pay":0,"ctime":"2017-03-16 12:33:56","type":"7"},{"income":1,"pay":0,"ctime":"2017-03-16 12:33:56","type":"2"}]
+         * total : 57
+         * page : 6
+         * rows : [{"income":0,"pay":200,"ctime":1492053364000,"type":4},{"income":1000,"pay":0,"ctime":1492052986000,"type":7},{"income":1,"pay":0,"ctime":1492052986000,"type":2},{"income":0,"pay":200,"ctime":1491975267000,"type":4},{"income":0,"pay":200,"ctime":1491969949000,"type":4},{"income":0,"pay":200,"ctime":1491968222000,"type":4},{"income":1,"pay":0,"ctime":1491967307000,"type":1}]
          */
 
-        private int resultCode;
-        private List<ListBean> list;
+        private int total;
+        private int page;
+        private List<RowsBean> rows;
 
-        public int getResultCode() {
-            return resultCode;
+        public int getTotal() {
+            return total;
         }
 
-        public void setResultCode(int resultCode) {
-            this.resultCode = resultCode;
+        public void setTotal(int total) {
+            this.total = total;
         }
 
-        public List<ListBean> getList() {
-            return list;
+        public int getPage() {
+            return page;
         }
 
-        public void setList(List<ListBean> list) {
-            this.list = list;
+        public void setPage(int page) {
+            this.page = page;
         }
 
-        public static class ListBean {
+        public List<RowsBean> getRows() {
+            return rows;
+        }
+
+        public void setRows(List<RowsBean> rows) {
+            this.rows = rows;
+        }
+
+        public static class RowsBean {
             /**
-             * income : 1000
-             * pay : 0
-             * ctime : 2017-04-06 14:42:56
-             * type : 7
+             * income : 0
+             * pay : 200
+             * ctime : 1492053364000
+             * type : 4
              */
 
             private int income;
             private int pay;
-            private String ctime;
-            private String type;
+            private long ctime;
+            private int type;
 
             public int getIncome() {
                 return income;
@@ -99,19 +111,19 @@ public class RechargeRecordBean {
                 this.pay = pay;
             }
 
-            public String getCtime() {
+            public long getCtime() {
                 return ctime;
             }
 
-            public void setCtime(String ctime) {
+            public void setCtime(long ctime) {
                 this.ctime = ctime;
             }
 
-            public String getType() {
+            public int getType() {
                 return type;
             }
 
-            public void setType(String type) {
+            public void setType(int type) {
                 this.type = type;
             }
         }

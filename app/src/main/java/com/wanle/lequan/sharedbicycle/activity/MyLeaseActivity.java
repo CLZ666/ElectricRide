@@ -1,7 +1,7 @@
 package com.wanle.lequan.sharedbicycle.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -11,7 +11,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MyLeaseActivity extends AppCompatActivity {
+public class MyLeaseActivity extends BaseActivity {
 
     @BindView(R.id.tv_title)
     TextView mTvTitle;
@@ -35,8 +35,10 @@ public class MyLeaseActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.fl_cdb:
+                startActivity(new Intent(this,LeaseRecordActivity.class));
                 break;
             case R.id.fl_battery:
+                startActivity(new Intent(this,BatteryReplaceRecordActivity.class));
                 break;
         }
     }
