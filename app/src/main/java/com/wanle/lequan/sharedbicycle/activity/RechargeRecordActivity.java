@@ -49,8 +49,9 @@ public class RechargeRecordActivity extends BaseActivity implements OnRefreshLis
     private RechargeRecordAdapter mAdapter;
     private View mEmptyView;
     private TextView mTv_empty;
-    private int mPage=1;
+    private int mPage = 1;
     private int endPage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,32 +91,35 @@ public class RechargeRecordActivity extends BaseActivity implements OnRefreshLis
     private void getRecord(final boolean isRefresh) {
         Map<String, String> map = new HashMap<>();
         map.put("userId", mUserId);
-        map.put("page", ""+mPage++);
+        map.put("page", "" + mPage++);
         map.put("rows", "10");
         Call<ResponseBody> call = HttpUtil.getService(ApiService.class).rechargeRecord(map);
         GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    String jsonString = response.body().string();
-                    Log.i("RECORD1", jsonString);
-                    if (jsonString != null) {
-                        Gson gson = new Gson();
-                        RechargeRecordBean dataBean = gson.fromJson(jsonString, RechargeRecordBean.class);
-                        if (null != dataBean) {
-                            if (dataBean.getResponseCode().equals("1")) {
-                                endPage=dataBean.getResponseObj().getPage();
-                                mAdapter.setData(dataBean.getResponseObj().getRows(), isRefresh);
-                            } else {
-                                ToastUtils.getShortToastByString(RechargeRecordActivity.this, dataBean.getResponseMsg());
-                            }
+                if (response.code() == 200) {
+                    try {
+                        String jsonString = response.body().string();
+                        Log.i("RECORD1", jsonString);
+                        if (jsonString != null) {
+                            Gson gson = new Gson();
+                            RechargeRecordBean dataBean = gson.fromJson(jsonString, RechargeRecordBean.class);
+                            if (null != dataBean) {
+                                if (dataBean.getResponseCode().equals("1")) {
+                                    endPage = dataBean.getResponseObj().getPage();
+                                    mAdapter.setData(dataBean.getResponseObj().getRows(), isRefresh);
+                                } else {
+                                    ToastUtils.getShortToastByString(RechargeRecordActivity.this, dataBean.getResponseMsg());
+                                }
 
+                            }
                         }
+                        abnormalView();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    abnormalView();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+
             }
 
             @Override
@@ -152,12 +156,12 @@ public class RechargeRecordActivity extends BaseActivity implements OnRefreshLis
 
     @Override
     public void onRefresh() {
-        if (NetWorkUtil.isNetworkAvailable(this)){
+        if (NetWorkUtil.isNetworkAvailable(this)) {
             mSwipRefresh.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mSwipRefresh.setRefreshing(false);
-                    mPage=1;
+                    mPage = 1;
                     getRecord(true);
                 }
             }, 1000);
@@ -166,12 +170,12 @@ public class RechargeRecordActivity extends BaseActivity implements OnRefreshLis
 
     @Override
     public void onLoadMore() {
-        if (mPage>endPage){
-            ToastUtil.show(this,"暂无更多数据");
+        if (mPage > endPage) {
+            ToastUtil.show(this, "暂无更多数据");
             mSwipRefresh.setLoadingMore(false);
             return;
         }
-        if (NetWorkUtil.isNetworkAvailable(this)){
+        if (NetWorkUtil.isNetworkAvailable(this)) {
             mSwipRefresh.postDelayed(new Runnable() {
                 @Override
                 public void run() {

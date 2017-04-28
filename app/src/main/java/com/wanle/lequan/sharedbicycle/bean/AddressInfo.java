@@ -15,7 +15,8 @@ public class AddressInfo {
 
     private AddressInfo(){
     }
-    public AddressInfo(String street,String car_amount,String distance, String time) {
+    public AddressInfo(int type,String street,String car_amount,String distance, String time) {
+        this.type=type;
         this.srtreet = street;
         this.car_amount=car_amount;
         this.distance = distance;

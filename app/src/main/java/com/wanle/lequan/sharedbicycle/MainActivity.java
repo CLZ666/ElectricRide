@@ -153,7 +153,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     private SharedPreferences mSpUserinfo;
     private static final int REQUEST_CODE = 1;
     private static final int RESULT_CODE = 2;
-
+    private boolean isShowEbikeEnergyFragment;
     private AddressInfoFragment mAddressInfoFragment;
     private EBikeEnergyFragment mEBikeEnergyFragment;
     private FragmentManager mFm;
@@ -503,9 +503,10 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         /*myLocationStyle.myLocationIcon(BitmapDescriptorFactory
                     .fromResource(R.drawable.location_icon));// 设置小蓝点的图标*/
         myLocationStyle.strokeColor(Color.BLUE);// 设置圆形的边框颜色
-        myLocationStyle.strokeWidth(3);
+        myLocationStyle.strokeWidth(1);
         //myLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));// 设置圆形的边框颜色
         myLocationStyle.radiusFillColor(getResources().getColor(R.color.tougrey2));// 设置圆形的填充颜色
+
         // myLocationStyle.radiusFillColor(color)//设置圆形的填充颜色
         // myLocationStyle.anchor(int,int)//设置小蓝点的锚点
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW);
@@ -545,13 +546,11 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                         mWalkRouteOverlay.removeFromMap();
                     }
                     if (!mIsStation) {
+                        regeocdeQuery();
+                        hideEBikeEnergyFragment();
                         showChargeStation();
-                        if (null != mInfo) {
-                            mInfo.setCar_amount(chargeStationCount + "");
-                            mInfo.setType(1);
-                            EventBus.getDefault().post(mInfo);
-                        }
                     } else {
+                        regeocdeQuery();
                         showBike();
                     }
                 }
@@ -578,6 +577,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 mIvGuide.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        aMap.setOnCameraChangeListener(null);
                         if (mAmapocation != null && mCenterPoint != null) {
                             NaviLatLng start = null, end = null;
                             start = new NaviLatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
@@ -989,6 +989,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stationMarkers = null;
+        bikeMarkers = null;
         mMap.onDestroy();
         if (null != mlocationClient) {
             mlocationClient.onDestroy();
@@ -1235,15 +1237,36 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         //bikeMarkers.clear();
         if (cars != null) {
             for (int i = 0; i < cars.size(); i++) {
+                final NearByCarBean.ResponseObjBean nearCarBean = cars.get(i);
                 View markerVeiw = LayoutInflater.from(this).inflate(R.layout.layout_map_marker, null);
-                double longitude = stringtoDouble(cars.get(i).getLongitude());
-                double latitude = stringtoDouble(cars.get(i).getLatitude());
+                ImageView ivBike = (ImageView) markerVeiw.findViewById(R.id.iv_bike);
+                double longitude = stringtoDouble(nearCarBean.getLongitude());
+                double latitude = stringtoDouble(nearCarBean.getLatitude());
                 LatLng latlng = new LatLng(latitude, longitude);
-                Marker marker = aMap.addMarker(new MarkerOptions()
-                        .anchor(0.5f, 0.5f)
-                        .position(latlng)
-                        .icon(BitmapDescriptorFactory.fromView(markerVeiw))
-                );
+                final int carPower = nearCarBean.getCarPower();
+                Marker marker = null;
+                if (carPower > 0 && carPower <= 10) {
+                    ivBike.setImageResource(R.drawable.bike_icon_red);
+                    marker = aMap.addMarker(new MarkerOptions()
+                            .anchor(0.5f, 0.5f)
+                            .position(latlng)
+                            .icon(BitmapDescriptorFactory.fromView(markerVeiw))
+                    );
+                } else if (carPower > 10 && carPower <= 50) {
+                    ivBike.setImageResource(R.drawable.bike_icon_yellow);
+                    marker = aMap.addMarker(new MarkerOptions()
+                            .anchor(0.5f, 0.5f)
+                            .position(latlng)
+                            .icon(BitmapDescriptorFactory.fromView(markerVeiw))
+                    );
+                } else {
+                    ivBike.setImageResource(R.drawable.bike_icon_green);
+                    marker = aMap.addMarker(new MarkerOptions()
+                            .anchor(0.5f, 0.5f)
+                            .position(latlng)
+                            .icon(BitmapDescriptorFactory.fromView(markerVeiw))
+                    );
+                }
                 marker.setObject(cars.get(i));
                 bikeMarkers.add(marker);
             }
@@ -1262,7 +1285,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         chargeStationCount = stations.size();
         for (int i = 0; i < stations.size(); i++) {
             View markerVeiw = LayoutInflater.from(this).inflate(R.layout.layout_map_marker, null);
-            ImageView iv_station = (ImageView) markerVeiw.findViewById(R.id.iv_is_bike);
+            ImageView iv_station = (ImageView) markerVeiw.findViewById(R.id.iv_bike);
             iv_station.setImageDrawable(getResources().getDrawable(R.drawable.station_icon));
             double longitude = stringtoDouble(stations.get(i).getLongitude());
             double latitude = stringtoDouble(stations.get(i).getLatitude());
@@ -1376,6 +1399,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
      * 显示每辆车的电池和充电宝信息
      */
     private void showEBikeEnergyFragment(Marker marker) {
+        isShowEbikeEnergyFragment = true;
         NearByCarBean.ResponseObjBean bean = (NearByCarBean.ResponseObjBean) marker.getObject();
         if (null != mAmapocation && null != bean) {
             LatLng locatePoint = new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
@@ -1391,6 +1415,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
      * 隐藏每辆车的电池和充电宝信息
      */
     private void hideEBikeEnergyFragment() {
+        isShowEbikeEnergyFragment = false;
         mFm = getSupportFragmentManager();
         mTransaction = mFm.beginTransaction();
         if (null != mEBikeEnergyFragment) {
@@ -1402,14 +1427,18 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     @Override
     public void onMapClick(LatLng latLng) {
         if (NetWorkUtil.isNetworkAvailable(this)) {
-            if (mOldMarker != null) {
-                mOldMarker.hideInfoWindow();
+            if (isShowEbikeEnergyFragment) {
+                isShowEbikeEnergyFragment = false;
+                hideEBikeEnergyFragment();
+            } else {
+                if (mOldMarker != null) {
+                    mOldMarker.hideInfoWindow();
+                }
+                if (null != mWalkRouteOverlay) {
+                    mWalkRouteOverlay.removeFromMap();
+                }
+                mIvGuide.setVisibility(View.GONE);
             }
-            if (null!=mWalkRouteOverlay){
-                mWalkRouteOverlay.removeFromMap();
-            }
-            mIvGuide.setVisibility(View.GONE);
-            hideEBikeEnergyFragment();
         }
     }
 
@@ -1467,7 +1496,11 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 int time = distance / 100;
                 Log.i("car_amount", mCar_amount + "");
                 mStreet1 = subString(regeocodeAddress.getFormatAddress(), province, city, district, mStreet);
-                mInfo = new AddressInfo(mStreet1, mCar_amount + "", distance + "", time + "");
+                if (mIsStation) {
+                    mInfo = new AddressInfo(1, mStreet1, chargeStationCount + "", distance + "", time + "");
+                } else {
+                    mInfo = new AddressInfo(2, mStreet1, mCar_amount + "", distance + "", time + "");
+                }
                 Log.i("address", regeocodeAddress.getFormatAddress());
                 EventBus.getDefault().post(new MyEvent(mInfo));
             } else {

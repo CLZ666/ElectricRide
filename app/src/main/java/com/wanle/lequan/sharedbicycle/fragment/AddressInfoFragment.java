@@ -53,14 +53,15 @@ public class AddressInfoFragment extends Fragment {
     public void onEventMainThread(MyEvent event) {
         AddressInfo info = event.getInfo();
         if (null != info) {
-            mTvAmount.setText("剩余" + info.getCar_amount() + "辆");
-            mTvStreet.setText(info.getSrtreet());
-            mTvDistance.setText("距离" + info.getDistance() + "米");
-            mIvBike.setImageDrawable(getResources().getDrawable(R.drawable.small_moto));
-            if (info.getType() == 1) {
+            if (info.getType()==1){
                 mTvAmount.setText("附近有充电基站" + info.getCar_amount() + "个");
                 mIvBike.setImageDrawable(getResources().getDrawable(R.drawable.station));
+            }else {
+                mTvAmount.setText("剩余" + info.getCar_amount() + "辆");
+                mIvBike.setImageDrawable(getResources().getDrawable(R.drawable.small_moto));
             }
+            mTvStreet.setText(info.getSrtreet());
+            mTvDistance.setText("距离" + info.getDistance() + "米");
         }
     }
 
