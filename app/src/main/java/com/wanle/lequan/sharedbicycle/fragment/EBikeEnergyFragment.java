@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.amap.api.maps.model.LatLng;
@@ -34,8 +35,6 @@ import butterknife.OnClick;
 public class EBikeEnergyFragment extends Fragment implements GeocodeSearch.OnGeocodeSearchListener {
 
 
-    @BindView(R.id.tv_ebike_no)
-    TextView mTvEbikeNo;
     @BindView(R.id.tv_battery_level)
     TextView mTvBatteryLevel;
     @BindView(R.id.tv_cdb_level)
@@ -44,11 +43,14 @@ public class EBikeEnergyFragment extends Fragment implements GeocodeSearch.OnGeo
     GeocodeSearch mGeocodeSearch;
     @BindView(R.id.tv_ebike_address)
     TextView mTvEbikeAddress;
+    @BindView(R.id.btn_nav)
+    Button mBtnNav;
     private LatLng mLocatePoint;
+
     public static EBikeEnergyFragment newInstance(NearByCarBean.ResponseObjBean ebikeInfo, LatLng locatePoint) {
         Bundle args = new Bundle();
         args.putParcelable("mEbikeInfo", ebikeInfo);
-        args.putParcelable("mLocatePoint",locatePoint);
+        args.putParcelable("mLocatePoint", locatePoint);
         EBikeEnergyFragment fragment = new EBikeEnergyFragment();
         fragment.setArguments(args);
         return fragment;
@@ -58,7 +60,7 @@ public class EBikeEnergyFragment extends Fragment implements GeocodeSearch.OnGeo
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEbikeInfo = (NearByCarBean.ResponseObjBean) getArguments().get("mEbikeInfo");
-        mLocatePoint=getArguments().getParcelable("mLocatePoint");
+        mLocatePoint = getArguments().getParcelable("mLocatePoint");
         mGeocodeSearch = new GeocodeSearch(getActivity());
         mGeocodeSearch.setOnGeocodeSearchListener(this);
     }
@@ -68,9 +70,17 @@ public class EBikeEnergyFragment extends Fragment implements GeocodeSearch.OnGeo
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ebike_energy, container, false);
         ButterKnife.bind(this, view);
-        if (null!=mEbikeInfo){
-            mTvEbikeNo.setText(mEbikeInfo.getCarNo());
-            mTvBatteryLevel.setText(mEbikeInfo.getCarPower()+"%");
+        if (null != mEbikeInfo) {
+            mBtnNav.setText("导航路线No." + mEbikeInfo.getCarNo());
+            final int carPower = mEbikeInfo.getCarPower();
+            if (carPower > 0 && carPower <= 10) {
+                mTvBatteryLevel.setTextColor(getResources().getColor(R.color.colorRed1));
+            } else if (carPower > 10 && carPower <= 50) {
+                mTvBatteryLevel.setTextColor(getResources().getColor(R.color.colorYellow));
+            } else {
+                mTvBatteryLevel.setTextColor(getResources().getColor(R.color.colorGreen1));
+        }
+            mTvBatteryLevel.setText(mEbikeInfo.getCarPower() + "%");
         }
         regeocdeQuery();
         return view;
@@ -78,11 +88,11 @@ public class EBikeEnergyFragment extends Fragment implements GeocodeSearch.OnGeo
 
     @OnClick(R.id.btn_nav)
     public void onClick() {
-        if (null!=mEbikeInfo){
-            LatLng endPoint=new LatLng(Double.parseDouble(mEbikeInfo.getLatitude()),Double.parseDouble(mEbikeInfo.getLongitude()));
+        if (null != mEbikeInfo) {
+            LatLng endPoint = new LatLng(Double.parseDouble(mEbikeInfo.getLatitude()), Double.parseDouble(mEbikeInfo.getLongitude()));
             if (mLocatePoint != null) {
                 NaviLatLng start = null, end = null;
-                start = new NaviLatLng(mLocatePoint.latitude,mLocatePoint.longitude);
+                start = new NaviLatLng(mLocatePoint.latitude, mLocatePoint.longitude);
                 end = new NaviLatLng(endPoint.latitude, endPoint.longitude);
                 Intent intent = new Intent(getActivity(), NaviActivity.class);
                 intent.putExtra("start", start);

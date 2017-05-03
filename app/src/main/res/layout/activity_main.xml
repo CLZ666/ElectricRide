@@ -150,11 +150,12 @@
         android:layout_below="@id/linear_bar">
 
     </FrameLayout>
-    <FrameLayout
+    <com.wanle.lequan.sharedbicycle.view.SlidingRelativeLayout
         android:id="@+id/fl_ebike_energy_replace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/linear_bar">
+        android:layout_below="@id/linear_bar"
+        >
 
-    </FrameLayout>
+    </com.wanle.lequan.sharedbicycle.view.SlidingRelativeLayout>
 </RelativeLayout>

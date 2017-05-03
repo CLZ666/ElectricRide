@@ -31,9 +31,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 import butterknife.BindView;
@@ -223,8 +221,8 @@ public class CarStateFragment extends Fragment {
      */
     private void continueUse() {
         String userId = getActivity().getSharedPreferences("userinfo", Context.MODE_PRIVATE).getString("userId", "");
-        Map<String, String> map = new HashMap<>();
-        map.put("userId", userId);
+       /* Map<String, String> map = new HashMap<>();
+        map.put("userId", userId);*/
         Call<ResponseBody> call = HttpUtil.getService(ApiService.class).continueUse(userId);
         GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
             @Override

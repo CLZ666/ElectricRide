@@ -64,9 +64,7 @@ public class MyTripActivity extends BaseActivity implements OnRefreshListener, O
     private void initView() {
         mTvTitle.setText("我的行程");
         mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-        if (NetWorkUtil.isNetworkAvailable(this)) {
-
-        }
+        NetWorkUtil.isNetworkAvailable(this);
         emptyView = findViewById(R.id.empty_view);
         mTv_empty = (TextView) emptyView.findViewById(R.id.tv_empty);
         mTv_empty.setText("暂时没有行程记录哦");

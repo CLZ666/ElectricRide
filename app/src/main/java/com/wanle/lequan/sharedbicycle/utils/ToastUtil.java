@@ -72,7 +72,8 @@ public class ToastUtil {
                 case 1801:
                     throw new AMapException(AMapException.AMAP_CLIENT_ERROR_PROTOCOL);
                 case 1802:
-                    throw new AMapException(AMapException.AMAP_CLIENT_SOCKET_TIMEOUT_EXCEPTION);
+                    break;
+                   // throw new AMapException(AMapException.AMAP_CLIENT_SOCKET_TIMEOUT_EXCEPTION);
                 case 1803:
                     throw new AMapException(AMapException.AMAP_CLIENT_URL_EXCEPTION);
                 case 1804:

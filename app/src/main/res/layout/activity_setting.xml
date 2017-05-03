@@ -5,41 +5,45 @@
     android:id="@+id/activity_setting"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white2"
+    android:orientation="vertical"
     tools:context="com.wanle.lequan.sharedbicycle.activity.SettingActivity">
-<include layout="@layout/layout_navigation_bar"/>
+
+    <include layout="@layout/layout_navigation_bar"/>
+
     <RelativeLayout
         android:id="@+id/rel_user_icon"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/white"
-        android:layout_marginTop="1dp">
+        android:layout_marginTop="1dp"
+        android:background="@color/white">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="头像"
+            android:layout_marginLeft="8dp"
             android:gravity="center"
-            android:textSize="16sp"
+            android:text="头像"
             android:textColor="@color/black"
-            android:layout_marginLeft="8dp"/>
+            android:textSize="16sp"/>
+
         <ImageView
             android:id="@+id/iv_arrow"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_arrow_right_cal"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginRight="5dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_arrow_right_cal"/>
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_user_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:gravity="center"
-            android:layout_toLeftOf="@id/iv_arrow"
-            android:layout_marginTop="3dp"
             android:layout_marginRight="5dp"
-            android:layout_marginLeft="300dp"
+            android:layout_marginTop="3dp"
+            android:layout_toLeftOf="@id/iv_arrow"
+            android:layout_centerVertical="true"
             android:src="@drawable/userhead"
             />
     </RelativeLayout>
@@ -79,6 +83,7 @@
         android:layout_marginTop="1dp"
         android:background="@color/white"
         >
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -120,73 +125,79 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
             android:gravity="center"
             android:text="手机号码"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            android:layout_marginLeft="8dp"/>
+            android:textSize="16sp"/>
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/rel_advice"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/white"
         android:layout_marginTop="9dp"
+        android:background="@color/white"
         >
+
         <TextView
             android:id="@+id/tv_advice"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="意见反馈"
-            android:gravity="center"
-            android:textColor="@color/black"
             android:layout_marginLeft="8dp"
+            android:gravity="center"
+            android:text="意见反馈"
+            android:textColor="@color/black"
             android:textSize="16sp"/>
+
         <ImageView
             android:id="@+id/iv_arrow5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="4dp"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_arrow_right_cal"
-            android:layout_marginRight="5dp"/>
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:src="@drawable/ic_arrow_right_cal"/>
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/rel_about_us"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/white"
         android:layout_marginTop="1dp"
+        android:background="@color/white"
         >
+
         <TextView
             android:id="@+id/tv_about_us"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="关于我们"
-            android:gravity="center"
-            android:textColor="@color/black"
             android:layout_marginLeft="8dp"
+            android:gravity="center"
+            android:text="关于我们"
+            android:textColor="@color/black"
             android:textSize="15sp"/>
+
         <ImageView
             android:id="@+id/iv_arrow6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="4dp"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_arrow_right_cal"
-            android:layout_marginRight="5dp"/>
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
+            android:src="@drawable/ic_arrow_right_cal"/>
     </RelativeLayout>
+
     <Button
         android:id="@+id/btn_exit_login"
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:text="退出登录"
-        android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
         android:background="@color/white"
+        android:text="退出登录"
         android:textSize="16sp"/>
 </LinearLayout>

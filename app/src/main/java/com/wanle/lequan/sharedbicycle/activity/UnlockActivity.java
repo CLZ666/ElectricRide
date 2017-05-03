@@ -74,17 +74,19 @@ public class UnlockActivity extends BaseActivity {
     }
 
     private void unlock() {
-        mCdt = new CountDownTimer(700000, 10000) {
+        mCdt = new CountDownTimer(60001, 2000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 userCar();
-                setProgress1(10);
+                setProgress1(2);
             }
 
             @Override
             public void onFinish() {
                 if (!mResponseCode.equals("1")) {
-                    ToastUtil.show(UnlockActivity.this, "开锁失败");
+                    ToastUtil.show(UnlockActivity.this, "开锁超时，请换一辆车");
+                   // startActivity(new Intent(UnlockActivity.this,MainActivity.class));
+                    finish();
                 }
             }
         };
@@ -132,7 +134,7 @@ public class UnlockActivity extends BaseActivity {
                 try {
                     String jsonString = response.body().string();
                     if (null != jsonString) {
-                        Log.i("unlock", jsonString);
+                        Log.i("unlock1", jsonString);
                         JSONObject jsonObject = new JSONObject(jsonString);
                         mResponseCode = jsonObject.getString("responseCode");
                         if (mResponseCode.equals("1")) {

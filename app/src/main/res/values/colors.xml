@@ -27,7 +27,9 @@
     <color name="color999999">#999999</color>
     <color name="colorRed">#FF0000</color>
     <color name="colorPink">#FF5A60</color>
-
+    <color name="colorGreen1">#07E801</color>
+    <color name="colorYellow">#ECDA0F</color>
+    <color name="colorRed1">#FF5959</color>
     <color name="google_blue">#4285F4</color>
     <color name="google_red">#EA4335</color>
     <color name="google_green">#34A853</color>

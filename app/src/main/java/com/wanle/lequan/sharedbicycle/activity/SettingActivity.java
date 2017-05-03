@@ -33,9 +33,7 @@ import com.wanle.lequan.sharedbicycle.utils.UpLoadUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -267,10 +265,10 @@ public class SettingActivity extends BaseActivity implements EasyPermissions.Per
         File file = new File(imagePath);
 
         if (bitmap != null) {
-            Map<String, RequestBody> map = new HashMap<>();
+            /*Map<String, RequestBody> map = new HashMap<>();
             map.put("userId", toRequestBody(userId));
             Log.e("upload", imagePath);
-            map.put("filename=\"" + file.getName(), RequestBody.create(MediaType.parse("image/png"), file));
+            map.put("filename=\"" + file.getName(), RequestBody.create(MediaType.parse("image/png"), file));*/
             RequestBody body = RequestBody.create(MediaType.parse("image/png"), file);
             Call<ResponseBody> call = HttpUtil.getService(ApiService.class).UploadIco(userId, body);
 

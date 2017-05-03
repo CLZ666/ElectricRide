@@ -57,9 +57,7 @@ public class RechargeRecordActivity extends BaseActivity implements OnRefreshLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recharge_record);
         ButterKnife.bind(this);
-        if (NetWorkUtil.isNetworkAvailable(this)) {
-
-        }
+        NetWorkUtil.isNetworkAvailable(this);
         initView();
         getRecord(false);
     }

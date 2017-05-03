@@ -33,7 +33,7 @@
                 android:paddingTop="5dp"
                 android:singleLine="true"
                 android:ellipsize="end"
-                android:text="长寿路街道财富时代"
+                android:text=""
                 android:textColor="@color/white"/>
         </android.support.v7.widget.CardView>
 
@@ -50,7 +50,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="3dp">
 
         <android.support.v7.widget.CardView
             android:layout_width="wrap_content"
@@ -72,7 +72,7 @@
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:paddingTop="5dp"
-                android:text="距离0米"
+                android:text=""
                 android:textColor="@color/white"/>
         </android.support.v7.widget.CardView>
 
@@ -90,7 +90,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="3dp">
 
         <android.support.v7.widget.CardView
             android:layout_width="wrap_content"
@@ -112,7 +112,7 @@
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:paddingTop="5dp"
-                android:text="剩余  辆"
+                android:text=""
                 android:textColor="@color/white"/>
         </android.support.v7.widget.CardView>
 
@@ -124,6 +124,6 @@
             android:layout_marginTop="4.5dp"
             android:scaleType="centerCrop"
             android:background="@drawable/iv_bgd_circle1"
-            android:src="@drawable/small_moto"/>
+            />
     </FrameLayout>
 </LinearLayout>

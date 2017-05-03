@@ -65,10 +65,12 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.MyView
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String itineraryId = dataBean.getId();
-                Intent intent = new Intent(mContext, TripDetailActivity.class);
-                intent.putExtra("itineraryId", itineraryId);
-                mContext.startActivity(intent);
+                if (null != dataBean) {
+                    String itineraryId = dataBean.getId();
+                    Intent intent = new Intent(mContext, TripDetailActivity.class);
+                    intent.putExtra("itineraryId", itineraryId);
+                    mContext.startActivity(intent);
+                }
             }
         });
     }

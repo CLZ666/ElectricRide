@@ -138,4 +138,24 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("user/note.html")
     Call<ResponseBody> globalParms(@Field("userId") String userId);
+
+    //单车租还充电宝的接口
+    @FormUrlEncoded
+    @POST("powerBank/usePowerBank.html")
+    Call<ResponseBody> leaseReturnCdb(@FieldMap Map<String, String> map);
+
+    //租还充电宝记录的接口
+    @FormUrlEncoded
+    @POST("user/powerBank/powerBankRecord.html")
+    Call<ResponseBody> leaseReturnCdbRecord(@FieldMap Map<String, String> map);
+
+    //单车借还车辆电池的接口
+    @FormUrlEncoded
+    @POST("carBattery/useBattery.html")
+    Call<ResponseBody> replaceReturnBattery(@FieldMap Map<String, String> map);
+
+    //借还出车辆电池记录的接口
+    @FormUrlEncoded
+    @POST("user/powerBank/powerBankRecord.html")
+    Call<ResponseBody> replaceReturnBatteryRecord(@FieldMap Map<String, String> map);
 }

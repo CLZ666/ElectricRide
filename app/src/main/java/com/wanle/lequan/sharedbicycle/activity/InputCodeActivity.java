@@ -171,7 +171,7 @@ public class InputCodeActivity extends BaseActivity {
 
     public void checkCarState() {
         String userId = mSpUserInfo.getString("userId", "");
-        String carNo = "181123321170";
+        final String carNo = "181139437395";
         Map<String, String> map = new HashMap<>();
         map.put("userId", userId);
         map.put("carNo", carNo);
@@ -198,7 +198,7 @@ public class InputCodeActivity extends BaseActivity {
                                         mProgersssDialog.dismiss();
                                         Intent intent=new Intent(InputCodeActivity.this,EBikeStatusActivity.class);
                                         intent.putExtra("carStateCheckBean",carStateCheckBean);
-                                        intent.putExtra("carNo", mCarno);
+                                        intent.putExtra("carNo", carNo);
                                         startActivity(intent);
                                     }
                                 };

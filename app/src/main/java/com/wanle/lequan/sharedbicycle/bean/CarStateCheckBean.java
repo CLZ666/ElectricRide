@@ -1,5 +1,7 @@
 package com.wanle.lequan.sharedbicycle.bean;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
@@ -10,10 +12,11 @@ import java.io.Serializable;
 
 public class CarStateCheckBean implements Serializable{
 
+
     /**
      * responseCode : 1
      * responseMsg :
-     * responseObj : {"carResult":{"powerCount":0,"maxPowerCount":"1","minCarPower":"10","batteryCount":0,"maxBatteryCount":"2"},"powerBank":{"powerBankStatus":0},"battery":{"batteryNo":"2017042116261079819744","distance":100000,"carPower":100,"batteryStatus":1,"version":"1.0"}}
+     * responseObj : {"carResult":{"powerCount":0,"maxPowerCount":"1","minCarPower":"10","batteryCount":0,"maxBatteryCount":"2"},"powerBank":{"powerElectricity":100,"powerNo":"112233445566","powerBankStatus":1},"battery":{"batteryNo":"2017042116261079819744","distance":100000,"carPower":100,"version（版本）":"1.0","batteryStatus":1}}
      */
 
     private String responseCode;
@@ -47,8 +50,8 @@ public class CarStateCheckBean implements Serializable{
     public static class ResponseObjBean implements Serializable{
         /**
          * carResult : {"powerCount":0,"maxPowerCount":"1","minCarPower":"10","batteryCount":0,"maxBatteryCount":"2"}
-         * powerBank : {"powerBankStatus":0}
-         * battery : {"batteryNo":"2017042116261079819744","distance":100000,"carPower":100,"batteryStatus":1,"version":"1.0"}
+         * powerBank : {"powerElectricity":100,"powerNo":"112233445566","powerBankStatus":1}
+         * battery : {"batteryNo":"2017042116261079819744","distance":100000,"carPower":100,"version（版本）":"1.0","batteryStatus":1}
          */
 
         private CarResultBean carResult;
@@ -137,10 +140,30 @@ public class CarStateCheckBean implements Serializable{
 
         public static class PowerBankBean implements Serializable{
             /**
-             * powerBankStatus : 0
+             * powerElectricity : 100
+             * powerNo : 112233445566
+             * powerBankStatus : 1
              */
 
+            private int powerElectricity;
+            private String powerNo;
             private int powerBankStatus;
+
+            public int getPowerElectricity() {
+                return powerElectricity;
+            }
+
+            public void setPowerElectricity(int powerElectricity) {
+                this.powerElectricity = powerElectricity;
+            }
+
+            public String getPowerNo() {
+                return powerNo;
+            }
+
+            public void setPowerNo(String powerNo) {
+                this.powerNo = powerNo;
+            }
 
             public int getPowerBankStatus() {
                 return powerBankStatus;
@@ -156,15 +179,16 @@ public class CarStateCheckBean implements Serializable{
              * batteryNo : 2017042116261079819744
              * distance : 100000
              * carPower : 100
+             * version（版本） : 1.0
              * batteryStatus : 1
-             * version : 1.0
              */
 
             private String batteryNo;
             private int distance;
             private int carPower;
+            @SerializedName("version（版本）")
+            private String _$Version181; // FIXME check this code
             private int batteryStatus;
-            private String version;
 
             public String getBatteryNo() {
                 return batteryNo;
@@ -190,20 +214,20 @@ public class CarStateCheckBean implements Serializable{
                 this.carPower = carPower;
             }
 
+            public String get_$Version181() {
+                return _$Version181;
+            }
+
+            public void set_$Version181(String _$Version181) {
+                this._$Version181 = _$Version181;
+            }
+
             public int getBatteryStatus() {
                 return batteryStatus;
             }
 
             public void setBatteryStatus(int batteryStatus) {
                 this.batteryStatus = batteryStatus;
-            }
-
-            public String getVersion() {
-                return version;
-            }
-
-            public void setVersion(String version) {
-                this.version = version;
             }
         }
     }

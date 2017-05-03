@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.LocationManager;
@@ -17,15 +15,12 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,7 +59,6 @@ import com.google.gson.Gson;
 import com.wanle.lequan.sharedbicycle.activity.BaseActivity;
 import com.wanle.lequan.sharedbicycle.activity.BlueToothActivity;
 import com.wanle.lequan.sharedbicycle.activity.DepositActivity;
-import com.wanle.lequan.sharedbicycle.activity.EndRideActivity;
 import com.wanle.lequan.sharedbicycle.activity.IdentityVeritActivity;
 import com.wanle.lequan.sharedbicycle.activity.IsLoginActivity;
 import com.wanle.lequan.sharedbicycle.activity.LoginActivity;
@@ -77,7 +71,6 @@ import com.wanle.lequan.sharedbicycle.adapter.InfoWinAdapter;
 import com.wanle.lequan.sharedbicycle.bean.AddressInfo;
 import com.wanle.lequan.sharedbicycle.bean.CarState;
 import com.wanle.lequan.sharedbicycle.bean.CarStateBean;
-import com.wanle.lequan.sharedbicycle.bean.EndRideBean;
 import com.wanle.lequan.sharedbicycle.bean.GlobalParmsBean;
 import com.wanle.lequan.sharedbicycle.bean.MessageBean;
 import com.wanle.lequan.sharedbicycle.bean.NearByCarBean;
@@ -104,12 +97,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -128,12 +118,12 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     MapView mMap;
     @BindView(R.id.btn_use_car)
     TextView mBtnUseCar;
-    @BindView(R.id.iv_end_point)
-    ImageView mIvEndPoint;
     @BindView(R.id.iv_bike_station)
     ImageView mIvBikeStation;
     @BindView(R.id.iv_guide)
     ImageView mIvGuide;
+    @BindView(R.id.iv_end_point)
+    ImageView mIvEndPoint;
     private SharedPreferences mSp_isLogin;
     private AMap aMap;
     private UiSettings mUiSettings;//定义一个UiSettings对象
@@ -158,7 +148,6 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     private EBikeEnergyFragment mEBikeEnergyFragment;
     private FragmentManager mFm;
     private FragmentTransaction mTransaction;
-    private ProgersssDialog mProgersssDialog;
     private static final int MY_PERMISSIONS_REQUEST_MAP = 1;
     private static final int MY_PERMISSIONS_REQUEST_QR_CODE = 2;
     private int mCar_amount;
@@ -173,13 +162,12 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     };
     private CarStateFragment mCarStateFragment = new CarStateFragment();
     private boolean mIsStation;
+    private boolean mIsGuide;
     private InfoWinAdapter mInfoWinAdapter;
     private Marker mOldMarker;
     private BlueToothStateReceiver mBlueToothStateReceiver;
     private CountDownTimer mMCdt;
     private NetInfoReceiver mNetinfoReceiver;
-    private String mStreet;
-    private String mStreet1;
     private SharedPreferences mSpGlobalParms;
     private SharedPreferences mSpUserInfo;
     private List<Marker> bikeMarkers;
@@ -347,14 +335,12 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                                             }
                                             regeocdeQuery();
                                             setAdressInfoFragment();
-                                            showBike();
+                                            //showBike();
                                             mBtnUseCar.setText("我要用车");
                                         }
                                     }
                                 }
                             }
-                        } else {
-
                         }
                     }
 
@@ -394,6 +380,17 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         mAddressInfoFragment = new AddressInfoFragment();
         mTransaction.replace(R.id.fl_fragment_replace, mAddressInfoFragment);
         mTransaction.commitAllowingStateLoss();
+        regeocdeQuery();
+    }
+
+    //隐藏屏幕中心对应的位置信息
+    private void hideAdressInfoFragment() {
+        mFm = getSupportFragmentManager();
+        mTransaction = mFm.beginTransaction();
+        if (null != mAddressInfoFragment) {
+            mTransaction.remove(mAddressInfoFragment);
+            mTransaction.commitAllowingStateLoss();
+        }
     }
 
     private void initView() {
@@ -410,31 +407,6 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         mSpGlobalParms = getSharedPreferences("global", MODE_PRIVATE);
     }
 
-    public String sHA1() {
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    getPackageName(), PackageManager.GET_SIGNATURES);
-            byte[] cert = info.signatures[0].toByteArray();
-            MessageDigest md = MessageDigest.getInstance("SHA1");
-            byte[] publicKey = md.digest(cert);
-            StringBuffer hexString = new StringBuffer();
-            for (int i = 0; i < publicKey.length; i++) {
-                String appendString = Integer.toHexString(0xFF & publicKey[i])
-                        .toUpperCase(Locale.US);
-                if (appendString.length() == 1)
-                    hexString.append("0");
-                hexString.append(appendString);
-                hexString.append(":");
-            }
-            String result = hexString.toString();
-            return result.substring(0, result.length() - 1);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * 得到屏幕的中心点经纬度,设置中心点的marker
@@ -516,104 +488,110 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
 
     @OnClick({R.id.iv_toolbarmore, R.id.iv_search, R.id.iv_gps_start, R.id.iv_submit_problem, R.id.iv_guide, R.id.iv_bike_station, R.id.btn_use_car, R.id.iv_end_point})
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_toolbarmore:
-                boolean isLogin = mSp_isLogin.getBoolean("isLogin", false);
-                if (isLogin) {
-                    startActivity(new Intent(this, UserInfoActivity.class));
-                } else {
-                    startActivity(new Intent(this, IsLoginActivity.class));
-                }
-                break;
-            case R.id.iv_search:
-                startActivityForResult(new Intent(this, SearchActivity.class), REQUEST_CODE);
-                //startActivityForResult(new Intent(this, DepositActivity.class), REQUEST_CODE);
-                break;
-            case R.id.iv_submit_problem:
-                // callPhone();
-                startActivity(new Intent(this, SubmitProblemActivity.class));
-                break;
-            case R.id.iv_gps_start:
-                mapPermission();
-                gps_start();
-                break;
-            case R.id.iv_bike_station:
-                if (NetWorkUtil.isNetworkAvailable(this)) {
-                    if (mOldMarker != null) {
-                        mOldMarker.hideInfoWindow();
-                    }
-                    if (mWalkRouteOverlay != null) {
-                        mWalkRouteOverlay.removeFromMap();
-                    }
-                    if (!mIsStation) {
-                        regeocdeQuery();
-                        hideEBikeEnergyFragment();
-                        showChargeStation();
+        if (NetWorkUtil.isNetworkAvailable(this)) {
+            switch (view.getId()) {
+                case R.id.iv_toolbarmore:
+                    boolean isLogin = mSp_isLogin.getBoolean("isLogin", false);
+                    if (isLogin) {
+                        startActivity(new Intent(this, UserInfoActivity.class));
                     } else {
-                        regeocdeQuery();
-                        showBike();
+                        startActivity(new Intent(this, IsLoginActivity.class));
                     }
-                }
-                break;
-            case R.id.btn_use_car:
-                if (mBtnUseCar.getText().equals("我要用车")) {
-                    userCar();
-                } else if (mBtnUseCar.getText().equals("我要还车")) {
+                    break;
+                case R.id.iv_search:
+                    startActivityForResult(new Intent(this, SearchActivity.class), REQUEST_CODE);
+                    //startActivityForResult(new Intent(this, DepositActivity.class), REQUEST_CODE);
+                    break;
+                case R.id.iv_submit_problem:
+                    // callPhone();
+                    startActivity(new Intent(this, SubmitProblemActivity.class));
+                    break;
+                case R.id.iv_gps_start:
+                    mapPermission();
+                    gps_start();
+                    break;
+                case R.id.iv_bike_station:
                     if (NetWorkUtil.isNetworkAvailable(this)) {
-                        //toReturnBike();
+                        if (mOldMarker != null) {
+                            mOldMarker.hideInfoWindow();
+                        }
+                        if (mWalkRouteOverlay != null) {
+                            mWalkRouteOverlay.removeFromMap();
+                        }
+                        if (!mIsStation) {
+                            regeocdeQuery();
+                            hideEBikeEnergyFragment();
+                            showChargeStation();
+                        } else {
+                            regeocdeQuery();
+                            showBike();
+                        }
+                        if (mIsGuide) {
+                            mIvGuide.setVisibility(View.GONE);
+                            isUserCar();
+                            mIvEndPoint.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    break;
+                case R.id.btn_use_car:
+                    if (mBtnUseCar.getText().equals("我要用车")) {
+                        userCar();
+                    } else if (mBtnUseCar.getText().equals("我要还车")) {
+                        if (NetWorkUtil.isNetworkAvailable(this)) {
+                            //toReturnBike();
                        /* mProgersssDialog = new ProgersssDialog(MainActivity.this);
                         mProgersssDialog.setMsg("正在还车中");
                         returnCar(1);*/
-                        returnCheck();
-                    }
-                }
-                break;
-            case R.id.iv_end_point:
-                if (null != mCenterPoint && null != mAmapocation) {
-                    if (!equal(mAmapocation.getLatitude(), mCenterPoint.latitude)) {
-                        mIvGuide.setVisibility(View.VISIBLE);
-                    }
-                }
-                mIvGuide.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        aMap.setOnCameraChangeListener(null);
-                        if (mAmapocation != null && mCenterPoint != null) {
-                            NaviLatLng start = null, end = null;
-                            start = new NaviLatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
-                            end = new NaviLatLng(mCenterPoint.latitude, mCenterPoint.longitude);
-                            Intent intent = new Intent(MainActivity.this, NaviActivity.class);
-                            intent.putExtra("start", start);
-                            intent.putExtra("end", end);
-                            startActivity(intent);
-                            mIvGuide.setVisibility(View.GONE);
-                            gps_start();
+                            returnCheck();
                         }
                     }
-                });
-                Log.i("mCenterPoint", mCenterPoint.toString());
-                if (mCenterPoint != null && mCenterPoint.latitude > 0) {
-                    routeLine(mCenterPoint);
-                }
-                break;
-            default:
-                break;
+                    break;
+                case R.id.iv_end_point:
+                    if (null != mCenterPoint && null != mAmapocation) {
+                        if (!equal(mAmapocation.getLatitude(), mCenterPoint.latitude)) {
+                            mIvGuide.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    mIvGuide.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            aMap.setOnCameraChangeListener(null);
+                            if (mAmapocation != null && mCenterPoint != null) {
+                                NaviLatLng start = null, end = null;
+                                start = new NaviLatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
+                                end = new NaviLatLng(mCenterPoint.latitude, mCenterPoint.longitude);
+                                Intent intent = new Intent(MainActivity.this, NaviActivity.class);
+                                intent.putExtra("start", start);
+                                intent.putExtra("end", end);
+                                startActivity(intent);
+                                mIvGuide.setVisibility(View.GONE);
+                                gps_start();
+                            }
+                        }
+                    });
+                    Log.i("mCenterPoint", mCenterPoint.toString());
+                    if (mCenterPoint != null && mCenterPoint.latitude > 0) {
+                        routeLine(mCenterPoint);
+                        hideAdressInfoFragment();
+                        hideCarStutsFragment();
+                        mIsGuide = true;
+                        mIvEndPoint.setVisibility(View.GONE);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
-    public void callPhone() {
-        final String phone = getSharedPreferences("global", MODE_PRIVATE).getString("customerService", "");
-        Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phone));//跳转到拨号界面，同时传递电话号码
-        startActivity(dialIntent);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-    }
 
     private void gps_start() {
         if (NetWorkUtil.isNetworkAvailable(this)) {
             mapPermission();
-            //isUserCar();
+            if (mIsGuide) {
+                mIvEndPoint.setVisibility(View.VISIBLE);
+                isUserCar();
+            }
             mIvGuide.setVisibility(View.GONE);
             if (mWalkRouteOverlay != null) {
                 mWalkRouteOverlay.removeFromMap();
@@ -657,7 +635,6 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
 
                 }
             };
-
             cdt.start();
         }
     }
@@ -773,182 +750,6 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     }
 
     /**
-     * 还车操作
-     */
-    public void toReturnBike() {
-        if (stationMarkers.size() == 0) {
-            ToastUtils.getShortToastByString(this, "附近没有还车站点");
-            return;
-        }
-        int minDistance = 0;
-        Marker nearEstMarker = null;
-        for (int i = 0; i < stationMarkers.size(); i++) {
-            Marker marker = stationMarkers.get(i);
-            double latitude = marker.getPosition().latitude;
-            double longitude = marker.getPosition().longitude;
-            LatLng end = new LatLng(latitude, longitude);
-            if (mAmapocation != null) {
-                LatLng start = new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
-                int temp = testDistance(start, end);
-                if (i == 0) {
-                    minDistance = temp;
-                    nearEstMarker = marker;
-                }
-                if (temp < minDistance) {
-                    minDistance = temp;
-                    nearEstMarker = marker;
-                }
-            }
-        }
-        Log.i("minDisatance", minDistance + "");
-        if (null != nearEstMarker) {
-            final NearByStationBean.ResponseObjBean markerInfo = (NearByStationBean.ResponseObjBean) nearEstMarker.getObject();
-            if (minDistance > 0 && minDistance <= 100) {
-                final AlertDialog dialogInStation = new AlertDialog.Builder(this).create();
-                View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_in_station, null);
-                TextView tv_address = (TextView) dialogView.findViewById(R.id.tv_station_address);
-                ImageView iv_station = (ImageView) dialogView.findViewById(R.id.iv_station);
-                ImageView iv_cancel = (ImageView) dialogView.findViewById(R.id.iv_cancel);
-                Button btn_confim_return = (Button) dialogView.findViewById(R.id.btn_confim_return);
-                dialogInStation.setView(dialogView);
-                iv_cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialogInStation.cancel();
-                    }
-                });
-                if (null != markerInfo) {
-                    tv_address.setText(markerInfo.getPlaceAddress());
-                    //Glide.with(MainActivity.this).load(markerInfo.getPlaceImg()).into(iv_station);
-                }
-                btn_confim_return.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mProgersssDialog = new ProgersssDialog(MainActivity.this);
-                        mProgersssDialog.setMsg("正在还车中");
-                        returnCar(1);
-                        dialogInStation.cancel();
-                    }
-                });
-                dialogInStation.show();
-            } else {
-                final AlertDialog dialogOutStation = new AlertDialog.Builder(this).create();
-                View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_out_station, null);
-                TextView tv_address = (TextView) dialogView.findViewById(R.id.tv_station_address);
-                ImageView iv_station = (ImageView) dialogView.findViewById(R.id.iv_station);
-                ImageView iv_cancel = (ImageView) dialogView.findViewById(R.id.iv_cancel);
-                Button btn_confim_return = (Button) dialogView.findViewById(R.id.btn_confim_return);
-                Button btn_follow_me = (Button) dialogView.findViewById(R.id.btn_follow_me);
-                dialogOutStation.setView(dialogView);
-                if (null != markerInfo) {
-                    tv_address.setText(markerInfo.getPlaceAddress());
-                    //Glide.with(MainActivity.this).load(markerInfo.getPlaceImg()).into(iv_station);
-                }
-                iv_cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialogOutStation.cancel();
-                    }
-                });
-                btn_confim_return.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final AlertDialog dialogReminder = new AlertDialog.Builder(MainActivity.this).create();
-                        View reminderView = LayoutInflater.from(MainActivity.this).inflate(R.layout.dialog_return_reminder, null);
-                        dialogReminder.setView(reminderView);
-                        TextView tv_return_cancel = (TextView) reminderView.findViewById(R.id.tv_return_cancel);
-                        TextView tv_confim_return = (TextView) reminderView.findViewById(R.id.tv_confim_return);
-                        tv_return_cancel.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialogReminder.cancel();
-                                dialogOutStation.cancel();
-                            }
-                        });
-                        tv_confim_return.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mProgersssDialog = new ProgersssDialog(MainActivity.this);
-                                mProgersssDialog.setMsg("正在还车中");
-                                returnCar(2);
-                                dialogReminder.cancel();
-                                dialogOutStation.cancel();
-                            }
-                        });
-                        dialogReminder.show();
-                    }
-                });
-                btn_follow_me.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        NaviLatLng start = null, end = null;
-                        start = new NaviLatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
-                        end = new NaviLatLng(stringtoDouble(markerInfo.getLatitude()), stringtoDouble(markerInfo.getLongitude()));
-                        Intent intent = new Intent(MainActivity.this, NaviActivity.class);
-                        intent.putExtra("start", start);
-                        intent.putExtra("end", end);
-                        startActivity(intent);
-                        dialogOutStation.cancel();
-                    }
-                });
-                dialogOutStation.show();
-            }
-        }
-    }
-
-    public void returnCar(int isInStation) {
-        String userId = mSpUserinfo.getString("userId", "");
-        Map<String, String> map = new HashMap<>();
-        map.put("userId", userId);
-        if (null != mAmapocation) {
-            final double longitude = mAmapocation.getLongitude();
-            final double latitude = mAmapocation.getLatitude();
-            map.put("longitude", longitude + "");
-            map.put("latitude", latitude + "");
-            map.put("isInStation", isInStation + "");
-        }
-        Call<ResponseBody> call = HttpUtil.getService(ApiService.class).returnCar(map);
-        GetJsonStringUtil.getJson_String(call, new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    String jsonString = response.body().string();
-                    Log.i("returncar", jsonString);
-                    if (null != jsonString) {
-                        Gson gson = new Gson();
-                        EndRideBean endRideBean = gson.fromJson(jsonString, EndRideBean.class);
-                        if (null != endRideBean) {
-                            if (endRideBean.getResponseCode().equals("1")) {
-                                mProgersssDialog.dismiss();
-                                for (Marker marker : stationMarkers) {
-                                    marker.remove();
-                                }
-                                Intent intent = new Intent(MainActivity.this, EndRideActivity.class);
-                                intent.putExtra("endRide", endRideBean);
-                                startActivity(intent);
-                                mBtnUseCar.setText("我要用车");
-                                showBike();
-                                mlocationClient.startLocation();//启动定位
-                                MainActivity.this.setAdressInfoFragment();
-                            } else {
-                                ToastUtil.show(MainActivity.this, endRideBean.getResponseMsg());
-                            }
-                        }
-
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
-    }
-
-    /**
      * 强制帮用户打开GPS
      *
      * @param context
@@ -999,6 +800,9 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         this.unregisterReceiver(mBlueToothStateReceiver);
         this.unregisterReceiver(mNetinfoReceiver);
         EventBus.getDefault().unregister(this);
+        if (null != mMCdt) {
+            mMCdt.cancel();
+        }
     }
 
     @Override
@@ -1062,7 +866,6 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     @Override
     protected void onRestart() {
         super.onRestart();
-        isUserCar();
         regeocdeQuery();
     }
 
@@ -1362,18 +1165,15 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         if (NetWorkUtil.isNetworkAvailable(this)) {
             mOldMarker = marker;
             routeLine(marker.getPosition());
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mCenterPoint = marker.getPosition();
-                    regeocdeQuery();
-                }
-            }, 800);
 
             final String title = marker.getOptions().getTitle();
             if (null == title) {
                 showEBikeEnergyFragment(marker);
             }
+            hideAdressInfoFragment();
+            hideCarStutsFragment();
+            mIsGuide = true;
+            mIvEndPoint.setVisibility(View.GONE);
             mIvGuide.setVisibility(View.VISIBLE);
             mIvGuide.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1405,6 +1205,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             LatLng locatePoint = new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
             mFm = getSupportFragmentManager();
             mTransaction = mFm.beginTransaction();
+            mTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+           // mTransaction.setCustomAnimations(R.anim.slide_fragment_horizontal_right_in, R.anim.slide_fragment_vertical_left_out, R.anim.slide_fragment_vertical_left_in, R.anim.slide_fragment_horizontal_right_out);
             mEBikeEnergyFragment = EBikeEnergyFragment.newInstance(bean, locatePoint);
             mTransaction.replace(R.id.fl_ebike_energy_replace, mEBikeEnergyFragment);
             mTransaction.commitAllowingStateLoss();
@@ -1418,6 +1220,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         isShowEbikeEnergyFragment = false;
         mFm = getSupportFragmentManager();
         mTransaction = mFm.beginTransaction();
+        mTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        //mTransaction.setCustomAnimations(R.anim.slide_fragment_horizontal_right_in, R.anim.slide_fragment_vertical_left_out, R.anim.slide_fragment_vertical_left_in, R.anim.slide_fragment_horizontal_right_out);
         if (null != mEBikeEnergyFragment) {
             mTransaction.remove(mEBikeEnergyFragment);
             mTransaction.commitAllowingStateLoss();
@@ -1430,14 +1234,18 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             if (isShowEbikeEnergyFragment) {
                 isShowEbikeEnergyFragment = false;
                 hideEBikeEnergyFragment();
-            } else {
-                if (mOldMarker != null) {
-                    mOldMarker.hideInfoWindow();
-                }
-                if (null != mWalkRouteOverlay) {
-                    mWalkRouteOverlay.removeFromMap();
-                }
+            }
+            if (mOldMarker != null) {
+                mOldMarker.hideInfoWindow();
+            }
+            if (null != mWalkRouteOverlay) {
+                mWalkRouteOverlay.removeFromMap();
+            }
+            if (mIsGuide) {
+                mIsGuide = false;
                 mIvGuide.setVisibility(View.GONE);
+                isUserCar();
+                mIvEndPoint.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -1487,22 +1295,23 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 String province = regeocodeAddress.getProvince();
                 String city = regeocodeAddress.getCity();
                 String district = regeocodeAddress.getDistrict();
-                mStreet = regeocodeAddress.getStreetNumber().getStreet() + "街";
-                Log.i("street", mStreet);
+                String street = regeocodeAddress.getStreetNumber().getStreet() + "街";
+
                 double latitude = mAmapocation.getLatitude();
                 double longitude = mAmapocation.getLongitude();
                 LatLng start = new LatLng(latitude, longitude);
                 int distance = testDistance(start, mCenterPoint);
                 int time = distance / 100;
                 Log.i("car_amount", mCar_amount + "");
-                mStreet1 = subString(regeocodeAddress.getFormatAddress(), province, city, district, mStreet);
+                String address = subString(regeocodeAddress.getFormatAddress(), province, city, district, street);
+                AddressInfo addressInfo;
                 if (mIsStation) {
-                    mInfo = new AddressInfo(1, mStreet1, chargeStationCount + "", distance + "", time + "");
+                    addressInfo = new AddressInfo(1, address, chargeStationCount + "", distance + "", time + "");
                 } else {
-                    mInfo = new AddressInfo(2, mStreet1, mCar_amount + "", distance + "", time + "");
+                    addressInfo = new AddressInfo(2, address, mCar_amount + "", distance + "", time + "");
                 }
                 Log.i("address", regeocodeAddress.getFormatAddress());
-                EventBus.getDefault().post(new MyEvent(mInfo));
+                EventBus.getDefault().post(new MyEvent(addressInfo));
             } else {
                 ToastUtil.show(this, R.string.no_result);
             }
@@ -1597,6 +1406,18 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         mTransaction = mFm.beginTransaction();
         mTransaction.replace(R.id.fl_fragment_replace, mCarStateFragment);
         mTransaction.commitAllowingStateLoss();
+    }
+
+    /**
+     * 隐藏车的状态的窗口
+     */
+    private void hideCarStutsFragment() {
+        mFm = getSupportFragmentManager();
+        mTransaction = mFm.beginTransaction();
+        if (null != mCarStateFragment) {
+            mTransaction.remove(mCarStateFragment);
+            mTransaction.commitAllowingStateLoss();
+        }
     }
 
     @Override
