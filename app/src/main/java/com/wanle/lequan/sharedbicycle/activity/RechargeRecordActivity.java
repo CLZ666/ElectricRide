@@ -76,6 +76,7 @@ public class RechargeRecordActivity extends BaseActivity implements OnRefreshLis
         netBug();
         mSwipeTarget.setEmptyView(mEmptyView);
         mSwipeTarget.setAdapter(mAdapter);
+
         mEmptyView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

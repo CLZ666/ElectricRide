@@ -13,7 +13,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/iv_bike"
@@ -66,5 +66,21 @@
                 android:textSize="12sp"
                 />
         </LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+            <ImageView
+                android:id="@+id/iv_ad2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ad2"/>
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/touming"/>
+        </FrameLayout>
     </RelativeLayout>
 </LinearLayout>

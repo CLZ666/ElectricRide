@@ -158,4 +158,14 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("user/powerBank/powerBankRecord.html")
     Call<ResponseBody> replaceReturnBatteryRecord(@FieldMap Map<String, String> map);
+
+    //我的优惠券的接口
+    @FormUrlEncoded
+    @POST("coupon/userCouponList.html")
+    Call<ResponseBody> mycoupon(@FieldMap Map<String, String> map);
+
+    //活动广告接口
+    @FormUrlEncoded
+    @POST("activity/activityList.html")
+    Call<ResponseBody> activityAd(@FieldMap Map<String, String> map);
 }

@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -41,25 +41,12 @@ public class UnlockActivity extends BaseActivity {
     ProgressBar mPbProgressbar;
     @BindView(R.id.tv_prg)
     TextView mTvPrg;
+    @BindView(R.id.iv_ad2)
+    ImageView mIvAd2;
     private int progress;
     private static final int MSG = 1;
     private SharedPreferences mSpUserInfo;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            //处理消息
-            switch (msg.what) {
-                case MSG:
-                    //设置滚动条和text的值
-                    mPbProgressbar.setProgress(progress);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-    private Thread mUnlockThread;
+
     private String mResponseCode = "";
     private CountDownTimer mCdt;
 
@@ -85,7 +72,7 @@ public class UnlockActivity extends BaseActivity {
             public void onFinish() {
                 if (!mResponseCode.equals("1")) {
                     ToastUtil.show(UnlockActivity.this, "开锁超时，请换一辆车");
-                   // startActivity(new Intent(UnlockActivity.this,MainActivity.class));
+                    // startActivity(new Intent(UnlockActivity.this,MainActivity.class));
                     finish();
                 }
             }
@@ -110,15 +97,6 @@ public class UnlockActivity extends BaseActivity {
         mTvTitle.setText("正在开锁");
         mTvTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         mSpUserInfo = getSharedPreferences("userinfo", MODE_PRIVATE);
-    }
-
-    @OnClick(R.id.iv_back)
-    public void onClick() {
-        if (progress == 100) {
-            finish();
-        } else {
-            ToastUtil.show(this, "请耐心等待开锁完成");
-        }
     }
 
     private void userCar() {
@@ -184,38 +162,22 @@ public class UnlockActivity extends BaseActivity {
     }
 
 
-    private void pbStart() {
-        //子线程循环间隔消息
-        mUnlockThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int max = mPbProgressbar.getMax();
-                try {
-                    //子线程循环间隔消息
-                    while (progress < max) {
-                        progress += 10;
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mTvPrg.setText(progress + "%");
-                            }
-                        });
-                        userCar();
-                        Message msg = new Message();
-                        msg.what = MSG;
-                        handler.sendMessage(msg);
-                        Thread.sleep(1000);
-                    }
-                    if (progress == max) {
-                        Intent intent = new Intent(UnlockActivity.this, MainActivity.class);
-                        intent.putExtra("unlock", true);
-                        startActivity(intent);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+    @OnClick({R.id.iv_back, R.id.iv_ad2, R.id.btn_cancel})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_back:
+                if (progress == 100) {
+                    finish();
+                } else {
+                    ToastUtil.show(this, "请耐心等待开锁完成");
                 }
-            }
-        });
-        mUnlockThread.start();
+                break;
+            case R.id.iv_ad2:
+                ToastUtil.show(this, "广告2");
+                break;
+            case R.id.btn_cancel:
+                mIvAd2.setVisibility(View.GONE);
+                break;
+        }
     }
 }

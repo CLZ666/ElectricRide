@@ -2,6 +2,7 @@ package com.wanle.lequan.sharedbicycle.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +77,7 @@ public class LeaseRecordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemViewType(int position) {
+        Log.i("9900",position+"");
         if (mData.get(position).getType() == 1) {
             return ITEM_TYPE.ITEM_IN_LEASE.ordinal();
         }

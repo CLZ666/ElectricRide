@@ -152,6 +152,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     private static final int MY_PERMISSIONS_REQUEST_QR_CODE = 2;
     private int mCar_amount;
     private int chargeStationCount;
+    private boolean isUseBike;
     private Handler carStateHandler = new Handler();
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -173,7 +174,6 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     private List<Marker> bikeMarkers;
     private List<Marker> stationMarkers;
     private String mUserId;
-    private AddressInfo mInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -320,6 +320,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                                     if (null != messageBean) {
                                         if (messageBean.getResponseCode().equals("1")) {
                                             // showChargeStation();
+                                            isUseBike = true;
                                             mBtnUseCar.setText("我要还车");
                                             gson = new Gson();
                                             final CarStateBean carStateBean = gson.fromJson(jsonString, CarStateBean.class);
@@ -329,6 +330,8 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                                                 setCarStutsFragment();
                                             }
                                         } else {
+                                            isUseBike = false;
+                                            setAdressInfoFragment();
                                             carStateHandler.removeCallbacks(mRunnable);
                                             if (null != mlocationClient) {
                                                 mlocationClient.startLocation();
@@ -486,7 +489,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         // aMap.setMyLocationRotateAngle(180);
     }
 
-    @OnClick({R.id.iv_toolbarmore, R.id.iv_search, R.id.iv_gps_start, R.id.iv_submit_problem, R.id.iv_guide, R.id.iv_bike_station, R.id.btn_use_car, R.id.iv_end_point})
+    @OnClick({R.id.iv_charge_station, R.id.iv_toolbarmore, R.id.iv_search, R.id.iv_gps_start, R.id.iv_submit_problem, R.id.iv_guide, R.id.iv_bike_station, R.id.btn_use_car, R.id.iv_end_point})
     public void onClick(View view) {
         if (NetWorkUtil.isNetworkAvailable(this)) {
             switch (view.getId()) {
@@ -511,37 +514,51 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                     gps_start();
                     break;
                 case R.id.iv_bike_station:
-                    if (NetWorkUtil.isNetworkAvailable(this)) {
-                        if (mOldMarker != null) {
-                            mOldMarker.hideInfoWindow();
-                        }
-                        if (mWalkRouteOverlay != null) {
-                            mWalkRouteOverlay.removeFromMap();
-                        }
-                        if (!mIsStation) {
-                            regeocdeQuery();
-                            hideEBikeEnergyFragment();
-                            showChargeStation();
-                        } else {
-                            regeocdeQuery();
-                            showBike();
-                        }
-                        if (mIsGuide) {
-                            mIvGuide.setVisibility(View.GONE);
-                            isUserCar();
-                            mIvEndPoint.setVisibility(View.VISIBLE);
-                        }
+
+                    if (mOldMarker != null) {
+                        mOldMarker.hideInfoWindow();
                     }
+                    if (mWalkRouteOverlay != null) {
+                        mWalkRouteOverlay.removeFromMap();
+                    }
+                    regeocdeQuery();
+                    showBike();
+                    if (mIsGuide) {
+                        mIsGuide = false;
+                        mIvGuide.setVisibility(View.GONE);
+                        isUserCar();
+                        mIvEndPoint.setVisibility(View.VISIBLE);
+                    }
+                    if (isUseBike) {
+                        mBtnUseCar.setText("我要还车");
+                    } else {
+                        mBtnUseCar.setText("我要用车");
+                    }
+
+                    break;
+                case R.id.iv_charge_station:
+                    if (mOldMarker != null) {
+                        mOldMarker.hideInfoWindow();
+                    }
+                    if (mWalkRouteOverlay != null) {
+                        mWalkRouteOverlay.removeFromMap();
+                    }
+                    hideEBikeEnergyFragment();
+                    regeocdeQuery();
+                    showChargeStation();
+                    if (mIsGuide) {
+                        mIsGuide = false;
+                        mIvGuide.setVisibility(View.GONE);
+                        isUserCar();
+                        mIvEndPoint.setVisibility(View.VISIBLE);
+                    }
+                    mBtnUseCar.setText("充电机柜");
                     break;
                 case R.id.btn_use_car:
                     if (mBtnUseCar.getText().equals("我要用车")) {
                         userCar();
                     } else if (mBtnUseCar.getText().equals("我要还车")) {
                         if (NetWorkUtil.isNetworkAvailable(this)) {
-                            //toReturnBike();
-                       /* mProgersssDialog = new ProgersssDialog(MainActivity.this);
-                        mProgersssDialog.setMsg("正在还车中");
-                        returnCar(1);*/
                             returnCheck();
                         }
                     }
@@ -589,6 +606,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         if (NetWorkUtil.isNetworkAvailable(this)) {
             mapPermission();
             if (mIsGuide) {
+                mIsGuide = false;
                 mIvEndPoint.setVisibility(View.VISIBLE);
                 isUserCar();
             }
@@ -648,7 +666,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 marker.remove();
             }
         }
-        mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.station));
+        //mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.station));
         if (null != mCenterPoint) {
             queryChargeStation(new LatLng(mCenterPoint.latitude, mCenterPoint.longitude));
         }
@@ -664,7 +682,7 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
                 marker.remove();
             }
         }
-        mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.moto));
+        // mIvBikeStation.setImageDrawable(getResources().getDrawable(R.drawable.moto));
         if (null != mCenterPoint) {
             queryCar(new LatLng(mCenterPoint.latitude, mCenterPoint.longitude));
         }
@@ -1203,13 +1221,13 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
         NearByCarBean.ResponseObjBean bean = (NearByCarBean.ResponseObjBean) marker.getObject();
         if (null != mAmapocation && null != bean) {
             LatLng locatePoint = new LatLng(mAmapocation.getLatitude(), mAmapocation.getLongitude());
-            mFm = getSupportFragmentManager();
-            mTransaction = mFm.beginTransaction();
-            mTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-           // mTransaction.setCustomAnimations(R.anim.slide_fragment_horizontal_right_in, R.anim.slide_fragment_vertical_left_out, R.anim.slide_fragment_vertical_left_in, R.anim.slide_fragment_horizontal_right_out);
+            final android.app.FragmentManager fm = getFragmentManager();
+            final android.app.FragmentTransaction transaction = fm.beginTransaction();
+            // mTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            transaction.setCustomAnimations(R.animator.slide_fragment_horizontal_right_in, R.animator.slide_fragment_vertical_left_out, R.animator.slide_fragment_vertical_left_in, R.animator.slide_fragment_horizontal_right_out);
             mEBikeEnergyFragment = EBikeEnergyFragment.newInstance(bean, locatePoint);
-            mTransaction.replace(R.id.fl_ebike_energy_replace, mEBikeEnergyFragment);
-            mTransaction.commitAllowingStateLoss();
+            transaction.replace(R.id.fl_ebike_energy_replace, mEBikeEnergyFragment);
+            transaction.commitAllowingStateLoss();
         }
     }
 
@@ -1218,13 +1236,13 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
      */
     private void hideEBikeEnergyFragment() {
         isShowEbikeEnergyFragment = false;
-        mFm = getSupportFragmentManager();
-        mTransaction = mFm.beginTransaction();
-        mTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-        //mTransaction.setCustomAnimations(R.anim.slide_fragment_horizontal_right_in, R.anim.slide_fragment_vertical_left_out, R.anim.slide_fragment_vertical_left_in, R.anim.slide_fragment_horizontal_right_out);
+        final android.app.FragmentManager fm = getFragmentManager();
+        final android.app.FragmentTransaction transaction = fm.beginTransaction();
+        // mTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        transaction.setCustomAnimations(R.animator.slide_fragment_horizontal_right_in, R.animator.slide_fragment_vertical_left_out, R.animator.slide_fragment_vertical_left_in, R.animator.slide_fragment_horizontal_right_out);
         if (null != mEBikeEnergyFragment) {
-            mTransaction.remove(mEBikeEnergyFragment);
-            mTransaction.commitAllowingStateLoss();
+            transaction.remove(mEBikeEnergyFragment);
+            transaction.commitAllowingStateLoss();
         }
     }
 

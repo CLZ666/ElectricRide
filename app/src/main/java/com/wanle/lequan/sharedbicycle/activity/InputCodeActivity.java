@@ -171,7 +171,7 @@ public class InputCodeActivity extends BaseActivity {
 
     public void checkCarState() {
         String userId = mSpUserInfo.getString("userId", "");
-        final String carNo = "181139437395";
+        final String carNo = "181123321170";
         Map<String, String> map = new HashMap<>();
         map.put("userId", userId);
         map.put("carNo", carNo);

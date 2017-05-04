@@ -11,6 +11,11 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 /**
  * autor:Jerry
  * fuction:网络连接判断的工具类
@@ -22,7 +27,7 @@ public class NetWorkUtil {
     /**
      * 判断网络情况
      *
-     * @param context  上下文
+     * @param context 上下文
      * @return false 表示没有网络 true 表示有网络
      */
     public static boolean isNetworkAvalible(Context context) {
@@ -106,8 +111,10 @@ public class NetWorkUtil {
             return false;
         }
     }
+
     /**
      * 检测当前的网络（WLAN、3G/2G）状态
+     *
      * @param context Context
      * @return true 表示网络可用
      */
@@ -116,24 +123,29 @@ public class NetWorkUtil {
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null) {
             NetworkInfo info = connectivity.getActiveNetworkInfo();
-            if (info != null && info.isConnected())
-            {
+            if (info != null && info.isConnected()) {
                 // 当前网络是连接的
-                if (info.getState() == NetworkInfo.State.CONNECTED)
-                {
+                if (info.getState() == NetworkInfo.State.CONNECTED) {
                     // 当前所连接的网络可用
                     return true;
-                }else{
-                    ToastUtils.getShortToastByString(context,"当前网络连接不可用");
+                    /*if (ping()){
+                        return true;
+                    }else {
+                        ToastUtils.getShortToastByString(context, "当前网络连接不可用");
+                    }*/
+                } else {
+                    ToastUtils.getShortToastByString(context, "当前网络连接不可用");
                 }
-            }else{
-                ToastUtils.getShortToastByString(context,"网络连接失败，请检查您的网络连接");
+            } else {
+                ToastUtils.getShortToastByString(context, "网络连接失败，请检查您的网络连接");
             }
         }
         return false;
     }
+
     /**
      * 检测当前的网络（WLAN、3G/2G）状态
+     *
      * @param context Context
      * @return true 表示网络可用
      */
@@ -142,22 +154,26 @@ public class NetWorkUtil {
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null) {
             NetworkInfo info = connectivity.getActiveNetworkInfo();
-            if (info != null && info.isConnected())
-            {
+            if (info != null && info.isConnected()) {
                 // 当前网络是连接的
-                if (info.getState() == NetworkInfo.State.CONNECTED)
-                {
+                if (info.getState() == NetworkInfo.State.CONNECTED) {
                     // 当前所连接的网络可用
+                   /* if (ping()){
+                        return true;
+                    }else {
+                        ToastUtils.getShortToastByString(context, "当前网络连接不可用");
+                    }*/
                     return true;
-                }else{
-                    ToastUtils.getShortToastByString(context,"当前网络连接不可用");
+                } else {
+                    ToastUtils.getShortToastByString(context, "当前网络连接不可用");
                 }
-            }else{
+            } else {
                 openNetSetting(context);
             }
         }
         return false;
     }
+
     private static void openNetSetting(final Activity activity) {
         final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(activity);
         builder.setMessage("网络无法访问，检查网络连接");
@@ -177,6 +193,43 @@ public class NetWorkUtil {
             }
         });
         builder.show();
+    }
+
+
+
+    public static final boolean ping() {
+
+        String result = null;
+        try {
+            String ip = "www.baidu.com";// ping 的地址，可以换成任何一种可靠的外网
+            Process p = Runtime.getRuntime().exec("ping -c 3 -w 100 " + ip);// ping网址3次
+            // 读取ping的内容，可以不加
+            InputStream input = p.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(input));
+            StringBuffer stringBuffer = new StringBuffer();
+            String content = "";
+            while ((content = in.readLine()) != null) {
+                stringBuffer.append(content);
+            }
+            Log.d("------ping-----", "result content : " + stringBuffer.toString());
+            // ping的状态
+            int status = p.waitFor();
+            if (status == 0) {
+                result = "success";
+                return true;
+            } else {
+                result = "failed";
+            }
+        } catch (IOException e) {
+            result = "IOException";
+        } catch (InterruptedException e) {
+            result = "InterruptedException";
+        } finally {
+            Log.d("----result---", "result = " + result);
+        }
+        return false;
+
+
     }
 }
 
