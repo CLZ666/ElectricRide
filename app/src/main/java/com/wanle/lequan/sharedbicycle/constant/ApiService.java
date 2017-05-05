@@ -29,7 +29,7 @@ import rx.Observable;
 
 public interface ApiService {
     public static final String BASE_URL = "http://test.car.lequangroup.cn/";
-    public String testurl = "http://192.168.0.103:8080/car/";
+    public String testurl = "http://192.168.0.101:8080/car/";
 
     //获取验证码的接口
     @GET("smsCode/getSmsCodeByReg.html")
@@ -156,7 +156,7 @@ public interface ApiService {
 
     //借还出车辆电池记录的接口
     @FormUrlEncoded
-    @POST("user/powerBank/powerBankRecord.html")
+    @POST("carBattery/carBatteryRecord.html")
     Call<ResponseBody> replaceReturnBatteryRecord(@FieldMap Map<String, String> map);
 
     //我的优惠券的接口
@@ -168,4 +168,9 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("activity/activityList.html")
     Call<ResponseBody> activityAd(@FieldMap Map<String, String> map);
+
+    //提交车辆问题的接口
+    @Multipart
+    @POST("car/problemSubmit.html")
+    Call<ResponseBody> submitProblem(@Query("userId") String userId, @Query("carNo") String carno,@Query("problemType") String problemType,@Query("describe") String desc,@Part("uploadFile\"; filename=\"test.jpg\"") RequestBody imgs);
 }
