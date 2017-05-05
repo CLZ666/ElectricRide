@@ -172,5 +172,5 @@ public interface ApiService {
     //提交车辆问题的接口
     @Multipart
     @POST("car/problemSubmit.html")
-    Call<ResponseBody> submitProblem(@Query("userId") String userId, @Query("carNo") String carno,@Query("problemType") String problemType,@Query("describe") String desc,@Part("uploadFile\"; filename=\"test.jpg\"") RequestBody imgs);
+    Call<ResponseBody> submitProblem(@Query("userId") String userId, @Query("carNo") String carno, @Query("problemType") String problemType, @Query("describe") String desc, @Part("uploadFile\"; filename=\"test.jpg\"") RequestBody imgs);
 }

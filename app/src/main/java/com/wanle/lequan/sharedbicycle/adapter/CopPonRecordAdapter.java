@@ -10,7 +10,9 @@ import android.widget.TextView;
 import com.wanle.lequan.sharedbicycle.R;
 import com.wanle.lequan.sharedbicycle.bean.CouPonBean;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -24,7 +26,7 @@ import butterknife.ButterKnife;
 
 public class CopPonRecordAdapter extends RecyclerView.Adapter<CopPonRecordAdapter.ViewHolder> {
 
-    private List<CouPonBean> mData;
+    private List<CouPonBean.ResponseObjBean.RowsBean> mData;
     private LayoutInflater mInflater;
 
     public CopPonRecordAdapter(Context context) {
@@ -33,7 +35,7 @@ public class CopPonRecordAdapter extends RecyclerView.Adapter<CopPonRecordAdapte
     }
 
 
-    public void setData(List<CouPonBean> data, boolean isRefresh) {
+    public void setData(List<CouPonBean.ResponseObjBean.RowsBean> data, boolean isRefresh) {
         if (data != null) {
             if (isRefresh) {
                 mData.clear();
@@ -52,9 +54,9 @@ public class CopPonRecordAdapter extends RecyclerView.Adapter<CopPonRecordAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final CouPonBean bean = mData.get(position);
-        holder.mTvTime.setText(bean.getYouxiaotime());
-        holder.mTvMoney.setText("￥"+bean.getMoney());
+        final CouPonBean.ResponseObjBean.RowsBean bean = mData.get(position);
+        holder.mTvTime.setText("有效期至:"+stampToDate(bean.getExpireTime()+""));
+        holder.mTvMoney.setText("￥"+Integer.parseInt(bean.getDiscountMoney())/100+"元");
     }
 
     @Override
@@ -75,5 +77,16 @@ public class CopPonRecordAdapter extends RecyclerView.Adapter<CopPonRecordAdapte
             super(view);
             ButterKnife.bind(this, view);
         }
+    }
+    /*
+  * 将时间戳转换为时间
+  */
+    public static String stampToDate(String s) {
+        String res;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long lt = Long.valueOf(s);
+        Date date = new Date(lt);
+        res = simpleDateFormat.format(date);
+        return res;
     }
 }

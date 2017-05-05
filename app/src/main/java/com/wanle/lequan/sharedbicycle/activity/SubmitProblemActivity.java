@@ -162,6 +162,8 @@ public class SubmitProblemActivity extends BaseActivity implements EasyPermissio
         mDialog = new AlertDialog.Builder(this).create();
         mDialog.setView(mView);
         mDialog.setCanceledOnTouchOutside(true);
+        TextView tv_title = (TextView) mView.findViewById(R.id.tv_title);
+        tv_title.setText("图片上传");
         TextView tv_choose = (TextView) mView.findViewById(R.id.tv_choose_picture);
         TextView tv_take = (TextView) mView.findViewById(R.id.tv_take_picture);
         TextView tv_cancel = (TextView) mView.findViewById(R.id.tv_cancel);
@@ -275,17 +277,17 @@ public class SubmitProblemActivity extends BaseActivity implements EasyPermissio
                         try {
                             if (response.code() == 200) {
                                 String jsonString = response.body().string();
-                                Log.i("problem1",jsonString);
-                                if (null!= jsonString){
-                                    Gson gson=new Gson();
+                                Log.i("problem1", jsonString);
+                                if (null != jsonString) {
+                                    Gson gson = new Gson();
                                     final MessageBean messageBean = gson.fromJson(jsonString, MessageBean.class);
-                                    if (null!=messageBean){
-                                        if (messageBean.getResponseCode().equals("1")){
-                                            ToastUtil.show(SubmitProblemActivity.this,"问题提交成功!");
+                                    if (null != messageBean) {
+                                        if (messageBean.getResponseCode().equals("1")) {
+                                            ToastUtil.show(SubmitProblemActivity.this, "问题提交成功!");
                                             startActivity(new Intent(SubmitProblemActivity.this, MainActivity.class));
                                             finish();
-                                        }else {
-                                            ToastUtil.show(SubmitProblemActivity.this,messageBean.getResponseMsg());
+                                        } else {
+                                            ToastUtil.show(SubmitProblemActivity.this, messageBean.getResponseMsg());
                                         }
                                     }
                                 }

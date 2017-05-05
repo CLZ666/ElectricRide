@@ -138,6 +138,7 @@ public class RechargeRecordActivity extends BaseActivity implements OnRefreshLis
             if (mAdapter.getCount() == 0) {
                 mEmptyView.setVisibility(View.VISIBLE);
                 mSwipRefresh.setVisibility(View.GONE);
+                mTv_empty.setText("您还未有账户明细");
             } else {
                 mEmptyView.setVisibility(View.GONE);
                 mSwipRefresh.setVisibility(View.VISIBLE);

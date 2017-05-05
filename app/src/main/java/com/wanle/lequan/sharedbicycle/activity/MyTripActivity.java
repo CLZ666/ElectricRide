@@ -142,6 +142,7 @@ public class MyTripActivity extends BaseActivity implements OnRefreshListener, O
             if (mMAdapter.getItemCount() == 0) {
                 emptyView.setVisibility(View.VISIBLE);
                 mSwipRefresh.setVisibility(View.GONE);
+                mTv_empty.setText("您还没有骑行记录哦");
             } else {
                 emptyView.setVisibility(View.GONE);
                 mSwipRefresh.setVisibility(View.VISIBLE);
